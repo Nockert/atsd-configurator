@@ -1,0 +1,43 @@
+
+
+
+// just for the checkout controller
+.is--ctl-checkout {
+
+    // set selection price and pseudo price
+    .atsd-configurator--checkout--item-price {
+
+        // default settings
+        .unitize(24, @remScaleFactor, line-height) !important;
+        .unitize(34, @remScaleFactor, padding-top) !important;
+
+        // the pseudo price
+        .atsd-configurator--checkout--price-pseudo {
+            .is--line-through;
+            .is--block;
+            .unitize(11, @remScaleFactor, font-size);
+            .unitize(11, @remScaleFactor, line-height) !important;
+        }
+
+        // the default price
+        .atsd-configurator--checkout--price {
+            color: #e74c3c;
+            .is--bold;
+            .unitize(24, @remScaleFactor, line-height) !important;
+        }
+
+    }
+
+    // the total price
+    .atsd-configurator--checkout--item-price.column--total-price {
+
+        // the pseudo price
+        .atsd-configurator--checkout--price-pseudo {
+            font-weight: normal !important;
+        }
+
+    }
+
+}
+
+

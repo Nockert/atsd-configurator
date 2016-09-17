@@ -1,0 +1,454 @@
+
+
+
+// main container
+.atsd-configurator {
+
+    // default gray background
+    background-color: #f2f3f4;
+
+    // set margin to default article details
+    margin-bottom: 20px;
+
+    // because of some floating we have to have some padding so the panel margins are shown
+    // padding-bottom: 1px;
+
+
+
+    // fieldsets
+    .atsd-configurator--fieldset {
+
+        // fieldset header
+        h1.atsd-configurator--fieldset-description {
+
+            // default settings
+            padding: 10px 15px 10px 15px;
+            margin-bottom: 0;
+            font-size: 16px;
+            color: #ffffff;
+            .primary-gradient();
+
+        }
+
+
+
+        // the upper summary div
+        .atsd-configurator--fieldset-summary {
+
+            // left image div
+            .atsd-configurator--fieldset-summary--left {
+
+                // default settings
+                width: 30%;
+                padding: 20px;
+
+                // the imbedded image
+                img {
+
+                    // just a border
+                    border: 1px solid #000000;
+
+                }
+            }
+
+
+            // right summary div
+            .atsd-configurator--fieldset-summary--right {
+
+                // default settings
+                width: 70%;
+                padding: 20px;
+
+                // the header
+                .atsd-configurator--fieldset-summary--header {
+
+                    // default settings
+                    margin-bottom: 12px;
+                    font-weight: bold;
+
+                }
+
+                // container for every element
+                .atsd-configurator--fieldset-summary--element-container {
+
+                    // the name of the element
+                    .column--element {
+
+                        // just the width
+                        width: 30%;
+
+                    }
+
+                    // the value (selected articles) of the element
+                    .column--selection {
+
+                        // just the width
+                        width: 70%;
+
+                    }
+                }
+            }
+
+
+
+        }
+
+
+
+        // one element inside a fieldset
+        .atsd-configurator--element {
+
+            // every panel
+            .panel {
+
+                // we need margin
+                margin-bottom: 20px;
+
+            }
+
+
+
+            // template: list
+            .atsd-configurator--article--list {
+
+                // main container for the article selection.
+                .article--list--container {
+
+                    // default settings
+                    padding: 20px;
+
+
+
+                    // container for the preview image
+                    .article--list--image--container {
+                        width: 20%;
+                    }
+
+                    // container for the articles
+                    .article--list--articles--container {
+
+                        // default settings
+                        width: 80%;
+
+
+
+                        // every other row
+                        .article--row:nth-child(2n) {
+
+                            // grey background
+                            background-color: #f2f3f4;
+
+                        }
+
+
+
+                        // every article within a row
+                        .article--row {
+
+                            // padding for the background color
+                            padding: 2px 4px 2px 4px;
+
+
+
+                            // input radio or checkbox
+                            .article--column--input {
+
+                                // default settings
+                                width: 4%;
+
+                            }
+
+                            // input radio or checkbox
+                            .article--column--name {
+
+                                // default settings
+                                width: 76%;
+
+                            }
+
+                            // input radio or checkbox
+                            .article--column--price {
+
+                                // default settings
+                                width: 20%;
+                                text-align: right;
+
+                            }
+
+                        }
+                    }
+                }
+            }
+
+
+
+            // template: slider
+            .atsd-configurator--article--slider {
+
+                // default shopware product slider
+                .product-slider {
+
+                    // fix left arrow
+                    .product-slider--arrow.arrow--prev {
+                        margin-left: -1px;
+                        top: 45%;
+                    }
+
+                    // fix right arrow
+                    .product-slider--arrow.arrow--next {
+                        margin-right: -1px;
+                        top: 45%;
+                    }
+                }
+
+
+
+                // disable mouse pointer on not clickable button
+                .btn.is--primary.is--not-multiple {
+
+                    // disable mouse hover
+                    cursor: not-allowed !important;
+
+                }
+
+
+            }
+
+
+
+
+
+        }
+
+    }
+
+
+
+    // delivery status within the configurator
+    .delivery--status-icon {
+
+        // default settings
+        border-radius: .5625rem;
+        background-clip: padding-box;
+        margin: 0 .3125rem 0 0;
+        width: .5625rem;
+        height: .5625rem;
+        line-height: .625rem;
+        display: inline-block;
+        position: relative;
+
+        // available
+        &.delivery--status-available {
+
+            // default green
+            background: #2ecc71;
+
+        }
+
+        // not available
+        &.delivery--status-not-available {
+
+            // default red
+            background: #e74c3c;
+
+        }
+    }
+
+
+
+    // optional article quantity
+    .article--quantity {
+
+        // default values
+        font-weight: bold;
+        color: #999999;
+
+    }
+
+
+
+    // our loading indicator
+    .atsd-configurator--info-panel--loading-indicator {
+
+        // default values
+        width: 100%;
+        display: block;
+        // height: 100px;
+        // background-color: #e9e9f1;
+        border: 1px solid #dadae5;
+        height: 50px;
+
+        // move the loading image
+        .emotion--loading-indicator {
+            // margin-top: -10px;
+            margin-top: -35px;
+        }
+
+    }
+
+
+    // the action panel
+    .atsd-configurator--actions {
+
+        // the price container
+        .atsd-configurator--actions--price {
+            width: 50%;
+            float: left;
+            text-align: center;
+            display: none;
+
+            // we need a few/copy paste css assignments from the original
+            .price--content {
+                font-size: 22px;
+                white-space: nowrap;
+                color: #050f1d;
+                font-weight: bold;
+                display: inline-block;
+                line-height: 1;
+            }
+
+            // ...
+            .price--discount .price--content {
+                color: #e74c3c;
+            }
+
+            // ...
+            .price--discount-icon {
+                padding: 3px 4px 3px 4px;
+                margin: 0 5px 0 5px;
+                font-size: 12px;
+                border-radius: 3px;
+                display: inline-block;
+                position: relative;
+                background: #e74c3c;
+                color: #fff;
+                text-align: center;
+                font-weight: bold;
+                vertical-align: top;
+            }
+
+            // ...
+            .content--discount {
+                font-size: 14px;
+                padding: 4px 0 4px 0;
+                white-space: nowrap;
+                display: inline-block;
+            }
+
+            // ...
+            .price--line-through {
+                text-decoration: line-through;
+            }
+
+            // ...
+            .tax-info {
+                font-size: 10px;
+                a {
+                    text-decoration: none !important;
+                }
+            }
+        }
+
+        // the save and submit button
+        .atsd-configurator--actions--save, .atsd-configurator--actions--submit {
+            width: 25%;
+            float: left;
+        }
+
+    }
+
+
+
+    // properties without article button
+    .product--properties.no--article-link {
+        // remove margin
+        margin-bottom: 0 !important;
+    }
+
+}
+
+
+
+
+
+// lower resolution < 768px
+@media screen and (max-width: @tabletViewportWidth) {
+
+    // remove the image from the fieldset
+    .atsd-configurator .atsd-configurator--fieldset .atsd-configurator--fieldset-summary .atsd-configurator--fieldset-summary--left {
+        display: none;
+    }
+
+    // and make the other block use the full width
+    .atsd-configurator .atsd-configurator--fieldset .atsd-configurator--fieldset-summary .atsd-configurator--fieldset-summary--right {
+        width: 100%;
+    }
+
+    // remove the image from the element within a list template
+    .atsd-configurator .atsd-configurator--fieldset .atsd-configurator--element .atsd-configurator--article--list .article--list--container .article--list--image--container {
+        display: none;
+    }
+
+    // and make the other 100% width
+    .atsd-configurator .atsd-configurator--fieldset .atsd-configurator--element .atsd-configurator--article--list .article--list--container .article--list--articles--container {
+        width: 100%;
+    }
+
+}
+
+
+
+
+
+
+// create a bottom panel at desktop resolution
+@media screen and (min-width: @desktopViewportWidth) {
+
+    // the bottom panel
+    .atsd-configurator .atsd-configurator--actions {
+
+        // default values
+        padding: 10px;
+        bottom: 0;
+        top: auto;
+        border-top: 1px solid #d6d6d6;
+        border-bottom: 0;
+        box-sizing: border-box;
+        left: 0;
+        right: 0;
+        width: 100%;
+        position: fixed;
+        z-index: 4999;
+        border-left: 0;
+        border-right: 0;
+        background-color: #f8f8f8;
+
+        // the inner container max 1260px
+        .atsd-configurator--actions--container {
+            width: 1260px;
+            margin: auto;
+        }
+
+        // make the price visible
+        .atsd-configurator--actions--price {
+            display: block;
+        }
+
+    }
+
+}
+
+
+
+// remove the bottom panel at low resolution
+@media screen and (max-width: @desktopViewportWidth) {
+
+    // the bottom panel
+    .atsd-configurator .atsd-configurator--actions {
+
+        // hide it at low resolution
+        display: none !important;
+
+    }
+
+}

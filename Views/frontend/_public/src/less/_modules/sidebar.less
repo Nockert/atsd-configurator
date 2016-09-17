@@ -1,0 +1,29 @@
+
+
+
+// correct category/account sidebar
+@media screen and (min-width: @tabletViewportWidth)
+{
+    .is--ctl-AtsdConfigurator {
+        .sidebar-main {
+            display: block;
+        }
+    }
+
+    .sidebar-main {
+        .is--ctl-AtsdConfigurator & {
+            .categories--headline,
+            .categories--navigation {
+                display: none;
+            }
+        }
+
+        .is--ctl-AtsdConfigurator & {
+            & + .content--wrapper {
+                .unitize(margin-left, 260);
+            }
+        }
+    }
+}
+
+
