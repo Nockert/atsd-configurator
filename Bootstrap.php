@@ -80,9 +80,14 @@
  * - added plugin configuration to show no-choice before or after available articles
  * - added plugin configuration to disable "to product" button
  *
+ * 1.2.0
+ * - added shopware 5.2 compability (sw5.2 only)
+ * - removed a bugfix for 5.1.2 where we had to generate thumbnails for configurator articles
+ *   in the component
  *
  *
- * 1.2.x
+ *
+ * 1.x.x
  * - split component into services
  *
  * 2.x.x
@@ -100,7 +105,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.1.16",
+        'version'     => "1.2.0",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

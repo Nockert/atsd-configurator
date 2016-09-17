@@ -417,6 +417,7 @@ class AtsdConfigurator
                     // we have to reset the cover thumbnail
                     if ( $product->getCover() instanceof \Shopware\Bundle\StoreFrontBundle\Struct\Media )
                     {
+                        /*
                         // do we even have a single thumbnail?
                         if ( count( $product->getCover()->getThumbnails() ) > 0 )
                         {
@@ -442,6 +443,7 @@ class AtsdConfigurator
 
                         // and set it
                         $product->getCover()->setThumbnails( array( $thumbnail ) );
+                        */
                     }
 
                     // save it
