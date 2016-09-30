@@ -85,6 +85,10 @@
  * - removed a bugfix for 5.1.2 where we had to generate thumbnails for configurator articles
  *   in the component
  *
+ * 1.2.1
+ * - fixed an exception when ordering a selection. we have to give the new 5.2 attribute bundle
+ *   a order_basket item to create the attributes from and overwrite them later
+ *
  *
  *
  * 1.x.x
@@ -105,7 +109,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.2.0",
+        'version'     => "1.2.1",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

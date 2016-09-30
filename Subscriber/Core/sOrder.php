@@ -226,7 +226,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
                 $article = $configurator['article'];
 
                 // get the corrected item
-                $item = $this->getBasketItem( $selection, $article, 1, 0, true );
+                $item = $this->getBasketItem( $selection, $article, 1, 0, true, (integer) $item['id'] );
             }
 
 
@@ -277,7 +277,8 @@ class sOrder implements \Enlight\Event\SubscriberInterface
                             $article,
                             (integer) $articleArr['quantity'],
                             (integer) $configurator['rebate'],
-                            false
+                            false,
+                            (integer) $item['id']
                         );
 
                         // add it
@@ -332,11 +333,12 @@ class sOrder implements \Enlight\Event\SubscriberInterface
      * @param integer                                                $quantity
      * @param integer                                                $rebate
      * @param boolean                                                $master
+     * @param integer                                                $basketId
      *
      * @return array
      */
 
-    private function getBasketItem( \Shopware\CustomModels\AtsdConfigurator\Selection $selection, \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article, $quantity, $rebate, $master )
+    private function getBasketItem( \Shopware\CustomModels\AtsdConfigurator\Selection $selection, \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article, $quantity, $rebate, $master, $basketId )
     {
         // get price data
         $price    = $this->component->getArticlePrice( $article ) * ( ( 100 - (integer) $rebate ) / 100 );
@@ -346,7 +348,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
         $item = array(
 
             // default data
-            'id' => null,
+            'id'           => $basketId,
             'articleID'    => $article->getId(),
             'articlename'  => $article->getName(),
             'ordernumber'  => $article->getNumber(),
