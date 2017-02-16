@@ -89,15 +89,8 @@
  * - fixed an exception when ordering a selection. we have to give the new 5.2 attribute bundle
  *   a order_basket item to create the attributes from and overwrite them later
  *
- *
- *
- * 1.x.x
- * - split component into services
- *
- * 2.x.x
- * - refactored components
- *
- *
+ * 1.2.2
+ * - fixed saving of attribute when splitting of articles is disabled
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
@@ -109,7 +102,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.2.1",
+        'version'     => "1.2.2",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

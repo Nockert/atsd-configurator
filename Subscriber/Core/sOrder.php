@@ -113,6 +113,12 @@ class sOrder implements \Enlight\Event\SubscriberInterface
         // get the basket
         $basket = $arguments->get( "details" );
 
+        // do we want to split?
+        $split = (boolean) $this->bootstrap->Config()->get( "splitConfigurator" );
+        $attr  = (string)  $this->bootstrap->Config()->get( "saveInAttribute" );
+
+
+
         // loop the basket
         foreach ( $basket as $article )
         {
@@ -129,7 +135,41 @@ class sOrder implements \Enlight\Event\SubscriberInterface
                 WHERE detailID = " . (integer) $article['orderDetailId'] . "
             ";
             Shopware()->Db()->exec( $query );
+
+            // did we split it?
+            if ( $split == true )
+                // ignore
+                continue;
+
+
+
+            // get the detail id
+            // $id = (integer) $article['orderDetailId'];
+
+            // get the attribute loader
+            /* @var $attributeLoader \Shopware\Bundle\AttributeBundle\Service\DataLoader */
+            // $attributeLoader = $this->container->get( "shopware_attribute.data_loader" );
+
+            // read the data
+            // $attributeData = $attributeLoader->load( "s_order_basket_attributes", $id );
+
+
+
+            // try to insert the split string into attributes
+            try
+            {
+                // try it
+                $query = "
+                    UPDATE s_order_details_attributes
+                    SET " . $attr . " = :attribute
+                    WHERE detailID = :id
+                ";
+                Shopware()->Db()->query( $query, array( 'id' => (integer) $article['orderDetailId'], 'attribute' => $article['atsd_configurator_split_string'] ) );
+            }
+            catch ( \Exception $exception ) {}
         }
+
+
 
         // done
         return;
@@ -297,7 +337,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
             // do we want to save the attribute?
             if ( $attr != "" )
                 // set it
-                $item['ob_' . $attr] = implode( "\n", $attribute );
+                $item['atsd_configurator_split_string'] = implode( "\n", $attribute );
 
 
 
