@@ -95,7 +95,7 @@
  * 1.2.3
  * - added shopware 5.1 support
  *
- * 1.3.0
+ * 1.2.4
  * - added configuration to set the main article as free of charge
  *
  * @category  Aquatuning
