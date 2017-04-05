@@ -97,6 +97,7 @@
  *
  * 1.2.4
  * - added configuration to set the main article as free of charge
+ * - added custom product slider to remove infinity loop
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

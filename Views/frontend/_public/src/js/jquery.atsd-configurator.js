@@ -366,7 +366,7 @@
         initProductSlider: function ()
         {
             // add plugin
-            StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "swProductSlider" );
+            StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "atsdProductSlider" );
         },
 
 
@@ -668,9 +668,6 @@
             // set the rest
             me.configuration.priceFormat.pre = sub[0];
             me.configuration.priceFormat.thousandsSep = sub[1];
-
-            // and we are done
-            return;
         },
 
 
@@ -715,10 +712,7 @@
                 explode[0] = explode[0].slice( 0, explode[0].length - 3 ) + me.configuration.priceFormat.thousandsSep + explode[0].slice( -3 );
 
             // set the formatted price
-            var formatted = explode[0] + me.configuration.priceFormat.decPoint + explode[1];
-
-            // return formatted number
-            return formatted;
+            return explode[0] + me.configuration.priceFormat.decPoint + explode[1];
         },
 
 

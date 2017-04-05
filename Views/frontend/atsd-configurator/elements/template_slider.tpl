@@ -31,7 +31,7 @@
     <div class="article--slider--container" style="">
 
         {* shopware product slider *}
-        <div class="product-slider" data-product-slider="true" data-atsd-configurator-product-slider="true">
+        <div class="product-slider" data-atsd-configurator-product-slider="true">
             <div class="product-slider--container">
 
                 {* is this an optional fieldset with a radio selection *}
