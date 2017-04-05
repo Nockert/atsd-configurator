@@ -7,12 +7,31 @@
 {* the detail *}
 <div class="" style="border: 1px solid #dadae5; padding: 20px;">
 
+    {* do we have scaled prices? *}
+    {if $article.sBlockPrices}
+
+        {* header *}
+        <div style="font-weight: bold;">
+            {s name='ProductBlockPricesHeader'}Staffelpreise (ohne Rabatt){/s}
+        </div>
+
+        {* just for default details css *}
+        <div class="product--details">
+
+            {* include default block prices *}
+            {include file="frontend/detail/block_price.tpl" sArticle=$article}
+
+        </div>
+
+    {/if}
+
+
 
     {* do we have an attribute and is it filled? *}
     {if $atsdConfiguratorConfig.articleInfoAttribute != "" && $article[$atsdConfiguratorConfig.articleInfoAttribute] != ""}
 
         {* header *}
-        <div style="font-weight: bold;">
+        <div style="font-weight: bold; margin-bottom: 8px;">
             {s name='ProductInfoHeader'}Produktinformationen{/s}
         </div>
 
@@ -27,6 +46,11 @@
 
     {* do we have properties? *}
     {if count( $article.sProperties ) > 0 }
+
+        {* header *}
+        <div style="font-weight: bold; margin-bottom: 14px;">
+            {s name='ProductPropertiesHeader'}Eigenschaften{/s}
+        </div>
 
         {* container *}
         <div class="product--properties panel has--border{if $atsdConfiguratorConfig.articleLinkStatus == false} no--article-link{/if}" style="font-size: 12px;">
@@ -53,6 +77,8 @@
 
     {/if}
 
+
+
     {* link to the article? *}
     {if $atsdConfiguratorConfig.articleLinkStatus == true}
 
@@ -62,6 +88,8 @@
         </a>
 
     {/if}
+
+
 
     {* clear floating *}
     <div style="clear: both;"></div>
