@@ -85,6 +85,9 @@
             // parse the price template
             me.parsePriceTemplate();
 
+            // set up article prices
+            me.parseArticlePrices();
+
             // startup the default selection
             me.parseCurrentSelection();
 
@@ -572,6 +575,33 @@
 
 
 
+
+
+        // ...
+        getArticlePriceForQuantity: function( json, quantity )
+        {
+            // create object from it
+            var prices = JSON.parse( json );
+
+            // loop them
+            for ( var i in prices )
+            {
+                // get current price
+                var price = prices[i];
+
+                // the correct one? or the last one?
+                if ( price.to == 0 || ( quantity >= price.from && quantity <= price.to ) )
+                    // return it
+                    return price.price;
+            }
+
+            // nothing found?! return first
+            return prices[0].price;
+        },
+
+
+
+
         // ...
         parseCurrentSelectionPrice: function()
         {
@@ -592,9 +622,12 @@
                     // get the article
                     var article = me.getArticleById( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
 
+                    // get current article scaled price
+                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), article.attr( "data-atsd-configurator-article-quantity" ) );
+
                     // add prices
-                    price       += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( article.attr( "data-atsd-configurator-article-price" ) ) * ( ( 100 - rebate ) / 100 );
-                    pseudoPrice += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( article.attr( "data-atsd-configurator-article-price" ) );
+                    price       += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                    pseudoPrice += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice );
                 }
             );
 
@@ -629,6 +662,40 @@
                 $( me.configuration.priceSelectors.container ).removeClass( me.configuration.priceSelectors.discount );
 
         },
+
+
+
+
+        // ...
+        parseArticlePrices: function()
+        {
+            // get this
+            var me = this;
+
+            // get config details
+            var rebate = parseFloat( me.$el.attr( "data-atsd-configurator-rebate" ) );
+
+            // get every article
+            me.$el.find( 'div[data-atsd-configurator-article="true"]' ).each ( function()
+                {
+                    // the article
+                    var article = $( this );
+
+                    // get the article price for it
+                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), article.attr( "data-atsd-configurator-article-quantity" ) );
+
+                    // get the price
+                    var price = parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+
+                    // set the price
+                    article.find( '.price--placeholder' ).html(
+                        me.formatPrice( price )
+                    );
+                }
+            );
+        },
+
+
 
 
 

@@ -457,6 +457,8 @@ class AtsdConfigurator
             }
         }
 
+
+
         // and set the main article
         if ( $includeMaster == true )
             // do it
@@ -625,8 +627,6 @@ class AtsdConfigurator
 
         // return by cache
         return $cache[$configuratorId]['cache'];
-
-
     }
 
 
@@ -761,8 +761,8 @@ class AtsdConfigurator
                 'number'   => $article->getNumber(),
                 'name'     => $article->getName(),
                 'quantity' => 1,
-                'price'    => ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0,
-                'priceNet' => ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0
+                'price'    => ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article, 1 ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0,
+                'priceNet' => ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article, 1 ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0
             );
         }
 
@@ -809,8 +809,8 @@ class AtsdConfigurator
                     $return['stock'] = min( $return['stock'], floor( $articleStruct->getStock() / $quantity ) );
 
                     // price calculations
-                    $price    = $this->getArticlePrice( $articleStruct ) * $quantity;
-                    $priceNet = $this->getArticleNetPrice( $articleStruct ) * $quantity;
+                    $price    = $this->getArticlePrice( $articleStruct, $quantity );
+                    $priceNet = $this->getArticleNetPrice( $articleStruct, $quantity );
 
                     // set prices
                     $return['pseudoPrice'] += $price;
@@ -861,8 +861,8 @@ class AtsdConfigurator
             $return['weight'] += $article->getWeight();
 
             // price calculations
-            $price    = ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article ) : 0.0;
-            $priceNet = ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article ) : 0.0;
+            $price    = ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article, 1 ) : 0.0;
+            $priceNet = ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article, 1 ) : 0.0;
 
             // set prices
             $return['pseudoPrice'] += $price;
@@ -1152,16 +1152,33 @@ class AtsdConfigurator
      * ...
      *
      * @param Struct\ListProduct   $article
+     * @param integer              $quantity
      *
-     * @return float
+     * @return Struct\Product\Price
      */
 
-    public function getArticlePrice( Struct\ListProduct $article )
+    public function getArticlePriceStructForQuantity( Struct\ListProduct $article, $quantity )
     {
-        // cheapest price rule
-        return $article->getCheapestPrice()->getCalculatedPrice();
-    }
+        // loop every available price
+        foreach ( $article->getPrices() as $price )
+        {
+            // get the rule
+            $rule = $price->getRule();
 
+            // final price?
+            if ( $rule->getTo() === null )
+                // we found it
+                return $price;
+
+            // found it?
+            if ( ( $quantity >= $price->getFrom() ) and ( $quantity <= $price->getTo() ) )
+                // yep
+                return $price;
+        }
+
+        // none found?! get the cheapest
+        return $article->getCheapestPrice();
+    }
 
 
 
@@ -1175,10 +1192,36 @@ class AtsdConfigurator
      * @return float
      */
 
-    public function getArticleNetPrice( Struct\ListProduct $article )
+    public function getArticlePrice( Struct\ListProduct $article, $quantity )
     {
-        // get the net price - will always be euro without currency factor
-        return $article->getCheapestPriceRule()->getPrice();
+        // get the price struct
+        $price = $this->getArticlePriceStructForQuantity( $article, $quantity );
+
+        // calculate final price
+        return $price->getCalculatedPrice() * $quantity;
+    }
+
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param Struct\ListProduct   $article
+     * @param integer              $quantity
+     *
+     * @return float
+     */
+
+    public function getArticleNetPrice( Struct\ListProduct $article, $quantity )
+    {
+        // get the price struct
+        $price = $this->getArticlePriceStructForQuantity( $article, $quantity );
+
+        // calculate final price
+        return $price->getRule()->getPrice() * $quantity;
     }
 
 

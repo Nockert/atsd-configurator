@@ -99,6 +99,9 @@
  * - added configuration to set the main article as free of charge
  * - added custom product slider to remove infinity loop
  *
+ * 1.2.5
+ * - added support of article scaled prices for configurator components
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH

@@ -53,6 +53,26 @@
                     {* set the name by radio or checkbox *}
                     {assign var="name" value="configurator-{if $element.multiple == true}checkbox{else}radio{/if}-fieldset-{$fieldset.id}-element-{$element.id}{if $element.multiple == true}[]{/if}"}
 
+
+
+                    {* every calculated price *}
+                    {assign var="prices" value=[]}
+
+                    {* loop every available price and save it *}
+                    {foreach $article->getPrices() as $price}
+
+                        {assign var="currentPrice" value=[]}
+
+                        {append var='currentPrice' index='from' value=$price->getRule()->getFrom()|intval}
+                        {append var='currentPrice' index='to' value={$price->getRule()->getTo()|intval}}
+                        {append var='currentPrice' index='price' value=$price->getCalculatedPrice()|floatval}
+
+                        {$prices[] = $currentPrice}
+
+                    {/foreach}
+
+
+
                     {* the item container *}
                     <div class="product-slider--item"
                          data-atsd-configurator-article="true"
@@ -60,6 +80,7 @@
                          data-atsd-configurator-element-id="{$element.id}"
                          data-atsd-configurator-article-id="{$elementArticle.id}"
                          data-atsd-configurator-article-price="{$article->getCheapestPrice()->getCalculatedPrice()}"
+                         data-atsd-configurator-article-prices='{$prices|json_encode}'
                          data-atsd-configurator-article-quantity="{$elementArticle.quantity}"
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"
@@ -147,7 +168,10 @@
                                                 <i class="delivery--status-icon delivery--status-{if ( $article->getStock() / $elementArticle.quantity ) < 1}not-{/if}available"></i>
 
                                                 {* and the price *}
-                                                {( $article->getCheapestPrice()->getCalculatedPrice() * $elementArticle.quantity * ( ( 100 - $configurator.rebate ) / 100 ) )|currency} {s name="Star"}*{/s}
+                                                <span class="price--placeholder">
+                                                    &nbsp;
+                                                    {* {( $article->getCheapestPrice()->getCalculatedPrice() * $elementArticle.quantity * ( ( 100 - $configurator.rebate ) / 100 ) )|currency} {s name="Star"}*{/s} *}
+                                                </span>
 
                                             </span>
                                         </div>
