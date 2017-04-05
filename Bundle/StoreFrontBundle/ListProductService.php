@@ -10,19 +10,27 @@
 
 namespace Shopware\AtsdConfigurator\Bundle\StoreFrontBundle;
 
+use Shopware\Components\DependencyInjection\Container;
+use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
+use Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService;
+use Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface;
+use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
+use Shopware\Bundle\StoreFrontBundle\Struct\Attribute;
 
 
 /**
  * Aquatuning Software Development - Configurator - Component
  */
 
-class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface
+class ListProductService implements ListProductServiceInterface
 {
 
     /**
      * The previously existing core service.
      *
-     * @var \Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface
+     * @var ListProductServiceInterface
      */
 
     private $coreService;
@@ -32,7 +40,7 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
     /**
      * The previously existing core service.
      *
-     * @var \Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService
+     * @var ConfiguratorService
      */
 
     private $configuratorService;
@@ -42,7 +50,7 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
     /**
      * The main component.
      *
-     * @var \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+     * @var Component
      */
 
     private $component;
@@ -52,31 +60,25 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
     /**
      * DI container.
      *
-     * @var \Shopware\Components\DependencyInjection\Container
+     * @var Container
      */
 
     protected $container;
-
-
-
+    
 
 
     /**
      * Object constructor.
      *
-     * @param \Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface    $coreService
-     * @param \Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService   $configuratorService
-     * @param \Shopware\AtsdConfigurator\Components\AtsdConfigurator                   $component
-     * @param \Shopware\Components\DependencyInjection\Container                       $container
+     * @param ListProductServiceInterface    $coreService
+     * @param ConfiguratorService            $configuratorService
+     * @param Component                      $component
+     * @param Container                      $container
      *
-     * @return \Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ListProductService
+     * @return ListProductService
      */
 
-    public function __construct(
-        \Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface $coreService,
-        \Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService $configuratorService,
-        \Shopware\AtsdConfigurator\Components\AtsdConfigurator $component,
-        \Shopware\Components\DependencyInjection\Container $container )
+    public function __construct( ListProductServiceInterface $coreService, ConfiguratorService $configuratorService, Component $component, Container $container )
     {
         // set parameters
         $this->coreService         = $coreService;
@@ -88,17 +90,16 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
 
 
 
-
     /**
      * ...
      *
-     * @param array                                                              $numbers
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface   $context
+     * @param array                     $numbers
+     * @param ProductContextInterface   $context
      *
-     * @return \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct[]
+     * @return ListProduct[]
      */
 
-    public function getList( array $numbers, \Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface $context )
+    public function getList( array $numbers, ProductContextInterface $context )
     {
         // call core service
         $products      = $this->coreService->getList( $numbers, $context );
@@ -114,7 +115,7 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
             // add attribute
             $product->addAttribute(
                 "atsd_configurator",
-                new \Shopware\Bundle\StoreFrontBundle\Struct\Attribute( array(
+                new Attribute( array(
                     'hasConfigurator'     => ( isset( $configurators[$product->getId()] ) ),
                     'defaultConfigurator' => ( isset( $configurators[$product->getId()] ) ) ? $this->getDefaultConfigurator( $configurators[$product->getId()]['id'], $product ) : null
                 ) )
@@ -135,13 +136,13 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
     /**
      * ...
      *
-     * @param string                                                             $number
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface   $context
+     * @param string                    $number
+     * @param ProductContextInterface   $context
      *
-     * @return \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct
+     * @return ListProduct
      */
 
-    public function get( $number, \Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface $context )
+    public function get( $number, ProductContextInterface $context )
     {
         // call our list
         $products = $this->getList( array( $number ), $context );
@@ -159,20 +160,24 @@ class ListProductService implements \Shopware\Bundle\StoreFrontBundle\Service\Li
     /**
      * ...
      *
-     * @param integer                                                $configuratorId
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct   $product
+     * @param integer       $configuratorId
+     * @param ListProduct   $product
      *
      * @return array
      */
 
-    private function getDefaultConfigurator( $configuratorId, \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $product )
+    private function getDefaultConfigurator( $configuratorId, ListProduct $product )
     {
+        // get the configurator
+        /* @var $configurator Configurator */
+        $configurator = $this->container->get( "shopware.model_manager" )->find( Configurator::class, $configuratorId );
+
         // call component
         $defaults = $this->component->getConfiguratorDefaults( $configuratorId );
 
         // add from our own article
-        $defaults['price']       += $product->getCheapestPrice()->getCalculatedPrice();
-        $defaults['pseudoPrice'] += $product->getCheapestPrice()->getCalculatedPrice();
+        $defaults['price']       += ( $configurator->getChargeArticle() == true ) ? $product->getCheapestPrice()->getCalculatedPrice() : 0.0;
+        $defaults['pseudoPrice'] += ( $configurator->getChargeArticle() == true ) ? $product->getCheapestPrice()->getCalculatedPrice() : 0.0;
         $defaults['stock']        = min( $defaults['stock'], $product->getStock() );
 
         // return it
