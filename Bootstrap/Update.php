@@ -10,6 +10,8 @@
 
 namespace Shopware\AtsdConfigurator\Bootstrap;
 
+use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+
 
 
 /**
@@ -22,7 +24,7 @@ class Update
 	/**
 	 * Main bootstrap object.
 	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
+	 * @var Bootstrap
 	 */
 
 	protected $bootstrap;
@@ -32,12 +34,12 @@ class Update
 	/**
 	 * ...
 	 *
-	 * @param \Shopware_Components_Plugin_Bootstrap   $bootstrap
+	 * @param Bootstrap   $bootstrap
 	 *
-	 * @return \Shopware\AtsdConfigurator\Bootstrap\Update
+	 * @return Update
 	 */
 
-	public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap )
+	public function __construct( Bootstrap $bootstrap )
 	{
 		// set params
 		$this->bootstrap = $bootstrap;
@@ -54,7 +56,7 @@ class Update
 	public function install()
 	{
         // install all updates
-        $this->update( "1.0.0" );
+        $this->update( "0.0.0" );
 
 		// done
 		return true;
@@ -75,6 +77,7 @@ class Update
 		// check current installed version
 		switch ( $version )
 		{
+            case "0.0.0":
             case "1.0.0":
             case "1.0.1":
             case "1.0.2":
