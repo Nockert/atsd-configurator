@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components;
+namespace Shopware\AtsdConfigurator\Components\Helper;
 
 
 
@@ -16,7 +16,7 @@ namespace Shopware\AtsdConfigurator\Components;
  * Aquatuning Software Development - Configurator - Component
  */
 
-class AtsdConfigurator
+class Basket
 {
 
 
@@ -68,7 +68,7 @@ class AtsdConfigurator
      * @param \Shopware_Components_Plugin_Bootstrap                $bootstrap
      * @param \Shopware\Components\DependencyInjection\Container   $container
      *
-     * @return \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+     * @return Basket
      */
 
     public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap, \Shopware\Components\DependencyInjection\Container $container )
