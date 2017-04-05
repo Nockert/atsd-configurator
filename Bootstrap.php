@@ -92,6 +92,9 @@
  * 1.2.2
  * - fixed saving of attribute when splitting of articles is disabled
  *
+ * 1.2.3
+ * - added shopware 5.1 support
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -102,7 +105,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.2.2",
+        'version'     => "1.2.3",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
@@ -189,7 +192,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     /**
      * Installation method.
      *
-     * @return bool
+     * @return array
      */
 
     public function install()
@@ -242,7 +245,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         $check = null;
 
         // throw an event for the check
-        $check = Enlight()->Events()->filter(
+        $check = Shopware()->Events()->filter(
             'Shopware_AtsdConfigurator_CheckLicense',
             $check,
             array(
@@ -294,11 +297,6 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
 
 
 
-
-
-
-
-
     /**
      * Register our custom models after initialisation.
      *
@@ -315,6 +313,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         // register our models
         $this->registerCustomModels();
     }
+
 
 
 
@@ -399,6 +398,53 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             $this->Application()->Events()->addSubscriber( $subscriber );
     }
 
+
+
+
+    /**
+     * Compare versions.
+     *
+     * @param string   $version   Like: 5.0.0
+     * @param string   $operator  Like: <=
+     *
+     * @return mixed
+     */
+
+    private function versionCompare( $version, $operator )
+    {
+        // return by default version compare
+        return version_compare( Shopware()->Config()->get( 'Version' ), $version, $operator );
+    }
+
+
+
+
+    /**
+     * ...
+     *
+     * @return boolean
+     */
+
+    public function isShopware51()
+    {
+        // return it
+        return ( ( $this->versionCompare( '5.1.0', '>=' ) ) and ( $this->versionCompare( '5.2.0', '<' ) ) );
+    }
+
+
+
+
+    /**
+     * ...
+     *
+     * @return boolean
+     */
+
+    public function isShopware52()
+    {
+        // return it
+        return $this->versionCompare( '5.2.0', '>=' );
+    }
 
 
 }

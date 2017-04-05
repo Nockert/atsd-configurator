@@ -10,19 +10,24 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Core;
 
+use Shopware\Components\DependencyInjection\Container;
+use Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap as Bootstrap;
+use Enlight\Event\SubscriberInterface;
+use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+
 
 
 /**
  * Aquatuning Software Development - Configurator - Subscriber
  */
 
-class sOrder implements \Enlight\Event\SubscriberInterface
+class sOrder implements SubscriberInterface
 {
 
 	/**
 	 * Main bootstrap object.
 	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
+	 * @var Bootstrap
 	 */
 
 	protected $bootstrap;
@@ -32,7 +37,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
 	/**
 	 * DI container.
 	 *
-	 * @var \Shopware\Components\DependencyInjection\Container
+	 * @var Container
 	 */
 
 	protected $container;
@@ -42,7 +47,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
 	/**
 	 * Main plugin component.
 	 *
-	 * @var \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+	 * @var Component
 	 */
 
 	protected $component;
@@ -55,17 +60,17 @@ class sOrder implements \Enlight\Event\SubscriberInterface
 	/**
 	 * ...
 	 *
-	 * @param \Shopware_Components_Plugin_Bootstrap                    $bootstrap
-	 * @param \Shopware\Components\DependencyInjection\Container       $container
-	 * @param \Shopware\AtsdConfigurator\Components\AtsdConfigurator   $component
+	 * @param Bootstrap   $bootstrap
+	 * @param Container   $container
+	 * @param Component   $component
 	 *
 	 * @return \Shopware\AtsdConfigurator\Subscriber\Core\sOrder
 	 */
 
 	public function __construct(
-		\Shopware_Components_Plugin_Bootstrap $bootstrap,
-		\Shopware\Components\DependencyInjection\Container $container,
-		\Shopware\AtsdConfigurator\Components\AtsdConfigurator $component )
+        Bootstrap $bootstrap,
+		Container $container,
+        Component $component )
 	{
 		// set params
 		$this->bootstrap = $bootstrap;
@@ -139,6 +144,11 @@ class sOrder implements \Enlight\Event\SubscriberInterface
             // did we split it?
             if ( $split == true )
                 // ignore
+                continue;
+
+            // this only affects shopware 5.2
+            if ( $this->bootstrap->isShopware51() == true )
+                // next
                 continue;
 
 
@@ -336,8 +346,13 @@ class sOrder implements \Enlight\Event\SubscriberInterface
 
             // do we want to save the attribute?
             if ( $attr != "" )
-                // set it
+            {
+                // set for shopware 5.1
+                $item['ob_' . $attr] = implode( "\n", $attribute );
+
+                // set for shopware 5.2
                 $item['atsd_configurator_split_string'] = implode( "\n", $attribute );
+            }
 
 
 
@@ -388,7 +403,7 @@ class sOrder implements \Enlight\Event\SubscriberInterface
         $item = array(
 
             // default data
-            'id'           => $basketId,
+            'id'           => ( $this->bootstrap->isShopware51() == true ) ? null : $basketId,
             'articleID'    => $article->getId(),
             'articlename'  => $article->getName(),
             'ordernumber'  => $article->getNumber(),

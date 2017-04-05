@@ -10,7 +10,13 @@
 
 namespace Shopware\AtsdConfigurator\Components;
 
-use Shopware\Bundle\StoreFrontBundle;
+use Shopware\Components\DependencyInjection\Container;
+use Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap as Bootstrap;
+use Shopware\Components\Model\ModelManager;
+use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
+use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
+use Shopware\Bundle\StoreFrontBundle\Struct;
+use Shopware\Bundle\MediaBundle\MediaService;
 
 
 
@@ -25,7 +31,7 @@ class AtsdConfigurator
     /**
      * Main bootstrap object.
      *
-     * @var \Shopware_Components_Plugin_Bootstrap
+     * @var Bootstrap
      */
 
     protected $bootstrap;
@@ -35,7 +41,7 @@ class AtsdConfigurator
     /**
      * DI container.
      *
-     * @var \Shopware\Components\DependencyInjection\Container
+     * @var Container
      */
 
     protected $container;
@@ -45,7 +51,7 @@ class AtsdConfigurator
     /**
      * Shopware context service.
      *
-     * @var StoreFrontBundle\Service\Core\ContextService
+     * @var ContextService
      */
 
     protected $contextService;
@@ -55,7 +61,7 @@ class AtsdConfigurator
     /**
      * Shopware context service.
      *
-     * @var \Shopware\Bundle\MediaBundle\MediaService
+     * @var MediaService
      */
 
     protected $mediaService;
@@ -65,7 +71,7 @@ class AtsdConfigurator
     /**
      * Shopware model manager.
      *
-     * @var \Shopware\Components\Model\ModelManager
+     * @var ModelManager
      */
 
     protected $modelManager;
@@ -97,13 +103,13 @@ class AtsdConfigurator
     /**
      * ...
      *
-     * @param \Shopware_Components_Plugin_Bootstrap                $bootstrap
-     * @param \Shopware\Components\DependencyInjection\Container   $container
+     * @param Bootstrap   $bootstrap
+     * @param Container   $container
      *
-     * @return \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+     * @return AtsdConfigurator
      */
 
-    public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap, \Shopware\Components\DependencyInjection\Container $container )
+    public function __construct( Bootstrap $bootstrap, Container $container )
     {
         // set params
         $this->bootstrap = $bootstrap;
@@ -148,6 +154,7 @@ class AtsdConfigurator
         // return it
         return $this->container->get( "session" );
     }
+
 
 
 
@@ -391,7 +398,7 @@ class AtsdConfigurator
 
 
         // get the service
-        /* @var $listProductService StoreFrontBundle\Service\ListProductServiceInterface */
+        /* @var $listProductService ListProductServiceInterface */
         $listProductService = $this->container->get('shopware_storefront.list_product_service');
 
         // get all products
@@ -414,15 +421,14 @@ class AtsdConfigurator
                     // get the product
                     $product = $products[$article['article']['mainDetail']['number']];
 
-                    // we have to reset the cover thumbnail
-                    if ( $product->getCover() instanceof \Shopware\Bundle\StoreFrontBundle\Struct\Media )
+                    // we have to reset the cover thumbnail for shopware 5.1
+                    if ( ( $this->bootstrap->isShopware51() == true ) and ( $product->getCover() instanceof Struct\Media ) )
                     {
-                        /*
                         // do we even have a single thumbnail?
                         if ( count( $product->getCover()->getThumbnails() ) > 0 )
                         {
                             // due to a bug before 5.1.2 we have to create a new thumbnail with the media service
-                            $thumbnail = new \Shopware\Bundle\StoreFrontBundle\Struct\Thumbnail(
+                            $thumbnail = new Struct\Thumbnail(
                                 $this->mediaService->getUrl( $product->getCover()->getThumbnail( 0 )->getSource() ),
                                 $this->mediaService->getUrl( $product->getCover()->getThumbnail( 0 )->getRetinaSource() ),
                                 $product->getCover()->getThumbnail( 0 )->getMaxWidth(),
@@ -433,7 +439,7 @@ class AtsdConfigurator
                         else
                         {
                             // use the default cover image
-                            $thumbnail = new \Shopware\Bundle\StoreFrontBundle\Struct\Thumbnail(
+                            $thumbnail = new Struct\Thumbnail(
                                 $product->getCover()->getFile(),
                                 $product->getCover()->getFile(),
                                 $product->getCover()->getWidth(),
@@ -443,7 +449,6 @@ class AtsdConfigurator
 
                         // and set it
                         $product->getCover()->setThumbnails( array( $thumbnail ) );
-                        */
                     }
 
                     // save it
@@ -747,7 +752,7 @@ class AtsdConfigurator
         if ( $includeMaster == true )
         {
             // get main article
-            /* @var $article \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct */
+            /* @var $article Struct\ListProduct */
             $article = $configurator['article'];
 
             // set article data
@@ -794,7 +799,7 @@ class AtsdConfigurator
                     $rebate   = (integer) $configurator['rebate'];
 
                     // article struct
-                    /* @var $articleStruct \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct */
+                    /* @var $articleStruct Struct\ListProduct */
                     $articleStruct = $article['article'];
 
                     // add weight
@@ -849,7 +854,7 @@ class AtsdConfigurator
         if ( $includeMaster == true )
         {
             // main article
-            /* @var $article \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct */
+            /* @var $article Struct\ListProduct */
             $article = $configurator['article'];
 
             // for the main article
@@ -1072,7 +1077,7 @@ class AtsdConfigurator
      *
      * @param \Shopware\CustomModels\AtsdConfigurator\Selection   $selection
      *
-     * @return array
+     * @return void
      */
 
     public function addSelectionToBasket( \Shopware\CustomModels\AtsdConfigurator\Selection $selection )
@@ -1136,9 +1141,6 @@ class AtsdConfigurator
 
         // save shit
         $this->modelManager->flush();
-
-        // done
-        return;
     }
 
 
@@ -1149,12 +1151,12 @@ class AtsdConfigurator
     /**
      * ...
      *
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct   $article
+     * @param Struct\ListProduct   $article
      *
      * @return float
      */
 
-    public function getArticlePrice( \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article )
+    public function getArticlePrice( Struct\ListProduct $article )
     {
         // cheapest price rule
         return $article->getCheapestPrice()->getCalculatedPrice();
@@ -1168,12 +1170,12 @@ class AtsdConfigurator
     /**
      * ...
      *
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct   $article
+     * @param Struct\ListProduct   $article
      *
      * @return float
      */
 
-    public function getArticleNetPrice( \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article )
+    public function getArticleNetPrice( Struct\ListProduct $article )
     {
         // get the net price - will always be euro without currency factor
         return $article->getCheapestPriceRule()->getPrice();
@@ -1205,7 +1207,7 @@ class AtsdConfigurator
     /**
      * Returns the current currency.
      *
-     * @return \Shopware\Bundle\StoreFrontBundle\Struct\Currency
+     * @return Struct\Currency
      */
 
     public function getCurrency()
