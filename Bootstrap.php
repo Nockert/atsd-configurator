@@ -101,6 +101,7 @@
  *
  * 1.2.5
  * - added support of article scaled prices for configurator components
+ * - added modal article details for slider template
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

@@ -197,7 +197,7 @@
 
                                         {* show the button *}
                                         <button class="btn is--align-center {if in_array( $elementArticle.id, $selection )}is--primary{/if} {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
-                                                style="width: 100%;"
+                                                style="width: 85%;"
                                                 data-atsd-configurator-selector-button="true"
                                                 data-atsd-configurator-selector-button-article-id="{$elementArticle.id}"
                                                 data-atsd-configurator-selector-button-element-id="{$element.id}"
@@ -210,6 +210,18 @@
                                             {else}
                                                 {s name="SelectorButtonSelectable" namespace="frontend/AtsdConfigurator/configuration"}Wählen{/s}
                                             {/if}
+
+                                        </button>
+
+                                        {* info button *}
+                                        <button class="btn is--align-center"
+                                                style="width: 10%; padding-left: 0; padding-right: 0;"
+                                                data-atsd-configurator-selector-info-button="true"
+                                                data-atsd-configurator-selector-info-button-article-id="{$elementArticle.id}"
+                                        >
+
+                                            {* button value *}
+                                            {s name="SelectorInfoButtonValue"}i{/s}
 
                                         </button>
 

@@ -68,6 +68,14 @@
                     {
                         loadingIndicator: '<div class="atsd-configurator--info-panel--loading-indicator"><i class="emotion--loading-indicator"></i></div>',
                         ajaxUrl:          null
+                    },
+
+                // info modal options
+                infoModal:
+                    {
+                        title:   "",
+                        timeout: 600,
+                        ajaxUrl: null
                     }
             },
 
@@ -118,7 +126,9 @@
             me.configuration.selectorButton.selected   = configuration.selectorButtonSelected;
             me.configuration.selectorButton.selectable = configuration.selectorButtonSelectable;
             me.configuration.weight.unit               = configuration.weightUnit;
-            me.configuration.infoPanel.ajaxUrl         = configuration.infoPanelAjaxUrl;
+            me.configuration.infoPanel.ajaxUrl         = configuration.articleInfoAjaxUrl;
+            me.configuration.infoModal.title           = configuration.infoModalTitle;
+            me.configuration.infoModal.ajaxUrl         = configuration.articleInfoAjaxUrl;
         },
 
 
@@ -143,6 +153,9 @@
 
             // info panel
             me._on( me.$el.find( 'div[data-atsd-configurator-selector-info="true"]' ), 'click', $.proxy( me.onSelectorInfoClick, me ) );
+
+            // slider article info button
+            me._on( me.$el.find( 'button[data-atsd-configurator-selector-info-button="true"]' ), 'click', $.proxy( me.onSelectorInfoButtonClick, me ) );
 
             // empty choice click for lists
             me._on( me.$el.find( 'div.atsd-configurator--article--list input[data-atsd-configurator-empty-choice-selector="true"]' ), 'click', $.proxy( me.onListEmptyChoiceClick, me ) );
@@ -353,6 +366,63 @@
             // click it
             input.click();
         },
+
+
+
+
+
+
+        // ...
+        onSelectorInfoButtonClick: function ( event )
+        {
+            // get this
+            var me = this;
+
+            // get the button
+            var button = $( event.currentTarget );
+
+            // get parameters
+            var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
+
+
+
+            // open loading indicator
+            $.loadingIndicator.open( { animationSpeed: 1 });
+
+            // make the ajax call to load the details
+            $.ajax(
+                {
+                    url:  me.configuration.infoModal.ajaxUrl,
+                    type: 'GET',
+                    data: { articleId: articleId }
+                }
+            ).done( function( response )
+                {
+                    // close loading indicator
+                    $.loadingIndicator.close( function()
+                        {
+                            // set a timeout to wait for the indicator to be closed fully
+                            var timeout = window.setTimeout( function()
+                                {
+                                    // clear the timer
+                                    window.clearTimeout( timeout );
+
+                                    // finally open the modal
+                                    $.modal.open( response,
+                                        {
+                                            title:          me.configuration.infoModal.title,
+                                            animationSpeed: 1
+                                        }
+                                    );
+                                },
+                                me.configuration.infoModal.timeout
+                            );
+                        }
+                    );
+                }
+            );
+        },
+
 
 
 
