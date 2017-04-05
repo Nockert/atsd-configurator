@@ -292,6 +292,33 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.list.Configurators",
                     flex: 2
                 },
                 {
+                    header: "Kostenlos",
+                    dataIndex: "chargeArticle",
+                    sortable: true,
+                    width: 120,
+                    renderer: me.renderChargeArticle,
+                    editor:
+                        {
+                            xtype:         "combobox",
+                            valueField:    "id",
+                            displayField:  "name",
+                            mode:          "local",
+                            allowBlank:    false,
+                            triggerAction: "all",
+                            editable:      false,
+                            store:         Ext.create( "Ext.data.Store",
+                                {
+                                    fields: [ "id", "name" ],
+                                    data:
+                                        [
+                                            { id: 1, name: "Nein" },
+                                            { id: 0, name: "Ja" }
+                                        ]
+                                }
+                            )
+                        }
+                },
+                {
                     header: "",
                     xtype: "actioncolumn",
                     width: 55,
@@ -352,8 +379,16 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.list.Configurators",
     renderRebate: function( value, metaData, record )
     {
         return value + "%";
-    }
+    },
 
+
+
+    //
+    renderChargeArticle: function( value, metaData, record )
+    {
+        console.log( "charge value: " + value );
+        return ( value == 0 ) ? "Ja" : "Nein";
+    }
 
 
 

@@ -78,6 +78,18 @@ class Configurator extends ModelEntity
 
 
     /**
+     * ...
+     *
+     * @var boolean   $chargeArticle
+     *
+     * @ORM\Column(name="chargeArticle", type="boolean", nullable=false, options={"default":1})
+     **/
+
+    private $chargeArticle = true;
+
+
+
+    /**
      * Article model
      *
      * @var \Shopware\Models\Article\Article   $article
@@ -209,6 +221,28 @@ class Configurator extends ModelEntity
     public function setRebate($rebate)
     {
         $this->rebate = $rebate;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return boolean
+     */
+    public function getChargeArticle()
+    {
+        return $this->chargeArticle;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param boolean $chargeArticle
+     *
+     * return void
+     */
+    public function setChargeArticle($chargeArticle)
+    {
+        $this->chargeArticle = $chargeArticle;
     }
 
 

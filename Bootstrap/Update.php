@@ -11,6 +11,7 @@
 namespace Shopware\AtsdConfigurator\Bootstrap;
 
 use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+use Exception;
 
 
 
@@ -103,6 +104,12 @@ class Update
                 $this->updateVersion1115();
             case "1.1.15":
                 $this->updateVersion1116();
+            case "1.1.16":
+            case "1.2.0":
+            case "1.2.1":
+            case "1.2.2":
+            case "1.2.3":
+                $this->updateSql( "1.3.0-a" );
 		}
 
 		// done
@@ -235,6 +242,28 @@ class Update
         return true;
     }
 
+
+
+
+    /**
+     * ...
+     *
+     * @param string   $version
+     *
+     * @return void
+     */
+
+    private function updateSql( $version )
+    {
+        // get the sql query for this update
+        $sql = @file_get_contents( $this->bootstrap->Path() . "Update/update-" . $version . ".sql" );
+
+        // execute the query
+        try
+        { Shopware()->Db()->exec( $sql ); }
+        // catch any db exception
+        catch ( Exception $exception ) {}
+    }
 
 
 

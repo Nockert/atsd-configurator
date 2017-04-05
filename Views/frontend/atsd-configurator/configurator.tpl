@@ -8,7 +8,7 @@
 <div class="atsd-configurator"
      data-atsd-configurator="true"
      data-atsd-configurator-rebate="{$configurator.rebate}"
-     data-atsd-configurator-main-article-price="{$configurator['article']->getCheapestPrice()->getCalculatedPrice()}"
+     data-atsd-configurator-main-article-price="{if $configurator.chargeArticle == true}{$configurator['article']->getCheapestPrice()->getCalculatedPrice()}{else}0{/if}"
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
 >

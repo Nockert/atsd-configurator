@@ -410,6 +410,9 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         //
         foreach ( $configurators as &$configurator )
         {
+            // force integer
+            $configurator['chargeArticle'] = (integer) $configurator['chargeArticle'];
+
             // add the article
             $configurator['articleName']   = (string) $configurator['article']['name'];
             $configurator['articleNumber'] = (string) $configurator['article']['mainDetail']['number'];
@@ -1614,9 +1617,10 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
             // update
             $update = array(
-                'name'    => (string)  $data['name'],
-                'rebate'  => (integer) $data['rebate'],
-                'article' =>           $article
+                'name'          => (string)  $data['name'],
+                'rebate'        => (integer) $data['rebate'],
+                'chargeArticle' => (boolean) $data['chargeArticle'],
+                'article'       =>           $article
             );
 
             // update

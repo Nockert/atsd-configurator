@@ -22,6 +22,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.model.Configurator",
             { name: "id",            type: "int", useNull: true },
             { name: "name",          type: "string" },
             { name: "rebate",        type: "int" },
+            { name: "chargeArticle", type: "int", defaultValue: 1 },
             { name: "articleNumber", type: "string", useNull: true },
             { name: "articleName",   type: "string" }
 

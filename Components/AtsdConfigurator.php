@@ -761,8 +761,8 @@ class AtsdConfigurator
                 'number'   => $article->getNumber(),
                 'name'     => $article->getName(),
                 'quantity' => 1,
-                'price'    => $this->getArticlePrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ),
-                'priceNet' => $this->getArticleNetPrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 )
+                'price'    => ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0,
+                'priceNet' => ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article ) * ( ( 100 - (integer) $configurator['rebate'] ) / 100 ) : 0.0
             );
         }
 
@@ -861,8 +861,8 @@ class AtsdConfigurator
             $return['weight'] += $article->getWeight();
 
             // price calculations
-            $price    = $this->getArticlePrice( $article );
-            $priceNet = $this->getArticleNetPrice( $article );
+            $price    = ( $configurator['chargeArticle'] == true ) ? $this->getArticlePrice( $article ) : 0.0;
+            $priceNet = ( $configurator['chargeArticle'] == true ) ? $this->getArticleNetPrice( $article ) : 0.0;
 
             // set prices
             $return['pseudoPrice'] += $price;
