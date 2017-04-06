@@ -170,7 +170,7 @@ class ListProductService implements ListProductServiceInterface
     {
         // get the configurator
         /* @var $configurator Configurator */
-        $configurator = $this->container->get( "shopware.model_manager" )->find( Configurator::class, $configuratorId );
+        $configurator = $this->container->get( "shopware.model_manager" )->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator', $configuratorId );
 
         // call component
         $defaults = $this->component->getConfiguratorDefaults( $configuratorId );
