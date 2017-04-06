@@ -155,7 +155,7 @@
             me._on( me.$el.find( 'div[data-atsd-configurator-selector-info="true"]' ), 'click', $.proxy( me.onSelectorInfoClick, me ) );
 
             // slider article info button
-            me._on( me.$el.find( 'button[data-atsd-configurator-selector-info-button="true"]' ), 'click', $.proxy( me.onSelectorInfoButtonClick, me ) );
+            me._on( me.$el.find( '*[data-atsd-configurator-selector-info-button="true"]' ), 'click', $.proxy( me.onSelectorInfoButtonClick, me ) );
 
             // empty choice click for lists
             me._on( me.$el.find( 'div.atsd-configurator--article--list input[data-atsd-configurator-empty-choice-selector="true"]' ), 'click', $.proxy( me.onListEmptyChoiceClick, me ) );
@@ -275,8 +275,6 @@
             // toggle visibility
             panel.toggle( 500 );
 
-
-
             // did we not load it yet?!
             if ( panel.attr( "data-atsd-configurator-selector-info-panel-loaded" ) == "false" )
             {
@@ -286,9 +284,8 @@
                 // make the ajax call to load the details
                 $.ajax(
                     {
-                        url:  me.configuration.infoPanel.ajaxUrl,
-                        type: 'GET',
-                        data: { articleId: articleId }
+                        url:  me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId ),
+                        type: 'GET'
                     }
                 ).done( function( response )
                     {
@@ -384,41 +381,11 @@
             // get parameters
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
-
-
-            // open loading indicator
-            $.loadingIndicator.open( { animationSpeed: 1 });
-
-            // make the ajax call to load the details
-            $.ajax(
+            // open modal
+            $.modal.open( me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId ),
                 {
-                    url:  me.configuration.infoModal.ajaxUrl,
-                    type: 'GET',
-                    data: { articleId: articleId }
-                }
-            ).done( function( response )
-                {
-                    // close loading indicator
-                    $.loadingIndicator.close( function()
-                        {
-                            // set a timeout to wait for the indicator to be closed fully
-                            var timeout = window.setTimeout( function()
-                                {
-                                    // clear the timer
-                                    window.clearTimeout( timeout );
-
-                                    // finally open the modal
-                                    $.modal.open( response,
-                                        {
-                                            title:          me.configuration.infoModal.title,
-                                            animationSpeed: 1
-                                        }
-                                    );
-                                },
-                                me.configuration.infoModal.timeout
-                            );
-                        }
-                    );
+                    mode:  "ajax",
+                    title: me.configuration.infoModal.title
                 }
             );
         },
