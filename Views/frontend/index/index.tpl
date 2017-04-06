@@ -26,7 +26,7 @@
                 selectorButtonSelected:   '{s name="SelectorButtonSelected"}Ausgewählt{/s}',
                 selectorButtonSelectable: '{s name="SelectorButtonSelectable"}Wählen{/s}',
                 weightUnit:               '{s name="BaseInfoWeightUnit" namespace="frontend/detail/index"}kg{/s}',
-                articleInfoAjaxUrl:       '{url controller="AtsdConfigurator" action="getArticleInfo"}',
+                articleInfoAjaxUrl:       '{url controller="AtsdConfigurator" action="getArticleInfo" articleId="__articleId__"}',
                 infoModalTitle:           '{s name="InfoModalTitle"}Produktinformationen{/s}'
             };
 

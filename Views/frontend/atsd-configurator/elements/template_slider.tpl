@@ -127,37 +127,19 @@
 
                                     </div>
 
-                                    {* article name - with link or without *}
-                                    {if $atsdConfiguratorConfigArticleLinkStatus == true}
+                                    {* article name with modal popup *}
+                                    <span style="cursor: pointer;" class="product--title"
+                                          data-atsd-configurator-selector-info-button="true"
+                                          data-atsd-configurator-selector-info-button-article-id="{$elementArticle.id}"
+                                    >
 
-                                        {* article name with link *}
-                                        <a href="{url controller="detail" action="index" sArticle=$article->getId()}"
-                                           class="product--title"
-                                           target="_blank"
-                                           title="{$article->getName()|escape}">
+                                        {* quantity *}
+                                        {if $elementArticle.quantity > 1}<span class="article--quantity">({$elementArticle.quantity}x)</span>{/if}
 
-                                            {* prepend quantity if > 1 *}
-                                            {if $elementArticle.quantity > 1}<span class="article--quantity">({$elementArticle.quantity}x)</span>{/if}
+                                        {* the article name *}
+                                        {$article->getName()|truncate:50}
 
-                                            {* the article name *}
-                                            {$article->getName()|truncate:50}
-
-                                        </a>
-
-                                    {else}
-
-                                        {* article name without link *}
-                                        <span style="cursor: pointer;" class="product--title">
-
-                                            {* prepend quantity if > 1 *}
-                                            {if $elementArticle.quantity > 1}<span class="article--quantity">({$elementArticle.quantity}x)</span>{/if}
-
-                                            {* the article name *}
-                                            {$article->getName()|truncate:50}
-
-                                        </span>
-
-                                    {/if}
+                                    </span>
 
                                     {* product price *}
                                     <div class="product--price-info">
@@ -197,7 +179,7 @@
 
                                         {* show the button *}
                                         <button class="btn is--align-center {if in_array( $elementArticle.id, $selection )}is--primary{/if} {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
-                                                style="width: 85%;"
+                                                style="width: 75%;"
                                                 data-atsd-configurator-selector-button="true"
                                                 data-atsd-configurator-selector-button-article-id="{$elementArticle.id}"
                                                 data-atsd-configurator-selector-button-element-id="{$element.id}"
@@ -213,17 +195,7 @@
 
                                         </button>
 
-                                        {* info button *}
-                                        <button class="btn is--align-center"
-                                                style="width: 10%; padding-left: 0; padding-right: 0;"
-                                                data-atsd-configurator-selector-info-button="true"
-                                                data-atsd-configurator-selector-info-button-article-id="{$elementArticle.id}"
-                                        >
 
-                                            {* button value *}
-                                            {s name="SelectorInfoButtonValue"}i{/s}
-
-                                        </button>
 
                                     </div>
 
