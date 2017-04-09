@@ -1337,6 +1337,14 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 'success' => false,
                 'error'   => "No element selected" );
 
+        // ...
+        $configurator = $element->getFieldset()->getConfigurator();
+
+        // main article to check every article against it (-1 will never be the same)
+        $configuratorArticleId = ( $configurator->getArticle() instanceof \Shopware\Models\Article\Article )
+            ? $configurator->getArticle()->getId()
+            : -1;
+
         // count new shop
         $counter = 0;
 
@@ -1359,6 +1367,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             // not found?!
             if ( !$article instanceof \Shopware\Models\Article\Article )
                 // invalid
+                continue;
+
+            // ...
+            if ( $article->getId() == $configuratorArticleId )
+                // ...
                 continue;
 
             // create a new article
@@ -1620,9 +1633,37 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                         // return error
                         return array(
                             'success' => false,
-                            'error'   => "einem Artikel können nicht mehrere Konfiguratoren zugeordnet werden"
+                            'error'   => "Einem Artikel können nicht mehrere Konfiguratoren zugeordnet werden."
                         );
                 }
+            }
+
+
+
+            // check if the main article is within the configurator as component article
+            if ( $article instanceof \Shopware\Models\Article\Article )
+            {
+                $query = "
+                    SELECT COUNT(*)
+                    FROM atsd_configurators_fieldsets_elements_articles AS article 
+                        LEFT JOIN atsd_configurators_fieldsets_elements AS element 
+                            ON article.elementId = element.id
+                        LEFT JOIN atsd_configurators_fieldsets AS fieldset 
+                            ON element.fieldsetId = fieldset.id
+                        LEFT JOIN atsd_configurators AS configurator
+                            ON fieldset.configuratorId = configurator.id
+                    WHERE configurator.id = ?
+                        AND article.articleId = ?
+                ";
+                $count = (integer) Shopware()->Db()->fetchOne( $query, array( $configurator->getId(), $article->getId() ) );
+
+                // ...
+                if ( $count > 0 )
+                    // return error
+                    return array(
+                        'success' => false,
+                        'error'   => "Der Artikel ist bereits als Komponente im Konfigurator vorhanden."
+                    );
             }
 
 
