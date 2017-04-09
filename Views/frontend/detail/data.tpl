@@ -14,12 +14,7 @@
     {if $atsdConfiguratorStatus == true}
 
         {* the default price container *}
-        <span class="price--content content--default">
-
-            {* fill it *}
-            &nbsp;
-
-        </span>
+        <span class="price--content content--default">&nbsp;</span>
 
     {* no configurator *}
     {else}

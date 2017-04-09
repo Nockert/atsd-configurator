@@ -234,8 +234,10 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         foreach ( $articles as &$article )
         {
             // add stuff
-            $article['articleName']   = $article['article']['name'];
-            $article['articleNumber'] = $article['article']['mainDetail']['number'];
+            $article['articleName']      = $article['article']['name'];
+            $article['articleNumber']    = $article['article']['mainDetail']['number'];
+            $article['quantitySelect']   = (integer) $article['quantitySelect'];
+            $article['quantityMultiply'] = (integer) $article['quantityMultiply'];
 
             // remove stuff
             unset( $article['article'] );
@@ -1138,7 +1140,9 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
             // update
             $update = array(
-                'quantity' => (integer) $data['quantity']
+                'quantity'         => (integer) $data['quantity'],
+                'quantitySelect'   => (boolean) $data['quantitySelect'],
+                'quantityMultiply' => ( ( (boolean) $data['quantityMultiply'] ) and ( (boolean) $data['quantitySelect'] ) )
             );
 
             // update
@@ -1359,6 +1363,8 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             $model->setArticle( $article );
             $model->setElement( $element );
             $model->setQuantity( 1 );
+            $model->setQuantityMultiply( false );
+            $model->setQuantitySelect( false );
 
             // persist it
             Shopware()->Models()->persist( $model );

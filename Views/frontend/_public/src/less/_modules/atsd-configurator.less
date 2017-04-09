@@ -148,6 +148,9 @@
                             // padding for the background color
                             padding: 2px 4px 2px 4px;
 
+                            // min height so that every row is the same height - with or without quantity
+                            min-height: 28px;
+
 
 
                             // input radio or checkbox
@@ -155,6 +158,9 @@
 
                                 // default settings
                                 width: 4%;
+                                min-height: 24px;
+                                line-height: 24px;
+
 
                             }
 
@@ -162,7 +168,10 @@
                             .article--column--name {
 
                                 // default settings
-                                width: 76%;
+                                width: 68%;
+                                margin-left: 0;
+                                min-height: 24px;
+                                line-height: 24px;
 
                             }
 
@@ -170,8 +179,75 @@
                             .article--column--price {
 
                                 // default settings
-                                width: 20%;
+                                width: 15%;
                                 text-align: right;
+                                min-height: 24px;
+                                line-height: 24px;
+
+                            }
+
+
+                            // input radio or checkbox
+                            .article--column--info-icon {
+
+                                // default settings
+                                width: 5%;
+                                cursor: pointer;
+                                min-height: 24px;
+                                line-height: 24px;
+
+                                // the icon
+                                img {
+                                    margin: auto;
+                                    margin-top: 5px;
+                                    width: 14px;
+                                }
+
+                            }
+
+
+
+                            // ...
+                            .article--column--quantity {
+
+
+                                width: 8%;
+
+
+                                .js--fancy-select {
+
+                                    // outer container
+                                    width: 100%;
+                                    vertical-align: bottom;
+                                    height: 24px;
+
+                                    // hide trigger
+                                    .js--fancy-select-trigger {
+                                        display: none;
+                                    }
+
+                                    // style text info
+                                    .js--fancy-select-text {
+                                        padding: 0;
+                                        text-align: center;
+                                        font-weight: bold;
+                                        color: #5f7285;
+                                        font-size: 14px;
+                                        line-height: 22px;
+                                    }
+                                }
+
+
+
+                                // the quantity button
+                                button.quantity--button {
+                                    width: 100%;
+                                    cursor: not-allowed !important;
+                                    height: 24px;
+                                    line-height: 22px;
+                                    overflow: hidden;
+                                    padding: 0;
+                                }
 
                             }
 
@@ -209,6 +285,58 @@
                     // disable mouse hover
                     cursor: not-allowed !important;
 
+                }
+
+
+
+                // visual selector
+                .product-slider--item {
+
+                    // the quantity button
+                    .product--visual-selector button.quantity--button {
+                        width: 20%;
+                        padding-left: 0;
+                        padding-right: 0;
+                        cursor: not-allowed !important;
+                    }
+
+                    // the selector button is 100% width by default
+                    .product--visual-selector button.selector--button {
+                        width: 100%;
+                    }
+
+                    // shrink the selector button when we have quantity output
+                    &.has--quantity-output {
+                        .product--visual-selector button.selector--button {
+                            width: 75%;
+                        }
+                    }
+                }
+
+
+
+                // we have fix js-fancy-select for slider visual selector
+                .product--visual-selector .js--fancy-select {
+
+                    // outer container
+                    width: 20%;
+                    vertical-align: bottom;
+                    height: 38px;
+
+                    // hide trigger
+                    .js--fancy-select-trigger {
+                        display: none;
+                    }
+
+                    // style text info
+                    .js--fancy-select-text {
+                        padding: 0;
+                        text-align: center;
+                        font-weight: bold;
+                        color: #5f7285;
+                        margin-top: -2px;
+                        font-size: 14px;
+                    }
                 }
 
 
@@ -367,6 +495,27 @@
 
 }
 
+
+
+// article info modal popup
+.atsd-configurator--info-modal--loading-indicator {
+    background-color: #f2f3f4;
+    height: 100%;
+
+    // loading indicator
+    .emotion--loading-indicator {
+        margin: auto;
+        padding: 0;
+        padding-top: ~"calc(50% - 20px)";
+    }
+}
+
+
+
+// article info modal popup
+.js--modal.atsd-configurator--info-modal .content {
+    height: ~"calc(100% - 42px)";
+}
 
 
 

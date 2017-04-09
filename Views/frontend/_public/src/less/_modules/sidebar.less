@@ -4,7 +4,7 @@
 // correct category/account sidebar
 @media screen and (min-width: @tabletViewportWidth)
 {
-    .is--ctl-AtsdConfigurator {
+    .is--ctl-AtsdConfigurator, .is--ctl-atsdconfigurator {
         .sidebar-main {
             display: block;
         }
@@ -18,7 +18,20 @@
             }
         }
 
+        .is--ctl-atsdconfigurator & {
+            .categories--headline,
+            .categories--navigation {
+                display: none;
+            }
+        }
+
         .is--ctl-AtsdConfigurator & {
+            & + .content--wrapper {
+                .unitize(margin-left, 260);
+            }
+        }
+
+        .is--ctl-atsdconfigurator & {
             & + .content--wrapper {
                 .unitize(margin-left, 260);
             }

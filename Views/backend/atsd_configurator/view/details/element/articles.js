@@ -452,6 +452,61 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
                     flex: 3,
                     dataIndex: 'articleName'
                 },
+
+                {
+                    header: "Auswahl",
+                    dataIndex: "quantitySelect",
+                    width: 60,
+                    renderer: me.renderArticleQuantitySelect,
+                    editor:
+                        {
+                            xtype:         "combobox",
+                            valueField:    "id",
+                            displayField:  "name",
+                            mode:          "local",
+                            allowBlank:    false,
+                            triggerAction: "all",
+                            editable:      false,
+                            store:         Ext.create( "Ext.data.Store",
+                                {
+                                    fields: [ "id", "name" ],
+                                    data:
+                                        [
+                                            { id: 1, name: "Ja" },
+                                            { id: 0, name: "Nein" }
+                                        ]
+                                }
+                            )
+                        }
+                },
+
+                {
+                    header: "Multiplikator",
+                    dataIndex: "quantityMultiply",
+                    width: 60,
+                    renderer: me.renderArticleQuantityMultiply,
+                    editor:
+                        {
+                            xtype:         "combobox",
+                            valueField:    "id",
+                            displayField:  "name",
+                            mode:          "local",
+                            allowBlank:    false,
+                            triggerAction: "all",
+                            editable:      false,
+                            store:         Ext.create( "Ext.data.Store",
+                                {
+                                    fields: [ "id", "name" ],
+                                    data:
+                                        [
+                                            { id: 1, name: "Ja" },
+                                            { id: 0, name: "Nein" }
+                                        ]
+                                }
+                            )
+                        }
+                },
+
                 {
                     header: "Anzahl",
                     width: 60,
@@ -469,6 +524,23 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
         // return columns
         return columns;
     },
+
+
+
+    //
+    renderArticleQuantitySelect: function( value, metaData, record )
+    {
+        return ( value == 1 ) ? "Ja" : "Nein";
+    },
+
+
+
+    //
+    renderArticleQuantityMultiply: function( value, metaData, record )
+    {
+        return ( value == 1 ) ? "Ja" : "Nein";
+    },
+
 
 
 

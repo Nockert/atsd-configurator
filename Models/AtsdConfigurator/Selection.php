@@ -110,21 +110,13 @@ class Selection extends ModelEntity
 
 
     /**
-     * UNI-DIRECTIONAL
+     * INVERSE SIDE
      *
-     * Article Model
+     * (Selfmade) Article model
      *
-     * @var ArrayCollection
+     * @var ArrayCollection $articles
      *
-     * @ORM\ManyToMany(targetEntity="Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article")
-     * @ORM\JoinTable(name="atsd_configurators_selections_to_articles",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="selectionId", referencedColumnName="id")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="articleId", referencedColumnName="id")
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="Shopware\CustomModels\AtsdConfigurator\Selection\Article", mappedBy="selection", orphanRemoval=true)
      */
 
     protected $articles;
@@ -336,37 +328,6 @@ class Selection extends ModelEntity
         $this->articles = $articles;
     }
 
-
-
-    /**
-     * Add a single entity to the collection
-     *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article
-     *
-     * @return void
-     */
-
-    public function addArticle(\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article)
-    {
-        if ( !( $this->articles->contains( $article ) ) )
-            $this->articles->add( $article );
-    }
-
-
-
-    /**
-     * Remove a single entity of the collection
-     *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article
-     *
-     * @return void
-     */
-
-    public function removeArticle(\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article)
-    {
-        if ( $this->articles->contains( $article ) )
-            $this->articles->removeElement( $article );
-    }
 
 
 

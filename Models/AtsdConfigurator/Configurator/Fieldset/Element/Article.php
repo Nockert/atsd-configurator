@@ -59,6 +59,25 @@ class Article extends ModelEntity
 
     private $quantity;
 
+    /**
+     * ...
+     *
+     * @var boolean   $quantitySelect
+     *
+     * @ORM\Column(name="quantitySelect", type="boolean", nullable=false, options={"default":0})
+     **/
+
+    private $quantitySelect = false;
+
+    /**
+     * ...
+     *
+     * @var boolean   $quantityMultiply
+     *
+     * @ORM\Column(name="quantityMultiply", type="boolean", nullable=false, options={"default":0})
+     **/
+
+    private $quantityMultiply = false;
 
     /**
      * OWNING SIDE
@@ -95,8 +114,6 @@ class Article extends ModelEntity
 
     public function __construct()
     {
-        // set default values
-        $this->articles = new ArrayCollection();
     }
 
 
@@ -161,6 +178,52 @@ class Article extends ModelEntity
     {
         $this->quantity = $quantity;
     }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return bool
+     */
+    public function getQuantitySelect()
+    {
+        return $this->quantitySelect;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param bool $quantitySelect
+     *
+     * return void
+     */
+    public function setQuantitySelect($quantitySelect)
+    {
+        $this->quantitySelect = $quantitySelect;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return bool
+     */
+    public function getQuantityMultiply()
+    {
+        return $this->quantityMultiply;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param bool $quantityMultiply
+     *
+     * return void
+     */
+    public function setQuantityMultiply($quantityMultiply)
+    {
+        $this->quantityMultiply = $quantityMultiply;
+    }
+
+
 
 
     /**

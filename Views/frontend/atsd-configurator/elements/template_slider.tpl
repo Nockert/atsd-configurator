@@ -53,6 +53,9 @@
                     {* set the name by radio or checkbox *}
                     {assign var="name" value="configurator-{if $element.multiple == true}checkbox{else}radio{/if}-fieldset-{$fieldset.id}-element-{$element.id}{if $element.multiple == true}[]{/if}"}
 
+                    {* quantity selector name *}
+                    {assign var="quantitySelectorName" value="configurator-fieldset-{$fieldset.id}-element-{$element.id}-article-{$elementArticle.id}-quantity"}
+
 
 
                     {* every calculated price *}
@@ -73,8 +76,22 @@
 
 
 
+                    {* currently selected? *}
+                    {assign var="isSelected" value=( in_array( $elementArticle.id, array_keys( $selection ) ) )}
+
+                    {* default selected quantity based on default quantity or selection *}
+                    {assign var="selectedQuantity" value={"{if $isSelected == true}{$selection[$elementArticle.id]}{else}{$elementArticle.quantity}{/if}"|intval}}
+
+                    {* do we want a select element *}
+                    {assign var="hasSelectableQuantity" value=$elementArticle.quantitySelect}
+
+                    {* do we want to show quantity *}
+                    {assign var="outputQuantity" value=( ( $elementArticle.quantity > 1 ) or ( $hasSelectableQuantity == true ) )}
+
+
+
                     {* the item container *}
-                    <div class="product-slider--item"
+                    <div class="product-slider--item{if $outputQuantity == true} has--quantity-output{/if}"
                          data-atsd-configurator-article="true"
                          data-atsd-configurator-fieldset-id="{$fieldset.id}"
                          data-atsd-configurator-element-id="{$element.id}"
@@ -88,6 +105,8 @@
                          data-atsd-configurator-article-image="{if is_object( $article->getCover() )}{$article->getCover()->getThumbnail( 0 )->getSource()}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
                          data-atsd-configurator-article-selector="slider"
                     >
+
+
 
                         {* default shopware product box *}
                         <div class="product--box box--slider">
@@ -133,9 +152,6 @@
                                           data-atsd-configurator-selector-info-button-article-id="{$elementArticle.id}"
                                     >
 
-                                        {* quantity *}
-                                        {if $elementArticle.quantity > 1}<span class="article--quantity">({$elementArticle.quantity}x)</span>{/if}
-
                                         {* the article name *}
                                         {$article->getName()|truncate:50}
 
@@ -147,13 +163,10 @@
                                             <span class="price--default is--nowrap">
 
                                                 {* output delivery status depending on available stock *}
-                                                <i class="delivery--status-icon delivery--status-{if ( $article->getStock() / $elementArticle.quantity ) < 1}not-{/if}available"></i>
+                                                <span class="delivery-status--placeholder">&nbsp;</span>
 
                                                 {* and the price *}
-                                                <span class="price--placeholder">
-                                                    &nbsp;
-                                                    {* {( $article->getCheapestPrice()->getCalculatedPrice() * $elementArticle.quantity * ( ( 100 - $configurator.rebate ) / 100 ) )|currency} {s name="Star"}*{/s} *}
-                                                </span>
+                                                <span class="price--placeholder">&nbsp;</span>
 
                                             </span>
                                         </div>
@@ -165,7 +178,7 @@
                                         {* hidden input field *}
                                         <input type="{if $element.multiple == true}checkbox{else}radio{/if}"
                                                name="{$name}"
-                                               {if in_array( $elementArticle.id, $selection )}checked="checked"{/if}
+                                               {if $isSelected == true}checked="checked"{/if}
                                                data-atsd-configurator-selector="true"
                                                data-atsd-configurator-selector-fieldset-id="{$fieldset.id}"
                                                data-atsd-configurator-selector-element-id="{$element.id}"
@@ -175,11 +188,71 @@
                                     </div>
 
                                     {* visual selector *}
-                                    <div style="margin-top: 12px;">
+                                    <div style="margin-top: 12px;" class="product--visual-selector">
+
+
+
+                                        {* do we went to output any form of quantity? *}
+                                        {if $outputQuantity == true}
+
+                                            {* do we want to show a select field? *}
+                                            {if $hasSelectableQuantity == true}
+
+                                                {* set variables *}
+                                                {assign var="step" value={"{if $elementArticle.quantityMultiply == true}{$elementArticle.quantity|intval}{else}1{/if}"}|intval}
+                                                {assign var="min" value=$step}
+                                                {assign var="max" value={"{if $atsdConfiguratorConfigSaleType == 0}99{else}{if $atsdConfiguratorConfigSaleType == 1}{if $article->isCloseouts() == true}{$article->getStock()}{else}99{/if}{else}{$article->getStock()}{/if}{/if}"}|intval}
+                                                {assign var="selected" value={$selectedQuantity}}
+
+                                                {* create the select *}
+                                                <select name="{$quantitySelectorName}"
+                                                        data-atsd-configurator-article-quantity-selector="true"
+                                                        data-atsd-configurator-article-quantity-selector-article-id="{$elementArticle.id}"
+                                                >
+
+                                                    {* loop for options *}
+                                                    {for $i=$min to $max step $step}
+                                                        <option value="{$i}"{if $i == $selected} selected{/if}>
+                                                            {$i}x
+                                                        </option>
+                                                    {/for}
+
+                                                </select>
+
+                                            {else}
+
+                                                {* append the quantity as hidden field *}
+                                                <input type="hidden"
+                                                       name="{$quantitySelectorName}"
+                                                       value="{$selectedQuantity}"
+                                                       data-atsd-configurator-article-quantity-selector="true"
+                                                       data-atsd-configurator-article-quantity-selector-article-id="{$elementArticle.id}"
+                                                />
+
+                                                {* just show the quantity as button *}
+                                                <button class="quantity--button btn is--align-center">
+                                                    {$elementArticle.quantity}x
+                                                </button>
+
+                                            {/if}
+
+                                        {else}
+
+                                            {* append the quantity as hidden field *}
+                                            <input type="hidden"
+                                                   name="{$quantitySelectorName}"
+                                                   value="{$selectedQuantity}"
+                                                   data-atsd-configurator-article-quantity-selector="true"
+                                                   data-atsd-configurator-article-quantity-selector-article-id="{$elementArticle.id}"
+                                            />
+
+                                        {/if}
+
+
 
                                         {* show the button *}
-                                        <button class="btn is--align-center {if in_array( $elementArticle.id, $selection )}is--primary{/if} {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
-                                                style="width: 75%;"
+                                        <button class="selector--button btn is--align-center {if $isSelected == true}is--primary{/if} {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
+                                                style=""
                                                 data-atsd-configurator-selector-button="true"
                                                 data-atsd-configurator-selector-button-article-id="{$elementArticle.id}"
                                                 data-atsd-configurator-selector-button-element-id="{$element.id}"
@@ -187,7 +260,7 @@
                                         >
 
                                             {* button text *}
-                                            {if in_array( $elementArticle.id, $selection )}
+                                            {if $isSelected == true}
                                                 {s name="SelectorButtonSelected" namespace="frontend/AtsdConfigurator/configuration"}Ausgewählt{/s}
                                             {else}
                                                 {s name="SelectorButtonSelectable" namespace="frontend/AtsdConfigurator/configuration"}Wählen{/s}

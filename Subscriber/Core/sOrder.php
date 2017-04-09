@@ -141,12 +141,8 @@ class sOrder implements SubscriberInterface
             ";
             Shopware()->Db()->exec( $query );
 
-            // did we split it?
-            if ( $split == true )
-                // ignore
-                continue;
-
-            // this only affects shopware 5.2
+            // since shopware 5.2 copies the attributes from s_order_basket items, we have to set the attribute
+            // manually via sql update after the complete process.
             if ( $this->bootstrap->isShopware51() == true )
                 // next
                 continue;
@@ -171,11 +167,12 @@ class sOrder implements SubscriberInterface
                 // try it
                 $query = "
                     UPDATE s_order_details_attributes
-                    SET " . $attr . " = :attribute
+                    SET " . str_replace( array( "'", '"' ), "", $attr ) . " = :attribute
                     WHERE detailID = :id
                 ";
                 Shopware()->Db()->query( $query, array( 'id' => (integer) $article['orderDetailId'], 'attribute' => $article['atsd_configurator_split_string'] ) );
             }
+            // ignore exceptions for faulty attribute names
             catch ( \Exception $exception ) {}
         }
 
@@ -268,6 +265,17 @@ class sOrder implements SubscriberInterface
 
 
 
+            // the selection array
+            $selectionArr = array();
+
+            // loop all articles
+            /* @var $article \Shopware\CustomModels\AtsdConfigurator\Selection\Article */
+            foreach ( $selection->getArticles() as $article )
+                // add it
+                $selectionArr[$article->getArticle()->getId()] = $article->getQuantity();
+
+
+
             // do we want to split?!
             if ( $split == true )
             {
@@ -308,12 +316,15 @@ class sOrder implements SubscriberInterface
                     {
                         // get the article
                         /* @var $article \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct */
-                        $article  = $articleArr['article'];
+                        $article = $articleArr['article'];
+
+                        // get the selected quantity
+                        $quantity = $selectionArr[$articleArr['id']];
 
                         // our article string
                         array_push(
                             $elementArticles,
-                            $articleArr['quantity'] . "x " . $article->getNumber() . " " . $article->getName()
+                            $quantity . "x " . $article->getNumber() . " " . $article->getName()
                         );
 
                         // we do NOT want to split?
@@ -325,7 +336,7 @@ class sOrder implements SubscriberInterface
                         $splitArticleItem = $this->getBasketItem(
                             $selection,
                             $article,
-                            (integer) $articleArr['quantity'],
+                            (integer) $quantity,
                             (integer) $configurator['rebate'],
                             false,
                             (integer) $item['id']
@@ -351,6 +362,7 @@ class sOrder implements SubscriberInterface
                 $item['ob_' . $attr] = implode( "\n", $attribute );
 
                 // set for shopware 5.2
+                $item[$attr] = implode( "\n", $attribute );
                 $item['atsd_configurator_split_string'] = implode( "\n", $attribute );
             }
 
@@ -396,8 +408,8 @@ class sOrder implements SubscriberInterface
     private function getBasketItem( \Shopware\CustomModels\AtsdConfigurator\Selection $selection, \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article, $quantity, $rebate, $master, $basketId )
     {
         // get price data
-        $price    = $this->component->getArticlePrice( $article ) * ( ( 100 - (integer) $rebate ) / 100 );
-        $priceNet = $this->component->getArticleNetPrice( $article ) * ( ( 100 - (integer) $rebate ) / 100 );
+        $price    = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $this->component->getArticlePrice( $article, $quantity ) * ( ( 100 - (integer) $rebate ) / 100 ) : 0.0;
+        $priceNet = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $this->component->getArticleNetPrice( $article, $quantity ) * ( ( 100 - (integer) $rebate ) / 100 ) : 0.0;
 
         // default item
         $item = array(
@@ -419,12 +431,12 @@ class sOrder implements SubscriberInterface
             'packunit'     => "",
 
             // price information
-            'price'        => $this->component->formatPrice( $price ),
-            'netprice'     => $priceNet,
-            'amount'       => $this->component->formatPrice( round( $price * $quantity, 2 ) ),
-            'amountnet'    => $this->component->formatPrice( round( $priceNet * $quantity, 2 ) ),
-            'priceNumeric' => $price,
-            'tax'          => $this->component->formatPrice( round( ( $price * $quantity ) - ( $priceNet * $quantity ), 2 ) ),
+            'price'        => $this->component->formatPrice( $price / $quantity ),
+            'netprice'     => ( $priceNet / $quantity ),
+            'amount'       => $this->component->formatPrice( round( $price, 2 ) ),
+            'amountnet'    => $this->component->formatPrice( round( $priceNet, 2 ) ),
+            'priceNumeric' => ( $price / $quantity ),
+            'tax'          => $this->component->formatPrice( round( ( $price ) - ( $priceNet ), 2 ) ),
 
             // our attributes
             'atsd_configurator_selection_id'     => $selection->getId(),

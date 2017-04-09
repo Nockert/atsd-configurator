@@ -10,6 +10,8 @@
 
 namespace Shopware\AtsdConfigurator\Bootstrap;
 
+use Doctrine\ORM\Tools\SchemaTool;
+
 
 
 /**
@@ -55,12 +57,47 @@ class Uninstall
 
 	public function uninstall()
 	{
+	    // remove updates
+        $this->removeUpdate130();
+
+	    // ...
         $this->removeDatabaseTables();
         $this->removeDatabaseAttributes();
 
 		// done
 		return true;
 	}
+
+
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    public function removeUpdate130()
+    {
+        try {
+            // get entity manager
+            $em = Shopware()->Models();
+
+            // get our schema tool
+            $tool = new SchemaTool( $em );
+
+            // list of our custom models
+            $classes = array(
+                $em->getClassMetadata( 'Shopware\CustomModels\AtsdConfigurator\Selection\Article' )
+            );
+
+            // remove them
+            $tool->dropSchema( $classes );
+        }
+        catch ( \Exception $exception ) {}
+
+        // done
+        return;
+    }
 
 
 
@@ -77,7 +114,7 @@ class Uninstall
         $em = Shopware()->Models();
 
         // get our schema tool
-        $tool = new \Doctrine\ORM\Tools\SchemaTool( $em );
+        $tool = new SchemaTool( $em );
 
         // list of our custom models
         $classes = array(

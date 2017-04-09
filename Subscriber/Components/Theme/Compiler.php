@@ -112,6 +112,7 @@ class Compiler implements \Enlight\Event\SubscriberInterface
 		// all js files here
 		$files = array(
 			$this->bootstrap->Path() . "Views/frontend/_public/src/js/jquery.atsd-product-slider.js",
+            $this->bootstrap->Path() . "Views/frontend/_public/src/js/jquery.atsd-ajax-modal.js",
             $this->bootstrap->Path() . "Views/frontend/_public/src/js/jquery.atsd-configurator.js"
 		);
 

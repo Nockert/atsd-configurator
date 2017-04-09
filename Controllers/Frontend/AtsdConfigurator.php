@@ -8,6 +8,12 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
+use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
+use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
+
+
+
 class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_Action
 {
 
@@ -147,10 +153,10 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         $articles = $selection->getArticles();
 
         // loop it
-        /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
+        /* @var $article Selection\Article */
         foreach ( $articles as $article )
-            // add it
-            array_push( $selectionArr, $article->getId() );
+            // add the article
+            $selectionArr[$article->getArticle()->getId()] = $article->getQuantity();
 
 
 
@@ -271,7 +277,26 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
         // get parameters
         $configuratorId = (integer) $this->Request()->getParam( "configuratorId" );
-        $articleIds     = (array)   explode( ",", (string) $this->Request()->getParam( "selection" ) );
+
+
+
+        // articles as array
+        $articles = array();
+
+        // split it
+        $split = (array) explode( ",", (string) $this->Request()->getParam( "selection" ) );
+
+        // loop every
+        foreach ( $split as $current )
+        {
+            // split again
+            $aktu = (array) explode( ":", (string) $current );
+
+            // add it
+            $articles[(integer) $aktu[0]] = (integer) $aktu[1];
+        }
+
+
 
         // get the configurator
         /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
@@ -284,7 +309,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
             throw new \Exception( "configurator with id " . $configuratorId . " not found" );
 
         // create a new selection
-        $selection = $component->createSelection( $configurator, $articleIds, $manual );
+        $selection = $component->createSelection( $configurator, $articles, $manual );
 
         // and return it
         return $selection;
@@ -348,8 +373,17 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
                 ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
                 ->find( $aktu['id'] );
 
-            // get basket data
-            $data = $component->getSelectionData( $selection );
+            // try it
+            try
+            {
+                // get basket data
+                $data = $component->getSelectionData( $selection );
+            }
+            catch ( ValidatorException $exception )
+            {
+                // ignore it
+                continue;
+            }
 
             // add stuff
             $data['date'] = $aktu['timestamp'];

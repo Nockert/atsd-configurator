@@ -10,13 +10,17 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend;
 
+use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_Request_Request as Request;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
+
 
 
 /**
  * Aquatuning Software Development - Configurator - Subscriber
  */
 
-class Detail implements \Enlight\Event\SubscriberInterface
+class Detail implements SubscriberInterface
 {
 
 	/**
@@ -251,6 +255,7 @@ class Detail implements \Enlight\Event\SubscriberInterface
         $view->assign( "atsdConfiguratorSelection", $selection );
         $view->assign( "atsdConfiguratorConfigArticleLinkStatus", (boolean) $this->bootstrap->Config()->get( "articleLinkStatus" ) );
         $view->assign( "atsdConfiguratorConfigNoChoicePosition", (integer) $this->bootstrap->Config()->get( "noChoicePosition" ) );
+        $view->assign( "atsdConfiguratorConfigSaleType", (integer) $this->bootstrap->Config()->get( "saleType" ) );
 
         // and we are done
         return;
@@ -264,12 +269,12 @@ class Detail implements \Enlight\Event\SubscriberInterface
     /**
      * ...
      *
-     * @param \Enlight_Controller_Request_Request   $request
+     * @param Request   $request
      *
      * @return array
      */
 
-    private function getCurrentSelection( \Enlight_Controller_Request_Request $request )
+    private function getCurrentSelection( Request $request )
     {
         // try getting the key from request
         $key = (string) $request->getParam( "atsdConfiguratorKey" );
@@ -280,13 +285,13 @@ class Detail implements \Enlight\Event\SubscriberInterface
             return array();
 
         // try to find the selection
-        /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+        /* @var $selection Selection */
         $selection = $this->modelManager
             ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
             ->findOneBy( array( 'key' => $key ) );
 
         // not found?
-        if ( !$selection instanceof \Shopware\CustomModels\AtsdConfigurator\Selection )
+        if ( !$selection instanceof Selection )
             // nope
             return array();
 
@@ -297,10 +302,10 @@ class Detail implements \Enlight\Event\SubscriberInterface
         $articles = $selection->getArticles();
 
         // loop the selection
-        /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
+        /* @var $article Selection\Article */
         foreach ( $articles as $article )
-            // add it
-            array_push( $arr, $article->getId() );
+            // add the article
+            $arr[$article->getArticle()->getId()] = $article->getQuantity();
 
         // return them
         return $arr;

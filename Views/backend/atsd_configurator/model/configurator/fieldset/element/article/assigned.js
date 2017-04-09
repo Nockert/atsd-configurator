@@ -23,7 +23,9 @@ Ext.define( "Shopware.apps.AtsdConfigurator.model.configurator.fieldset.element.
             { name: "articleNumber", type: "string" },
             { name: "articleName",   type: "string" },
             { name: "elementId",     type: "int" },
-            { name: "quantity",      type: "int" }
+            { name: "quantity",      type: "int" },
+            { name: "quantitySelect",      type: "int" },
+            { name: "quantityMultiply",      type: "int" }
 
         ],
 

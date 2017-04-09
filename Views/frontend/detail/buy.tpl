@@ -25,7 +25,7 @@
 
                         {* hidden values *}
                         <input type="hidden" name="configuratorId" value="{$atsdConfigurator.id}" />
-                        <input type="hidden" name="selection"  value="" data-atsd-configurator-hidden-selection="true" />
+                        <input type="hidden" name="selection" value="" data-atsd-configurator-hidden-selection="true" />
 
                         {* the button *}
                         <button class="btn is--align-center is--icon-right is--large" style="width: 100%;" onclick="$.loadingIndicator.open( { 'closeOnClick': false } );">
@@ -41,7 +41,7 @@
 
                     {* hidden values *}
                     <input type="hidden" name="configuratorId" value="{$atsdConfigurator.id}" />
-                    <input type="hidden" name="selection"  value="" data-atsd-configurator-hidden-selection="true" />
+                    <input type="hidden" name="selection" value="" data-atsd-configurator-hidden-selection="true" />
 
                     {* the button *}
                     <button class="buybox--button block btn is--primary is--icon-right is--center is--large" name="{s name="DetailBuyActionAdd" namespace="frontend/detail/buy"}{/s}" onclick="$.loadingIndicator.open( { 'closeOnClick': false } );">

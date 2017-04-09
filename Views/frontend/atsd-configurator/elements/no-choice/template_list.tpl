@@ -35,6 +35,9 @@
 
     </div>
 
+    {* quantity selector *}
+    <div class="block article--column--quantity">&nbsp;</div>
+
     {* the price *}
     <div class="block article--column--price" style="width: 15%">
         {"0.00"|currency} {s name="Star"}*{/s}

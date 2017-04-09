@@ -103,8 +103,9 @@
  * - added support of article scaled prices for configurator components
  * - added modal article details for slider template
  *
- * 1.2.6
+ * 1.3.0
  * - moved article details modal popup in slider template to article name click event
+ * - added article quantity as selection option
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

@@ -76,6 +76,13 @@
                         title:   "",
                         timeout: 600,
                         ajaxUrl: null
+                    },
+
+                // delivery status templates
+                deliveryStatus:
+                    {
+                        available:    '<i class="delivery--status-icon delivery--status-available"></i>',
+                        notAvailable: '<i class="delivery--status-icon delivery--status-not-available"></i>'
                     }
             },
 
@@ -95,6 +102,9 @@
 
             // set up article prices
             me.parseArticlePrices();
+
+            // set up delivery status
+            me.parseArticleDeliveryStatus();
 
             // startup the default selection
             me.parseCurrentSelection();
@@ -163,6 +173,24 @@
 
             // empty choice click for slider
             me._on( me.$el.find( 'div.product-slider--item[data-atsd-configurator-empty-choice="true"] button[data-atsd-configurator-empty-choice-selector-button="true"]' ), 'click', $.proxy( me.onSliderEmptyChoiceClick, me ) );
+
+            // on quantity select change
+            me._on( me.$el.find( 'select[data-atsd-configurator-article-quantity-selector="true"]' ), 'change', $.proxy( me.onArticleQuantityChange, me ) );
+        },
+
+
+
+
+        // ...
+        onArticleQuantityChange: function ( event )
+        {
+            // get this
+            var me = this;
+
+            // parse everything again
+            me.parseArticlePrices();
+            me.parseArticleDeliveryStatus();
+            me.parseCurrentSelection();
         },
 
 
@@ -381,12 +409,10 @@
             // get parameters
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
-            // open modal
-            $.modal.open( me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId ),
-                {
-                    mode:  "ajax",
-                    title: me.configuration.infoModal.title
-                }
+            // open our modal
+            $.atsdAjaxModal.open(
+                me.configuration.infoModal.title,
+                me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId )
             );
         },
 
@@ -457,7 +483,7 @@
                     var article = me.getArticleById( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
 
                     // add weight
-                    weight += parseFloat( article.attr( "data-atsd-configurator-article-weight" ) ) * parseInt( article.attr( "data-atsd-configurator-article-quantity" ) );
+                    weight += parseFloat( article.attr( "data-atsd-configurator-article-weight" ) ) * me.getArticleQuantityByArticle( article );
                 }
             );
 
@@ -485,7 +511,7 @@
                     var article = me.getArticleById( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
 
                     // calculate article max stock
-                    var articleStock = Math.floor( parseInt( article.attr( "data-atsd-configurator-article-stock" ) ) / parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) );
+                    var articleStock = Math.floor( parseInt( article.attr( "data-atsd-configurator-article-stock" ) ) / me.getArticleQuantityByArticle( article ) );
 
                     // set minimum stock
                     stock = ( articleStock < stock ) ? articleStock : stock;
@@ -515,8 +541,14 @@
             // get every selected input
             me.$el.find( 'input[data-atsd-configurator-selector="true"]:checked' ).each ( function()
                 {
+                    // get the article id
+                    var articleId = $( this ).attr( "data-atsd-configurator-selector-article-id" );
+
+                    // get quantity
+                    var quantity = me.getArticleQuantityById( articleId );
+
                     // add the article id
-                    selected.push( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
+                    selected.push( articleId + ":" + quantity );
                 }
             );
 
@@ -592,8 +624,8 @@
 
                             // add the name and quantity
                             articles.push(
-                                ( parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) > 1 )
-                                    ? '<span class="article--quantity">(' + article.attr( "data-atsd-configurator-article-quantity" ) + "x)</span> " + article.attr( "data-atsd-configurator-article-name" )
+                                ( me.getArticleQuantityByArticle( article ) > 1 )
+                                    ? '<span class="article--quantity">(' + me.getArticleQuantityByArticle( article ).toString() + "x)</span> " + article.attr( "data-atsd-configurator-article-name" )
                                     : article.attr( "data-atsd-configurator-article-name" )
                             );
                         }
@@ -659,12 +691,15 @@
                     // get the article
                     var article = me.getArticleById( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
 
+                    // get the quantity
+                    var quantity = me.getArticleQuantityByArticle( article );
+
                     // get current article scaled price
-                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), article.attr( "data-atsd-configurator-article-quantity" ) );
+                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
 
                     // add prices
-                    price       += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
-                    pseudoPrice += parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice );
+                    price       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                    pseudoPrice += quantity * parseFloat( articlePrice );
                 }
             );
 
@@ -718,11 +753,14 @@
                     // the article
                     var article = $( this );
 
+                    // get the quantity
+                    var quantity = me.getArticleQuantityByArticle( article );
+
                     // get the article price for it
-                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), article.attr( "data-atsd-configurator-article-quantity" ) );
+                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
 
                     // get the price
-                    var price = parseInt( article.attr( "data-atsd-configurator-article-quantity" ) ) * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                    var price = quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
 
                     // set the price
                     article.find( '.price--placeholder' ).html(
@@ -732,6 +770,58 @@
             );
         },
 
+
+
+
+
+
+        // ...
+        parseArticleDeliveryStatus: function()
+        {
+            // get this
+            var me = this;
+
+            // get every article
+            me.$el.find( 'div[data-atsd-configurator-article="true"]' ).each ( function()
+                {
+                    // the article
+                    var article = $( this );
+
+                    // get the quantity
+                    var quantity = me.getArticleQuantityByArticle( article );
+
+                    // get stock
+                    var stock = article.attr( "data-atsd-configurator-article-stock" );
+
+                    // set the price
+                    article.find( '.delivery-status--placeholder' ).html(
+                        ( quantity <= stock )
+                            ? me.configuration.deliveryStatus.available
+                            : me.configuration.deliveryStatus.notAvailable
+                    );
+                }
+            );
+        },
+
+
+
+
+
+        // ...
+        getArticleQuantityById: function( id )
+        {
+            // get the input
+            return parseInt( $( '*[data-atsd-configurator-article-quantity-selector="true"][data-atsd-configurator-article-quantity-selector-article-id="' + id + '"]' ).val() );
+        },
+
+
+
+        // ...
+        getArticleQuantityByArticle: function( article )
+        {
+            // call by id
+            return this.getArticleQuantityById( article.attr( "data-atsd-configurator-article-id" ) );
+        },
 
 
 

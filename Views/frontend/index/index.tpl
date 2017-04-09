@@ -8,7 +8,7 @@
 
 
 {* append our javascript *}
-{block name='frontend_index_header_javascript_jquery' prepend}
+{block name='frontend_index_header_javascript_jquery'}
 
     {* only if active *}
     {if $atsdConfiguratorShopStatus == true}
@@ -33,6 +33,9 @@
         </script>
 
     {/if}
+
+    {* smarty parent *}
+    {$smarty.block.parent}
 
 {/block}
 

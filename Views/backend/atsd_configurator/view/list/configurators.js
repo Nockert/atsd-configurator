@@ -386,7 +386,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.list.Configurators",
     //
     renderChargeArticle: function( value, metaData, record )
     {
-        console.log( "charge value: " + value );
         return ( value == 0 ) ? "Ja" : "Nein";
     }
 

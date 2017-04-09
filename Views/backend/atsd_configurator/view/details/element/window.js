@@ -35,7 +35,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Window",
     layout: "fit",
 
     // style
-    width: 900,
+    width: 1100,
     height: 450,
     
     // title

@@ -14,7 +14,6 @@ use Shopware\Components\DependencyInjection\Container;
 use Shopware\CustomModels\AtsdConfigurator\Configurator;
 use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
 use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
-use Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService;
 use Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
 use Shopware\Bundle\StoreFrontBundle\Struct\Attribute;

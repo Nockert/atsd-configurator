@@ -89,3 +89,26 @@
 
 
 
+{* remove tabs for shopware 5.2 *}
+{block name="frontend_detail_index_detail"}
+
+    {* do we even have a configurator? *}
+    {if $atsdConfiguratorStatus != true}
+        {$smarty.block.parent}
+    {/if}
+
+{/block}
+
+{* remove tabs for shopware 5.2 *}
+{block name="frontend_detail_index_tabs_cross_selling"}
+
+    {* do we even have a configurator? *}
+    {if $atsdConfiguratorStatus != true}
+        {$smarty.block.parent}
+    {/if}
+
+{/block}
+
+
+
+

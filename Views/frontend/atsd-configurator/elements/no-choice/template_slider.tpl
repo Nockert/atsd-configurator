@@ -41,13 +41,6 @@
                 </div>
 
                 {* article name *}
-                {*
-                <a href="#"
-                   class="product--title"
-                   title="{s name="EmptyChoice"}Keine Auswahl{/s}">
-                    {s name="EmptyChoice"}Keine Auswahl{/s}
-                </a>
-                *}
                 <span class="product--title" style="cursor: pointer;">
                     {s name="EmptyChoice"}Keine Auswahl{/s}
                 </span>
@@ -68,7 +61,7 @@
                 <div style="margin-top: 12px;">
 
                     {* show the button *}
-                    <button class="btn is--align-center {if in_array( $elementArticle.id, $selection )}is--primary{/if} {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
+                    <button class="btn is--align-center {if $element.multiple == true}is--multiple{else}is--not-multiple{/if}"
                             style="width: 100%;"
                             data-atsd-configurator-empty-choice-selector-button="true"
                             data-atsd-configurator-empty-choice-selector-button-element-id="{$element.id}"

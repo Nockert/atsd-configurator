@@ -110,6 +110,11 @@ class Update
             case "1.2.2":
             case "1.2.3":
                 $this->updateSql( "1.2.4-a" );
+            case "1.2.4":
+            case "1.2.5":
+                $this->updateSql( "1.3.0-a" );
+                $this->updateSql( "1.3.0-b" );
+                $this->updateSql( "1.3.0-c" );
 		}
 
 		// done

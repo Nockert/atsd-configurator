@@ -13,10 +13,13 @@ namespace Shopware\AtsdConfigurator\Components;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap as Bootstrap;
 use Shopware\Components\Model\ModelManager;
+use Enlight_Components_Session_Namespace as Session;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct;
 use Shopware\Bundle\MediaBundle\MediaService;
+use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
 
 
 
@@ -146,7 +149,7 @@ class AtsdConfigurator
     /**
      * Returns the current session.
      *
-     * @return \Enlight_Components_Session_Namespace
+     * @return Session
      */
 
     protected function getSession()
@@ -499,9 +502,14 @@ class AtsdConfigurator
                 foreach ( $element['articles'] as $article )
                 {
                     // did we select this article?
-                    if ( in_array( $article['id'], $selection ) )
-                        // all good -> next element
+                    if ( isset( $selection[$article['id']] ) )
+                    {
+                        // @todo
+                        // check quantity
+
+                        // all good
                         continue 2;
+                    }
                 }
 
                 // none of these mandatory articles are selected
@@ -521,6 +529,14 @@ class AtsdConfigurator
     /**
      * Get a default selection for a specified configurator. We always use the first article
      * of every mandatory element.
+     *
+     * The returning selections key = element article id and value = quantity.
+     *
+     * Example:
+     * array(
+     *     1 => 15
+     *     2 => 5
+     * );
      *
      * @param integer   $configuratorId
      *
@@ -560,10 +576,7 @@ class AtsdConfigurator
                     continue;
 
                 // just set the first article of this element
-                array_push(
-                    $selection,
-                    (integer) $element['articles'][0]['id']
-                );
+                $selection[(integer) $element['articles'][0]['id']] = (integer) $element['articles'][0]['quantity'];
             }
         }
 
@@ -639,8 +652,8 @@ class AtsdConfigurator
     /**
      * Get all relevant data for a selection in the checkout.
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Selection   $selection
-     * @param boolean                                             $useCache
+     * @param Selection   $selection
+     * @param boolean     $useCache
      *
      * @return array
      */
@@ -648,7 +661,7 @@ class AtsdConfigurator
     public function getSelectionData( $selection, $useCache = true )
     {
         // not a valid selection?!
-        if ( !$selection instanceof \Shopware\CustomModels\AtsdConfigurator\Selection )
+        if ( !$selection instanceof Selection )
             // return stuff
             return array(
                 'valid' => false
@@ -689,24 +702,24 @@ class AtsdConfigurator
     /**
      * ...
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Selection   $selection
+     * @param Selection   $selection
      *
      * @return array
      */
 
-    private function calculateSelectionDataBySelection( \Shopware\CustomModels\AtsdConfigurator\Selection $selection )
+    private function calculateSelectionDataBySelection( Selection $selection )
     {
-        // get the selected article ids
-        $selectionArr = array_map(
-            function( \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article ) {
-                return $article->getId();
-            },
-            $selection->getArticles()->toArray()
-        );
+        // the selection array
+        $selectionArr = array();
+
+        // loop all articles
+        /* @var $article Selection\Article */
+        foreach ( $selection->getArticles() as $article )
+            // add it
+            $selectionArr[$article->getArticle()->getId()] = $article->getQuantity();
 
         // call by array
         return $this->calculateSelectionData( $selection->getConfigurator()->getId(), $selectionArr, $selection->getKey() );
-
     }
 
 
@@ -720,6 +733,8 @@ class AtsdConfigurator
      * @param string    $key
      * @param boolean   $validate
      * @param boolean   $includeMaster
+     *
+     * @throws Exception\ValidatorException
      *
      * @return array
      */
@@ -745,6 +760,11 @@ class AtsdConfigurator
 
         // get the configurator
         $configurator = $this->getParsedConfiguratorForSelection( $configuratorId, $selection, $validate, $includeMaster );
+
+        // validation failed
+        if ( $configurator === null )
+            // error
+            throw new Exception\ValidatorException( "error validating the selection" );
 
 
 
@@ -795,7 +815,7 @@ class AtsdConfigurator
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
                     // some vars
-                    $quantity = (integer) $article['quantity'];
+                    $quantity = (integer) $selection[$article['id']];
                     $rebate   = (integer) $configurator['rebate'];
 
                     // article struct
@@ -896,23 +916,24 @@ class AtsdConfigurator
     /**
      * ...
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Selection   $selection
-     * @param boolean                                             $validate
+     * @param Selection   $selection
+     * @param boolean     $validate
      *
      * @return array|null
      */
 
-    public function getParsedConfiguratorForSelectionBySelection( \Shopware\CustomModels\AtsdConfigurator\Selection $selection, $validate = true )
+    public function getParsedConfiguratorForSelectionBySelection( Selection $selection, $validate = true )
     {
-        // get the selected article ids
-        $selectionArr = array_map(
-            function( \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article $article ) {
-                return $article->getId();
-            },
-            $selection->getArticles()->toArray()
-        );
+        // the selection array
+        $selectionArr = array();
 
-        // call method
+        // loop all articles
+        /* @var $article Selection\Article */
+        foreach ( $selection->getArticles() as $article )
+            // add it
+            $selectionArr[$article->getArticle()->getId()] = $article->getQuantity();
+
+        // call by array
         return $this->getParsedConfiguratorForSelection( $selection->getConfigurator()->getId(), $selectionArr, $validate );
     }
 
@@ -945,10 +966,7 @@ class AtsdConfigurator
             ->setParameter( "configuratorId", $configuratorId );
 
         // get all
-        $configurators = $builder->getQuery()->getArrayResult();
-
-        // the first
-        $configurator = $configurators[0];
+        $configurator = array_shift( $builder->getQuery()->getArrayResult() );
 
 
 
@@ -972,7 +990,7 @@ class AtsdConfigurator
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
                     // is this article not selected?
-                    if ( !in_array( $article['id'], $selection ) )
+                    if ( !isset( $selection[$article['id']] ) )
                         // remove it
                         unset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] );
                 }
@@ -997,44 +1015,58 @@ class AtsdConfigurator
      * Get a default selection for a specified configurator. We always use the first article
      * of every mandatory element.
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Configurator   $configurator
-     * @param array                                                  $articleIds
-     * @param boolean                                                $manual
+     * @param Configurator   $configurator
+     * @param array          $articles
+     * @param boolean        $manual
      *
-     * @return \Shopware\CustomModels\AtsdConfigurator\Selection
+     * @return Selection
      */
 
-    public function createSelection( \Shopware\CustomModels\AtsdConfigurator\Configurator $configurator, array $articleIds, $manual = false )
+    public function createSelection( Configurator $configurator, array $articles, $manual = false )
     {
         // create a new selection
-        $selection = new \Shopware\CustomModels\AtsdConfigurator\Selection();
+        $selection = new Selection();
 
         // set default values
         $selection->setConfigurator( $configurator );
         $selection->setCustomer( $this->getCustomer() );
         $selection->setManual( $manual );
 
+        // save it
+        $this->modelManager->persist( $selection );
+        $this->modelManager->flush( $selection );
+
         // loop the articleids
-        foreach ( $articleIds as $articleId )
+        foreach ( $articles as $articleId => $quantity )
         {
             // get the article
-            /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
-            $article = $this->modelManager
+            /* @var $configuratorArticle Configurator\Fieldset\Element\Article */
+            $configuratorArticle = $this->modelManager
                 ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article' )
                 ->findOneBy( array( 'id' => (integer) $articleId ) );
 
             // not found?
-            if ( !$article instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article )
+            if ( !$configuratorArticle instanceof Configurator\Fieldset\Element\Article )
                 // next
                 continue;
 
-            // add it to the selection
-            $selection->addArticle( $article );
+            // create a new selection article
+            $article = new Selection\Article();
+
+            // set it up
+            $article->setQuantity( $quantity );
+            $article->setSelection( $selection );
+            $article->setArticle( $configuratorArticle );
+
+            // save it
+            $this->modelManager->persist( $article );
         }
 
-        // save it
-        $this->modelManager->persist( $selection );
-        $this->modelManager->flush( $selection );
+        // save every article
+        $this->modelManager->flush();
+
+        // reload the selection with articles
+        $this->modelManager->refresh( $selection );
 
         // and return it
         return $selection;
@@ -1075,12 +1107,12 @@ class AtsdConfigurator
     /**
      *
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Selection   $selection
+     * @param Selection   $selection
      *
      * @return void
      */
 
-    public function addSelectionToBasket( \Shopware\CustomModels\AtsdConfigurator\Selection $selection )
+    public function addSelectionToBasket( Selection $selection )
     {
         // get the article
         $article = $selection->getConfigurator()->getArticle();

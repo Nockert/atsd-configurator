@@ -11,6 +11,7 @@
 namespace Shopware\CustomModels\AtsdConfigurator;
 
 use Shopware\Components\Model\ModelRepository;
+use Doctrine\ORM\QueryBuilder;
 
 
 
@@ -26,7 +27,7 @@ class Repository extends ModelRepository
     /**
      * Get configurator.
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
 
     public function getMinimalConfiguratorQueryBuilder()
@@ -55,7 +56,7 @@ class Repository extends ModelRepository
     /**
      * Get configurator.
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
 
     public function getConfiguratorQueryBuilder()
@@ -91,7 +92,7 @@ class Repository extends ModelRepository
     /**
      * Get full configurator.
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
 
     public function getConfiguratorWithArticlesQueryBuilder()
@@ -122,7 +123,7 @@ class Repository extends ModelRepository
     /**
      * Get full configurator.
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
 
     public function getPartialConfiguratorWithArticlesQueryBuilder()
@@ -155,7 +156,7 @@ class Repository extends ModelRepository
      * @param integer   $offset
      * @param integer   $limit
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
 
     public function getConfiguratorListQueryBuilder( $search, $sort, $offset, $limit )
@@ -205,7 +206,9 @@ class Repository extends ModelRepository
     /**
      * Get the articles.
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @deprecated not used by any other method
+     *
+     * @return QueryBuilder
      */
 
     public function getSelectionArticlesQueryBuilder()
@@ -216,13 +219,14 @@ class Repository extends ModelRepository
 
         // write the query
         $builder->select( array(
-            "selection", "PARTIAL article.{id,quantity}", "PARTIAL swArticle.{id}", "PARTIAL swArticleDetail.{id,number}"
+            "selection", "PARTIAL selectionArticle.{id,quantity}", "PARTIAL configuratorArticle.{id,quantity}", "PARTIAL swArticle.{id}", "PARTIAL swArticleDetail.{id,number}"
         ) );
 
         // every table we need
         $builder->from( '\Shopware\CustomModels\AtsdConfigurator\Selection', "selection" )
-            ->leftJoin( "selection.articles", "article" )
-            ->leftJoin( "article.article", "swArticle" )
+            ->leftJoin( "selection.articles", "selectionArticle" )
+            ->leftJoin( "selectionArticle.articles", "configuratorArticle" )
+            ->leftJoin( "configuratorArticle.article", "swArticle" )
             ->leftJoin( "swArticle.mainDetail", "swArticleDetail" );
 
         // and return them
