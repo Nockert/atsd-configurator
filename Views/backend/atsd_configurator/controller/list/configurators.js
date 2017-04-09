@@ -59,14 +59,12 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.list.Configurators",
                     'editConfigurator':   me.onEditConfigurator,
                     'searchConfigurator': me.onSearchConfigurator,
                     'deleteConfigurator': me.onDeleteConfigurator,
+                    'copyConfigurator':   me.onCopyConfigurator,
                     'addConfigurator':    me.onAddConfigurator,
                     'updateConfigurator': me.onUpdateConfigurator
                 }
             }
         );
-
-        // done
-        return;
     },
 
 
@@ -328,8 +326,64 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.list.Configurators",
                 )
             }
         );
-    }
+    },
 
+
+
+
+
+
+
+    //
+    onCopyConfigurator: function( scope, grid, rowIndex, colIndex, button )
+    {
+        // get this
+        var me = this;
+
+        // get the store
+        var store = grid.getStore();
+
+        // get the record
+        var record = store.getAt( rowIndex );
+
+        // ask if we should really delete the record
+        Ext.MessageBox.confirm( "Konfigurator kopieren", "Möchten Sie den Konfigurator <b>" + record.get( "name" ) + "</b> wirklich kopieren?", function ( response )
+            {
+                // dont load the new template
+                if ( response !== "yes" )
+                    // just return
+                    return;
+
+                // set loading
+                me.getConfiguratorList().setLoading( true );
+
+
+
+                // just make an ajax call
+                Ext.Ajax.request(
+                    {
+                        url: '{url controller="AtsdConfigurator" action="copyConfigurator"}',
+                        method: 'GET',
+                        params:
+                            {
+                                id: record.get( "id" )
+                            },
+                        success: function( response, operation )
+                        {
+                            // disable loading
+                            me.getConfiguratorList().setLoading( false );
+
+                            // output message
+                            Shopware.Notification.createGrowlMessage( "", "Der Konfigurator wurde erfolgreich gelöscht." );
+
+                            // reload the store
+                            grid.getStore().reload();
+                        }
+                    }
+                );
+            }
+        );
+    }
 
 
 

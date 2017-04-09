@@ -8,6 +8,10 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
+use Shopware\CustomModels\AtsdConfigurator\Configurator;
+
+
+
 class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers_Backend_ExtJs
 {
 
@@ -577,6 +581,8 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             )
         );
     }
+
+
 
 
 
@@ -1747,6 +1753,142 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         }
     }
 
+
+
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    public function copyConfiguratorAction()
+    {
+        // assign view
+        $this->View()->assign(
+            $this->copyConfigurator(
+                (integer) $this->Request()->getParam( "id", 0 )
+            )
+        );
+    }
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param integer    $id
+     *
+     * @return array
+     */
+
+    protected function copyConfigurator( $id )
+    {
+        // ...
+        /* @var $source Configurator */
+        $source = Shopware()->Models()
+            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
+            ->find( $id );
+
+        // not found?
+        if ( !$source instanceof Configurator )
+            // nope
+            return array(
+                'success' => false,
+                'error'   => "configurator not found"
+            );
+
+
+
+        // new configurator
+        $target = new Configurator();
+
+        // set it up
+        $target->setName( $source->getName() . " - Kopie" );
+        $target->setRebate( $source->getRebate() );
+        $target->setChargeArticle( $source->getChargeArticle() );
+
+        // save it
+        $this->getModelManager()->persist( $target );
+        $this->getModelManager()->flush( $target );
+
+
+
+        // loop source fieldsets
+        /* @var $sourceFieldset Configurator\Fieldset */
+        foreach ( $source->getFieldsets() as $sourceFieldset )
+        {
+            // fieldset
+            $fieldset = new Configurator\Fieldset();
+
+            // set it
+            $fieldset->setName( $sourceFieldset->getName() );
+            $fieldset->setDescription( $sourceFieldset->getDescription() );
+            $fieldset->setMediaFile( $sourceFieldset->getMediaFile() );
+            $fieldset->setPosition( $sourceFieldset->getPosition() );
+            $fieldset->setConfigurator( $target );
+
+            // save
+            $this->getModelManager()->persist( $fieldset );
+
+
+
+            // loop elements
+            /* @var $sourceElement Configurator\Fieldset\Element */
+            foreach ( $sourceFieldset->getElements() as $sourceElement )
+            {
+                // element
+                $element = new Configurator\Fieldset\Element();
+
+                // set it up
+                $element->setName( $sourceElement->getName() );
+                $element->setDescription( $sourceElement->getDescription() );
+                $element->setMediaFile( $sourceElement->getMediaFile() );
+                $element->setPosition( $sourceElement->getPosition() );
+                $element->setMandatory( $sourceElement->getMandatory() );
+                $element->setMultiple( $sourceElement->getMutiple() );
+                $element->setComment( $sourceElement->getComment() );
+                $element->setTemplate( $sourceElement->getTemplate() );
+                $element->setFieldset( $fieldset );
+
+                // save
+                $this->getModelManager()->persist( $element );
+
+
+
+                // loop articles
+                /* @var $sourceArticle Configurator\Fieldset\Element\Article */
+                foreach ( $sourceElement->getArticles() as $sourceArticle )
+                {
+                    // article
+                    $article = new Configurator\Fieldset\Element\Article();
+
+                    // set it up
+                    $article->setPosition( $sourceArticle->getPosition() );
+                    $article->setQuantity( $sourceArticle->getQuantity() );
+                    $article->setQuantitySelect( $sourceArticle->getQuantitySelect() );
+                    $article->setQuantityMultiply( $sourceArticle->getQuantityMultiply() );
+                    $article->setArticle( $sourceArticle->getArticle() );
+                    $article->setElement( $element );
+
+                    // save
+                    $this->getModelManager()->persist( $article );
+                }
+            }
+        }
+
+
+
+        // save
+        $this->getModelManager()->flush();
+
+        // done
+        return array(
+            'success' => true
+        );
+    }
 
 
 

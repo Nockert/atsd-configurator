@@ -106,6 +106,7 @@
  * 1.3.0
  * - moved article details modal popup in slider template to article name click event
  * - added article quantity as selection option
+ * - added option to copy configurator
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

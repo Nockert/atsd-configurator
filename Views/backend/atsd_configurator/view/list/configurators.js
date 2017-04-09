@@ -321,7 +321,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.list.Configurators",
                 {
                     header: "",
                     xtype: "actioncolumn",
-                    width: 55,
+                    width: 80,
                     items:
                         [
                             {
@@ -342,7 +342,16 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.list.Configurators",
                                 {
                                     me.fireEvent( "editConfigurator", me, grid, rowIndex, colIndex, button );
                                 }
+                            },
+                            {
+                                iconCls : 'sprite-document-copy',
+                                tooltip : 'Konfigurator kopieren',
+                                handler: function( grid, rowIndex, colIndex, button )
+                                {
+                                    me.fireEvent( "copyConfigurator", me, grid, rowIndex, colIndex, button );
+                                }
                             }
+
                         ]
                 }
             ];
