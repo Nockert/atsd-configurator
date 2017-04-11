@@ -12,7 +12,7 @@ namespace Shopware\AtsdConfigurator\Components\Selection;
 
 use Shopware\AtsdConfigurator\Components\Exception;
 use Shopware\Bundle\StoreFrontBundle\Struct;
-use Shopware\CustomModels\AtsdConfigurator\Repository;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
 use Shopware\AtsdConfigurator\Components\Configurator\ArticlePriceService;
 
 
@@ -248,6 +248,32 @@ class CalculatorService
     }
 
 
+
+
+
+
+    /**
+     * ...
+     *
+     * @param Selection   $selection
+     *
+     * @return array
+     */
+
+    public function calculateSelectionDataBySelection( Selection $selection )
+    {
+        // the selection array
+        $selectionArr = array();
+
+        // loop all articles
+        /* @var $article Selection\Article */
+        foreach ( $selection->getArticles() as $article )
+            // add it
+            $selectionArr[$article->getArticle()->getId()] = $article->getQuantity();
+
+        // call by array
+        return $this->calculateSelectionData( $selection->getConfigurator()->getId(), $selectionArr, $selection->getKey() );
+    }
 
 
 }

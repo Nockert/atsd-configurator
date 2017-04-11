@@ -390,8 +390,8 @@ class ServiceContainer implements SubscriberInterface
     {
         // ...
         return new Components\AtsdConfigurator(
-            $this->bootstrap,
-            $this->container
+            $this->container,
+            $this->container->get( "shopware.model_manager" )
         );
     }
 

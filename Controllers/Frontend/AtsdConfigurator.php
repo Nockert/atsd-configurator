@@ -11,6 +11,7 @@
 use Shopware\CustomModels\AtsdConfigurator\Configurator;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
 use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
+use Shopware\AtsdConfigurator\Components;
 
 
 
@@ -21,7 +22,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
     /**
      * Save a new selection and redirect back to the article.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return void
      */
@@ -133,16 +134,30 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
 
+        /* @var $validatorService Components\Configurator\ValidatorService */
+        $validatorService = $this->container->get( "atsd_configurator.configurator.validator-service");
+
+        /* @var $filterService Components\Configurator\FilterService */
+        $filterService = $this->container->get( "atsd_configurator.configurator.filter-service");
+
+        /* @var $parserService Components\Configurator\ParserService */
+        $parserService = $this->container->get( "atsd_configurator.configurator.parser-service");
+
+        /* @var $selectionValidatorService Components\Selection\ValidatorService */
+        $selectionValidatorService = $this->container->get( "atsd_configurator.selection.validator-service");
+
+
+
         // validate it
-        if ( $component->valdiateConfigurator( $configurator ) == false )
+        if ( $validatorService->valdiate( $configurator ) == false )
             // done
             throw new \Exception( "invalid configurator with id " . $selection->getConfigurator()->getId() );
 
         // filter the configurator
-        $configurator = $component->filterConfigurator( $configurator );
+        $configurator = $filterService->filter( $configurator );
 
         // get all product infos
-        $configurator = $component->parseConfigurator( $configurator );
+        $configurator = $parserService->parse( $configurator );
 
 
 
@@ -161,7 +176,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
         // is the selection valid?
-        if ( $component->validateSelection( $configurator, $selectionArr ) == false )
+        if ( $selectionValidatorService->validate( $configurator, $selectionArr ) == false )
         {
             // redirect to article again
             $url = array(
@@ -181,8 +196,11 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
 
+        /* @var $basketService Components\Selection\BasketService */
+        $basketService = $this->container->get( "atsd_configurator.selection.basket-service");
+
         // add it
-        $component->addSelectionToBasket( $selection );
+        $basketService->addSelectionToBasket( $selection );
 
         // get the data once to cache it
         $component->getSelectionData( $selection );
@@ -264,9 +282,9 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
      *
      * @param boolean   $manual
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return \Shopware\CustomModels\AtsdConfigurator\Selection
+     * @return Selection
      */
 
     private function createSelectionFromRequest( $manual = false )
@@ -274,6 +292,9 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // get the component
         /* @var $component \Shopware\AtsdConfigurator\Components\AtsdConfigurator */
         $component = $this->get( "atsd_configurator.component" );
+
+        /* @var $creatorService Components\Selection\CreatorService */
+        $creatorService = $this->container->get( "atsd_configurator.selection.creator-service");
 
         // get parameters
         $configuratorId = (integer) $this->Request()->getParam( "configuratorId" );
@@ -309,7 +330,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
             throw new \Exception( "configurator with id " . $configuratorId . " not found" );
 
         // create a new selection
-        $selection = $component->createSelection( $configurator, $articles, $manual );
+        $selection = $creatorService->createSelection( $configurator, $articles, $manual );
 
         // and return it
         return $selection;

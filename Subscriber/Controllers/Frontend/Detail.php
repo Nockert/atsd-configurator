@@ -13,6 +13,7 @@ namespace Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend;
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Request_Request as Request;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
+use Shopware\AtsdConfigurator\Components;
 
 
 
@@ -182,8 +183,25 @@ class Detail implements SubscriberInterface
 
 
 
+        /* @var $validatorService Components\Configurator\ValidatorService */
+        $validatorService = $this->container->get( "atsd_configurator.configurator.validator-service");
+
+        /* @var $filterService Components\Configurator\FilterService */
+        $filterService = $this->container->get( "atsd_configurator.configurator.filter-service");
+
+        /* @var $parserService Components\Configurator\ParserService */
+        $parserService = $this->container->get( "atsd_configurator.configurator.parser-service");
+
+        /* @var $selectionValidatorService Components\Selection\ValidatorService */
+        $selectionValidatorService = $this->container->get( "atsd_configurator.selection.validator-service");
+
+        /* @var $selectionDefaultService Components\Selection\DefaultService */
+        $selectionDefaultService = $this->container->get( "atsd_configurator.selection.default-service");
+
+
+
         // validate it
-        $valid = $this->component->valdiateConfigurator( $configurator );
+        $valid = $validatorService->valdiate( $configurator );
 
 
 
@@ -205,10 +223,10 @@ class Detail implements SubscriberInterface
 
 
         // filter the configurator
-        $configurator = $this->component->filterConfigurator( $configurator );
+        $configurator = $filterService->filter( $configurator );
 
         // get all product infos
-        $configurator = $this->component->parseConfigurator( $configurator );
+        $configurator = $parserService->parse( $configurator );
 
 
 
@@ -224,7 +242,7 @@ class Detail implements SubscriberInterface
                 $view->assign( "atsdConfiguratorSelectionLoaded", true );
 
             // validate it
-            if ( $this->component->validateSelection( $configurator, $selection ) == false )
+            if ( $selectionValidatorService->validate( $configurator, $selection ) == false )
             {
                 // set the view
                 $view->assign( "atsdConfiguratorSelectionError", true );
@@ -236,7 +254,7 @@ class Detail implements SubscriberInterface
         // no selection found
         if ( ( !is_array( $selection ) ) or ( count( $selection ) == 0 ) )
             // get default selection for this configurator
-            $selection = $this->component->getDefaultSelection( $configurator['id'] );
+            $selection = $selectionDefaultService->getDefaultSelection( $configurator['id'] );
 
 
 
