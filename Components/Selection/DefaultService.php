@@ -62,6 +62,10 @@ class DefaultService
      *     2 => 5
      * );
      *
+     * @todo we have to parse and filter the configurator first or the first article which would
+     *       be selected will be dropped in the filter process and the from price will be wrong
+     *       because we -have- to select more mandatory articles
+     *
      * @param integer   $configuratorId
      *
      * @return array

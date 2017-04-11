@@ -17,25 +17,12 @@ namespace Shopware\AtsdConfigurator\Components\Selection;
 class ValidatorService
 {
 
-    /**
-     * ...
-     *
-     * @return ValidatorService
-     */
-
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
+    
 
     /**
      * Checks if the selection is complete for the configurator.
+     *
+     * @todo we have to check if the quantity is correct because the data comes from a html form
      *
      * @param array   $configurator
      * @param array   $selection

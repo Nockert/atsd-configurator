@@ -121,6 +121,7 @@ use Shopware\AtsdConfigurator\Subscriber;
 use Shopware\AtsdConfigurator\Bootstrap\Install;
 use Shopware\AtsdConfigurator\Bootstrap\Update;
 use Shopware\AtsdConfigurator\Bootstrap\Uninstall;
+use Enlight_Event_EventArgs as EventArgs;
 
 
 
@@ -386,12 +387,12 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param EventArgs   $arguments
      *
      * @return void
      */
 
-    public function onStartDispatch( \Enlight_Event_EventArgs $arguments )
+    public function onStartDispatch( EventArgs $arguments )
     {
         // licence ok?
         if ( $this->checkLicense( false ) == false )
