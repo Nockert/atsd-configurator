@@ -10,19 +10,31 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Core;
 
+use Enlight\Event\SubscriberInterface;
+use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
+use Shopware\Components\DependencyInjection\Container;
+use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+use Enlight_Event_EventArgs as EventArgs;
+use Enlight_Hook_HookArgs as HookArgs;
+use Shopware\Models\Article\Detail;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
+use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use Shopware\Models\Order\Basket as BasketItem;
+
 
 
 /**
  * Aquatuning Software Development - Configurator - Subscriber
  */
 
-class sBasket implements \Enlight\Event\SubscriberInterface
+class sBasket implements SubscriberInterface
 {
 
 	/**
 	 * Main bootstrap object.
 	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
+	 * @var Bootstrap
 	 */
 
 	protected $bootstrap;
@@ -32,7 +44,7 @@ class sBasket implements \Enlight\Event\SubscriberInterface
 	/**
 	 * DI container.
 	 *
-	 * @var \Shopware\Components\DependencyInjection\Container
+	 * @var Container
 	 */
 
 	protected $container;
@@ -42,7 +54,7 @@ class sBasket implements \Enlight\Event\SubscriberInterface
 	/**
 	 * Main plugin component.
 	 *
-	 * @var \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+	 * @var Component
 	 */
 
 	protected $component;
@@ -55,18 +67,15 @@ class sBasket implements \Enlight\Event\SubscriberInterface
 	/**
 	 * ...
 	 *
-	 * @param \Shopware_Components_Plugin_Bootstrap                    $bootstrap
-	 * @param \Shopware\Components\DependencyInjection\Container       $container
-	 * @param \Shopware\AtsdConfigurator\Components\AtsdConfigurator   $component
+	 * @param Bootstrap   $bootstrap
+	 * @param Container   $container
+	 * @param Component   $component
 	 *
-	 * @return \Shopware\AtsdConfigurator\Subscriber\Core\sBasket
+	 * @return sBasket
 	 */
 
-	public function __construct(
-		\Shopware_Components_Plugin_Bootstrap $bootstrap,
-		\Shopware\Components\DependencyInjection\Container $container,
-		\Shopware\AtsdConfigurator\Components\AtsdConfigurator $component )
-	{
+	public function __construct( Bootstrap $bootstrap, Container $container, Component $component )
+    {
 		// set params
 		$this->bootstrap = $bootstrap;
 		$this->container = $container;
@@ -104,12 +113,12 @@ class sBasket implements \Enlight\Event\SubscriberInterface
 	/**
 	 * Read our plugin attributes as well.
 	 *
-	 * @param \Enlight_Event_EventArgs   $arguments
+	 * @param EventArgs   $arguments
 	 *
 	 * @return string
 	 */
 
-	public function onBasketGetBasketFilterSqlEvent( \Enlight_Event_EventArgs $arguments )
+	public function onBasketGetBasketFilterSqlEvent( EventArgs $arguments )
 	{
 		// get the query
 		$query = $arguments->getReturn();
@@ -133,12 +142,12 @@ class sBasket implements \Enlight\Event\SubscriberInterface
     /**
      * Set our own price for every selection.
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param EventArgs   $arguments
      *
      * @return array
      */
 
-    public function onFilterPrice( \Enlight_Event_EventArgs $arguments )
+    public function onFilterPrice( EventArgs $arguments )
     {
         // get the array
         $queryNewPrice = $arguments->getReturn();
@@ -147,12 +156,12 @@ class sBasket implements \Enlight\Event\SubscriberInterface
         $id = (integer) $arguments->get( "id" );
 
         // get the basket
-        /* @var $basket \Shopware\Models\Order\Basket */
+        /* @var $basket BasketItem */
         $basket = Shopware()->Models()
             ->find( '\Shopware\Models\Order\Basket', $id );
 
         // not found?
-        if ( !$basket instanceof \Shopware\Models\Order\Basket )
+        if ( !$basket instanceof BasketItem )
             // nope
             return $queryNewPrice;
 
@@ -174,13 +183,24 @@ class sBasket implements \Enlight\Event\SubscriberInterface
             return $queryNewPrice;
 
         // get the selection
-        /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+        /* @var $selection Selection */
         $selection = Shopware()->Models()
             ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
             ->find( $selectionId );
 
-        // get selection data
-        $data = $this->component->getSelectionData( $selection );
+        // try to get selection data
+        try
+        {
+            // try it
+            $data = $this->component->getSelectionData( $selection );
+
+        }
+        // catch validation errors
+        catch ( ValidatorException $exception )
+        {
+            // just return invalid array and sbasket will remove the article
+            return array();
+        }
 
         // set the new price
         $queryNewPrice['price'] = $data['priceNet'];
@@ -198,12 +218,12 @@ class sBasket implements \Enlight\Event\SubscriberInterface
     /**
      * Dont allow an article with a configurator to be added like this.
      *
-     * @param \Enlight_Hook_HookArgs   $arguments
+     * @param HookArgs   $arguments
      *
      * @return void
      */
 
-    public function beforeAddArticleHook( \Enlight_Hook_HookArgs $arguments )
+    public function beforeAddArticleHook( HookArgs $arguments )
     {
         // get the controller
         /* @var $sBasket \sBasket */
@@ -214,13 +234,13 @@ class sBasket implements \Enlight\Event\SubscriberInterface
         $quantity    = (integer) $arguments->get( "quantity" );
 
         // get the detail
-        /* @var $detail \Shopware\Models\Article\Detail */
+        /* @var $detail Detail */
         $detail = Shopware()->Models()
             ->getRepository( '\Shopware\Models\Article\Detail' )
             ->findOneBy( array( 'number' => $ordernumber ) );
 
         // did we even find it?
-        if ( !$detail instanceof \Shopware\Models\Article\Detail )
+        if ( !$detail instanceof Detail )
             // ignore it
             return;
 
@@ -228,12 +248,13 @@ class sBasket implements \Enlight\Event\SubscriberInterface
         $article = $detail->getArticle();
 
         // does it have a configurator?
+        /* @var $configurator Configurator */
         $configurator = Shopware()->Models()
             ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
             ->findOneBy( array( 'article' => $article ) );
 
         // no configurator found?
-        if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+        if ( !$configurator instanceof Configurator )
             // nothing to do
             return;
 
@@ -256,21 +277,21 @@ class sBasket implements \Enlight\Event\SubscriberInterface
     /**
      * Read our item data for any article if available.
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param EventArgs   $arguments
      *
      * @return string
      */
 
-    public function onBasketGetBasketFilterResultEvent( \Enlight_Event_EventArgs $arguments )
+    public function onBasketGetBasketFilterResultEvent( EventArgs $arguments )
     {
         // get the basket
         $basket = $arguments->getReturn();
 
         // loop all items in the basket
-        foreach ( $basket['content'] as &$basketArticle )
+        foreach ( $basket['content'] as $key => $basketArticle )
         {
             // default
-            $basketArticle['atsdConfiguratorHasSelection'] = false;
+            $basket['content'][$key]['atsdConfiguratorHasSelection'] = false;
 
             // get the selector id
             $selectorId = (integer) $basketArticle['atsd_configurator_selection_id'];
@@ -281,26 +302,72 @@ class sBasket implements \Enlight\Event\SubscriberInterface
                 continue;
 
             // get the selector
-            /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+            /* @var $selection Selection */
             $selection = Shopware()->Models()
                 ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
                 ->find( $selectorId );
 
-            // get basket data
-            $data = $this->component->getSelectionData( $selection );
+
+
+            // try to get selection data
+            try
+            {
+                // try it
+                $data = $this->component->getSelectionData( $selection );
+
+            }
+            // catch validation errors
+            catch ( ValidatorException $exception )
+            {
+                // remove the article
+                unset( $basket['content'][$key] );
+
+                // remove it from the db
+                $this->removeSelectionFromBasket( $basketArticle['id'] );
+
+                // continue with next one
+                continue;
+            }
+
+
 
             // set the data
-            $basketArticle['atsdConfiguratorSelection']    = $data;
-            $basketArticle['atsdConfiguratorHasSelection'] = true;
+            $basket['content'][$key]['atsdConfiguratorSelection']    = $data;
+            $basket['content'][$key]['atsdConfiguratorHasSelection'] = true;
 
             // overwrite default values for the basket
-            $basketArticle['instock'] = $data['stock'];
+            $basket['content'][$key]['instock'] = $data['stock'];
         }
 
         // return the new basket
         return $basket;
     }
 
+
+
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param integer   $orderBasketId
+     *
+     * @return void
+     */
+
+    private function removeSelectionFromBasket( $orderBasketId )
+    {
+        // get the model to remove the attribute as well
+        /* @var $orderBasket BasketItem */
+        $orderBasket = Shopware()->Models()->find( '\Shopware\Models\Order\Basket', $orderBasketId );
+
+        // remove it
+        Shopware()->Models()->remove( $orderBasket );
+        Shopware()->Models()->flush( $orderBasket );
+    }
 
 
 

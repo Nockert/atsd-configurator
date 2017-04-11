@@ -10,6 +10,9 @@
 
 namespace Shopware\AtsdConfigurator\Bundle\StoreFrontBundle;
 
+use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
+use Shopware\CustomModels\AtsdConfigurator\Repository;
+
 
 
 /**
@@ -20,56 +23,27 @@ class ConfiguratorService
 {
 
     /**
-     * Shopware model manager.
+     * ...
      *
-     * @var \Shopware\Components\Model\ModelManager
+     * @var Repository
      */
 
-    private $modelManager;
+    private $repository;
 
 
 
     /**
-     * Plugin component.
+     * ...
      *
-     * @var \Shopware\AtsdConfigurator\Components\AtsdConfigurator
+     * @param Repository   $repository
+     *
+     * @return ConfiguratorService
      */
 
-    private $component;
-
-
-
-    /**
-     * DI container.
-     *
-     * @var \Shopware\Components\DependencyInjection\Container
-     */
-
-    private $container;
-
-
-
-
-
-    /**
-     * Object constructor.
-     *
-     * @param \Shopware\Components\Model\ModelManager                  $modelManager
-     * @param \Shopware\AtsdConfigurator\Components\AtsdConfigurator   $component
-     * @param \Shopware\Components\DependencyInjection\Container       $container
-     *
-     * @return \Shopware\AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService
-     */
-
-    public function __construct(
-        \Shopware\Components\Model\ModelManager $modelManager,
-        \Shopware\AtsdConfigurator\Components\AtsdConfigurator $component,
-        \Shopware\Components\DependencyInjection\Container $container )
+    public function __construct( Repository $repository )
     {
         // set parameters
-        $this->modelManager = $modelManager;
-        $this->component    = $component;
-        $this->container    = $container;
+        $this->repository = $repository;
     }
 
 
@@ -82,7 +56,7 @@ class ConfiguratorService
      * Get all bundles for the given products. The bundles are returned in an array
      * with the article id as key and the bundles as value.
      *
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct[]   $products
+     * @param ListProduct[]   $products
      *
      * @return array
      */
@@ -100,7 +74,7 @@ class ConfiguratorService
 
 
         // get query builder
-        $builder = $this->component->getRepository()->getMinimalConfiguratorQueryBuilder();
+        $builder = $this->repository->getMinimalConfiguratorQueryBuilder();
 
         // only for our products
         $builder->andWhere(
@@ -150,7 +124,7 @@ class ConfiguratorService
     {
         // get the ids
         $articleIds = array_map(
-            function( \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $product ) {
+            function( ListProduct $product ) {
                 return $product->getId();
             },
             $products

@@ -10,6 +10,8 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Core;
 
+use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
+
 
 
 /**
@@ -131,8 +133,18 @@ class sAdmin implements \Enlight\Event\SubscriberInterface
                 ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
                 ->find( (integer) $article['atsd_configurator_selection_id'] );
 
-            // get selection data
-            $data = $this->component->getSelectionData( $selection );
+            // get selection data and ignore it when an error occurs
+            try
+            {
+                // get the selection data
+                $data = $this->component->getSelectionData( $selection );
+            }
+            // catch validation errors
+            catch ( ValidatorException $exception )
+            {
+                // set 0 as weight
+                $data = array( 'weight' => 0 );
+            }
 
             // add the weight
             $basket['weight'] = (float) $basket['weight'] + (float) $data['weight'];

@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
     /**
      * Load a selection and redirect to the article.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return void
      */
@@ -64,18 +64,18 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // none given?
         if ( empty( $key ) )
             // nothing to do
-            throw new \Exception( "unknown key" );
+            throw new Exception( "unknown key" );
 
         // try to find the selection
-        /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+        /* @var $selection Selection */
         $selection = Shopware()->Models()
             ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
             ->findOneBy( array( 'key' => $key ) );
 
         // not found?
-        if ( !$selection instanceof \Shopware\CustomModels\AtsdConfigurator\Selection )
+        if ( !$selection instanceof Selection )
             // nope
-            throw new \Exception( "selection not found for key " . $key );
+            throw new Exception( "selection not found for key " . $key );
 
 
 

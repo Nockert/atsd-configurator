@@ -10,10 +10,17 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Core;
 
-use Shopware\Components\DependencyInjection\Container;
-use Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap as Bootstrap;
 use Enlight\Event\SubscriberInterface;
-use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+use Shopware\AtsdConfigurator\Components\VersionService;
+use Shopware\Components\DependencyInjection\Container;
+use Enlight_Config as Config;
+use Enlight_Event_EventArgs as EventArgs;
+use Enlight_Hook_HookArgs as HookArgs;
+use Shopware\AtsdConfigurator\Components\Selection\ParserService;
+use Shopware\AtsdConfigurator\Components\Configurator\ArticlePriceService;
+use Exception;
+use Shopware\CustomModels\AtsdConfigurator\Selection;
+use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
 
 
 
@@ -24,58 +31,52 @@ use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
 class sOrder implements SubscriberInterface
 {
 
-	/**
-	 * Main bootstrap object.
-	 *
-	 * @var Bootstrap
-	 */
+    /**
+     * ...
+     *
+     * @var Container
+     */
 
-	protected $bootstrap;
-
-
-
-	/**
-	 * DI container.
-	 *
-	 * @var Container
-	 */
-
-	protected $container;
+    protected $container;
 
 
 
-	/**
-	 * Main plugin component.
-	 *
-	 * @var Component
-	 */
+    /**
+     * ...
+     *
+     * @var Config;
+     */
 
-	protected $component;
-
-
+    protected $config;
 
 
 
+    /**
+     * ...
+     *
+     * @var VersionService
+     */
 
-	/**
+    protected $versionService;
+
+
+
+    /**
 	 * ...
 	 *
-	 * @param Bootstrap   $bootstrap
-	 * @param Container   $container
-	 * @param Component   $component
+     * @param Container        $container
+     * @param Config           $config
+     * @param VersionService   $versionService
 	 *
-	 * @return \Shopware\AtsdConfigurator\Subscriber\Core\sOrder
+	 * @return sOrder
 	 */
 
-	public function __construct(
-        Bootstrap $bootstrap,
-		Container $container,
-        Component $component )
+	public function __construct( Container $container, Config $config, VersionService $versionService )
 	{
 		// set params
-		$this->bootstrap = $bootstrap;
-		$this->container = $container;
-		$this->component = $component;
+        $this->container      = $container;
+		$this->config         = $config;
+        $this->versionService = $versionService;
 	}
 
 
@@ -108,19 +109,19 @@ class sOrder implements SubscriberInterface
     /**
      * ...
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param EventArgs   $arguments
      *
      * @return void
      */
 
-    public function onProcessDetails( \Enlight_Event_EventArgs $arguments )
+    public function onProcessDetails( EventArgs $arguments )
     {
         // get the basket
         $basket = $arguments->get( "details" );
 
         // do we want to split?
-        $split = (boolean) $this->bootstrap->Config()->get( "splitConfigurator" );
-        $attr  = (string)  $this->bootstrap->Config()->get( "saveInAttribute" );
+        $split = (boolean) $this->config->get( "splitConfigurator" );
+        $attr  = (string)  $this->config->get( "saveInAttribute" );
 
 
 
@@ -143,7 +144,7 @@ class sOrder implements SubscriberInterface
 
             // since shopware 5.2 copies the attributes from s_order_basket items, we have to set the attribute
             // manually via sql update after the complete process.
-            if ( $this->bootstrap->isShopware51() == true )
+            if ( $this->versionService->isShopware51() == true )
                 // next
                 continue;
 
@@ -173,7 +174,7 @@ class sOrder implements SubscriberInterface
                 Shopware()->Db()->query( $query, array( 'id' => (integer) $article['orderDetailId'], 'attribute' => $article['atsd_configurator_split_string'] ) );
             }
             // ignore exceptions for faulty attribute names
-            catch ( \Exception $exception ) {}
+            catch ( Exception $exception ) {}
         }
 
 
@@ -192,12 +193,12 @@ class sOrder implements SubscriberInterface
     /**
 	 * Split the configurator into single articles.
 	 *
-	 * @param \Enlight_Hook_HookArgs   $arguments
+	 * @param HookArgs   $arguments
 	 *
 	 * @return void
 	 */
 
-	public function beforeSaveOrder( \Enlight_Hook_HookArgs $arguments )
+	public function beforeSaveOrder( HookArgs $arguments )
 	{
         // get the controller
         /* @var $sOrder \sOrder */
@@ -228,8 +229,12 @@ class sOrder implements SubscriberInterface
     private function parseOrderBasket( \sOrder $sOrder )
     {
         // do we want to split?
-        $split = (boolean) $this->bootstrap->Config()->get( "splitConfigurator" );
-        $attr  = (string)  $this->bootstrap->Config()->get( "saveInAttribute" );
+        $split = (boolean) $this->config->get( "splitConfigurator" );
+        $attr  = (string)  $this->config->get( "saveInAttribute" );
+
+        // get the parser service
+        /* @var $parserService ParserService */
+        $parserService = $this->container->get( "atsd_configurator.selection.parser-service" );
 
 
 
@@ -261,7 +266,7 @@ class sOrder implements SubscriberInterface
                 ->find( $selectionId );
 
             // get basket data
-            $configurator = $this->component->getParsedConfiguratorForSelectionBySelection( $selection, false );
+            $configurator = $parserService->getParsedConfiguratorForSelectionBySelection( $selection, false );
 
 
 
@@ -395,27 +400,33 @@ class sOrder implements SubscriberInterface
     /**
      * ...
      *
-     * @param \Shopware\CustomModels\AtsdConfigurator\Selection      $selection
-     * @param \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct   $article
-     * @param integer                                                $quantity
-     * @param integer                                                $rebate
-     * @param boolean                                                $master
-     * @param integer                                                $basketId
+     * @param Selection     $selection
+     * @param ListProduct   $article
+     * @param integer       $quantity
+     * @param integer       $rebate
+     * @param boolean       $master
+     * @param integer       $basketId
      *
      * @return array
      */
 
-    private function getBasketItem( \Shopware\CustomModels\AtsdConfigurator\Selection $selection, \Shopware\Bundle\StoreFrontBundle\Struct\ListProduct $article, $quantity, $rebate, $master, $basketId )
+    private function getBasketItem( Selection $selection, ListProduct $article, $quantity, $rebate, $master, $basketId )
     {
+        // get the price service
+        /* @var $articlePriceService ArticlePriceService */
+        $articlePriceService = $this->container->get( "atsd_configurator.configurator.article-price-service" );
+
+
+
         // get price data
-        $price    = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $this->component->getArticlePrice( $article, $quantity ) * ( ( 100 - (integer) $rebate ) / 100 ) : 0.0;
-        $priceNet = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $this->component->getArticleNetPrice( $article, $quantity ) * ( ( 100 - (integer) $rebate ) / 100 ) : 0.0;
+        $price    = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $articlePriceService->getArticlePrice( $article, $quantity, (integer) $rebate ) : 0.0;
+        $priceNet = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $articlePriceService->getArticleNetPrice( $article, $quantity, (integer) $rebate ) : 0.0;
 
         // default item
         $item = array(
 
             // default data
-            'id'           => ( $this->bootstrap->isShopware51() == true ) ? null : $basketId,
+            'id'           => ( $this->versionService->isShopware51() == true ) ? null : $basketId,
             'articleID'    => $article->getId(),
             'articlename'  => $article->getName(),
             'ordernumber'  => $article->getNumber(),
@@ -423,7 +434,7 @@ class sOrder implements SubscriberInterface
             'quantity'     => $quantity,
             'modus'        => "0",
             'esdarticle'   => false,
-            'tax_rate'     => $this->component->getTaxRate( $article->getTax()->getTax() ),
+            'tax_rate'     => $articlePriceService->getTaxRate( $article->getTax()->getTax() ),
             'taxID'        => $article->getTax()->getId(),
             'instock'      => $article->getStock(),
             'ean'          => $article->getEan(),
@@ -431,12 +442,12 @@ class sOrder implements SubscriberInterface
             'packunit'     => "",
 
             // price information
-            'price'        => $this->component->formatPrice( $price / $quantity ),
+            'price'        => $articlePriceService->formatPrice( $price / $quantity ),
             'netprice'     => ( $priceNet / $quantity ),
-            'amount'       => $this->component->formatPrice( round( $price, 2 ) ),
-            'amountnet'    => $this->component->formatPrice( round( $priceNet, 2 ) ),
+            'amount'       => $articlePriceService->formatPrice( round( $price, 2 ) ),
+            'amountnet'    => $articlePriceService->formatPrice( round( $priceNet, 2 ) ),
             'priceNumeric' => ( $price / $quantity ),
-            'tax'          => $this->component->formatPrice( round( ( $price ) - ( $priceNet ), 2 ) ),
+            'tax'          => $articlePriceService->formatPrice( round( ( $price ) - ( $priceNet ), 2 ) ),
 
             // our attributes
             'atsd_configurator_selection_id'     => $selection->getId(),

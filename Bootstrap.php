@@ -108,11 +108,21 @@
  * - added article quantity as selection option
  * - added option to copy configurator
  * - added check to disallow a configurator article within a configurator
+ * - removed articles from selection when removing an element article
+ * - restructured components and services
+ * - added check for invalid selections within the cart
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
+
+use Shopware\AtsdConfigurator\Subscriber;
+use Shopware\AtsdConfigurator\Bootstrap\Install;
+use Shopware\AtsdConfigurator\Bootstrap\Update;
+use Shopware\AtsdConfigurator\Bootstrap\Uninstall;
+
+
 
 class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -217,11 +227,11 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             $this->checkLicense();
 
             // install the plugin
-            $installer = new \Shopware\AtsdConfigurator\Bootstrap\Install( $this );
+            $installer = new Install( $this );
             $installer->install();
 
             // update it to current version
-            $updater = new \Shopware\AtsdConfigurator\Bootstrap\Update( $this );
+            $updater = new Update( $this );
             $updater->install();
 
             // fertig
@@ -340,7 +350,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     public function uninstall()
     {
         // uninstall the plugin
-        $uninstaller = new \Shopware\AtsdConfigurator\Bootstrap\Uninstall( $this );
+        $uninstaller = new Uninstall( $this );
         $uninstaller->uninstall();
 
         // done
@@ -360,7 +370,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     public function update( $version )
     {
         // update it to current version
-        $updater = new \Shopware\AtsdConfigurator\Bootstrap\Update( $this );
+        $updater = new Update( $this );
         $updater->update( $version );
 
         // all done
@@ -390,20 +400,20 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
 
         // we need our service subscriber first to get at least our component via container
         $this->Application()->Events()->addSubscriber(
-            new \Shopware\AtsdConfigurator\Subscriber\ServiceContainer( $this, $this->get( "service_container" ) )
+            new Subscriber\ServiceContainer( $this, $this->get( "service_container" ) )
         );
 
         // subscribers to add
         $subscribers = array(
-            new \Shopware\AtsdConfigurator\Subscriber\Components\Theme\Compiler( $this ),
-            new \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Account( $this, $this->get( "service_container" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Checkout( $this, $this->get( "service_container" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Detail( $this, $this->get( "service_container" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Listing( $this, $this->get( "service_container" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Core\sAdmin( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Core\sBasket( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Core\sOrder( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
-            new \Shopware\AtsdConfigurator\Subscriber\Controllers( $this )
+            new Subscriber\Components\Theme\Compiler( $this ),
+            new Subscriber\Controllers\Frontend\Account( $this, $this->get( "service_container" ) ),
+            new Subscriber\Controllers\Frontend\Checkout( $this, $this->get( "service_container" ) ),
+            new Subscriber\Controllers\Frontend\Detail( $this, $this->get( "service_container" ) ),
+            new Subscriber\Controllers\Frontend\Listing( $this, $this->get( "service_container" ) ),
+            new Subscriber\Core\sAdmin( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
+            new Subscriber\Core\sBasket( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
+            new Subscriber\Core\sOrder( $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.config" ), $this->get( "service_container" )->get( "atsd_configurator.version-service" ) ),
+            new Subscriber\Controllers( $this )
         );
 
         // loop them
@@ -413,52 +423,6 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     }
 
 
-
-
-    /**
-     * Compare versions.
-     *
-     * @param string   $version   Like: 5.0.0
-     * @param string   $operator  Like: <=
-     *
-     * @return mixed
-     */
-
-    private function versionCompare( $version, $operator )
-    {
-        // return by default version compare
-        return version_compare( Shopware()->Config()->get( 'Version' ), $version, $operator );
-    }
-
-
-
-
-    /**
-     * ...
-     *
-     * @return boolean
-     */
-
-    public function isShopware51()
-    {
-        // return it
-        return ( ( $this->versionCompare( '5.1.0', '>=' ) ) and ( $this->versionCompare( '5.2.0', '<' ) ) );
-    }
-
-
-
-
-    /**
-     * ...
-     *
-     * @return boolean
-     */
-
-    public function isShopware52()
-    {
-        // return it
-        return $this->versionCompare( '5.2.0', '>=' );
-    }
 
 
 }

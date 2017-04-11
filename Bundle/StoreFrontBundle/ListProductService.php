@@ -109,6 +109,7 @@ class ListProductService implements ListProductServiceInterface
 
 
         // loop all products
+        /* @var $product ListProduct */
         foreach ( $products as $product )
         {
             // add attribute
