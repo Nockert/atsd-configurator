@@ -74,8 +74,6 @@ class AtsdConfigurator
      *
      * @param Container      $container
      * @param ModelManager   $modelManager
-     *
-     * @return AtsdConfigurator
      */
 
     public function __construct( Container $container, ModelManager $modelManager )
@@ -118,8 +116,12 @@ class AtsdConfigurator
     public function getRepository()
     {
         // return the default repository
-        return $this->modelManager
+        /* @var $repo Repository */
+        $repo = $this->modelManager
             ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' );
+
+        // return it
+        return $repo;
     }
 
 

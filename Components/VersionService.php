@@ -17,19 +17,6 @@ namespace Shopware\AtsdConfigurator\Components;
 class VersionService
 {
 
-    /**
-     * ...
-     *
-     * @return VersionService
-     */
-
-    public function __construct()
-    {
-    }
-
-
-
-
 
 
     /**

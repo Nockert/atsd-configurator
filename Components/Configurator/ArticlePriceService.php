@@ -23,19 +23,6 @@ class ArticlePriceService
 
 
 
-    /**
-     * ...
-     *
-     * @return ArticlePriceService
-     */
-
-    public function __construct()
-    {
-    }
-
-
-
-
 
     /**
      * ...

@@ -17,7 +17,7 @@ namespace Shopware\AtsdConfigurator\Components\Selection;
 class ValidatorService
 {
 
-    
+
 
     /**
      * Checks if the selection is complete for the configurator.
