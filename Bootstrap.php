@@ -112,6 +112,9 @@
  * - restructured components and services
  * - added check for invalid selections within the cart
  *
+ * 1.3.1
+ * - renamed internal js components to use plugin namespace
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -130,7 +133,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.3.0",
+        'version'     => "1.3.1",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

@@ -410,7 +410,7 @@
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
             // open our modal
-            $.atsdAjaxModal.open(
+            $.atsdConfiguratorAjaxModal.open(
                 me.configuration.infoModal.title,
                 me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId )
             );
@@ -432,7 +432,7 @@
         initProductSlider: function ()
         {
             // add plugin
-            StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "atsdProductSlider" );
+            StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "atsdConfiguratorProductSlider" );
         },
 
 

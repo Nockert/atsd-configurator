@@ -7,7 +7,7 @@
 
 
     // ...
-    $.atsdAjaxModal = {
+    $.atsdConfiguratorAjaxModal = {
 
         // our loading indicator
         loadingIndicator: '<div class="atsd-configurator--info-modal--loading-indicator"><i class="emotion--loading-indicator"></i></div>',

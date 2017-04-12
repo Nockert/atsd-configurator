@@ -37,7 +37,7 @@
     /**
      * Product Slider Plugin
      */
-    $.plugin('atsdProductSlider', {
+    $.plugin('atsdConfiguratorProductSlider', {
 
         defaults: {
 
