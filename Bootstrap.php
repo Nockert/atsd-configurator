@@ -130,7 +130,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $plugin_info = array(
-        'version'     => "1.2.5",
+        'version'     => "1.3.0",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
