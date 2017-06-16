@@ -49,8 +49,6 @@ class CalculatorService
      *
      * @param ParserService         $parserService
      * @param ArticlePriceService   $articlePriceService
-     *
-     * @return CalculatorService
      */
 
     public function __construct( ParserService $parserService, ArticlePriceService $articlePriceService )

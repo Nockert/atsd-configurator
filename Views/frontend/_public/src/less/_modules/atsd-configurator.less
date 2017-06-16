@@ -214,6 +214,7 @@
                                 width: 8%;
 
 
+                                // shopware 5.1 and 5.2
                                 .js--fancy-select {
 
                                     // outer container
@@ -236,6 +237,33 @@
                                         line-height: 22px;
                                     }
                                 }
+
+
+
+                                // shopware 5.3
+                                .select-field.quantity-select {
+                                    width: 100%;
+                                    vertical-align: bottom;
+                                    height: 24px;
+
+                                    select {
+                                        padding: 0;
+                                        text-align-last: center;
+                                        font-weight: bold;
+                                        height: 24px;
+                                        line-height: 22px;
+                                    }
+                                }
+                                .select-field.quantity-select:after {
+                                    display: none;
+                                }
+
+
+
+
+
+
+
 
 
 
@@ -315,6 +343,9 @@
 
 
 
+
+
+                // shopware 5.2
                 // we have fix js-fancy-select for slider visual selector
                 .product--visual-selector .js--fancy-select {
 
@@ -338,6 +369,34 @@
                         font-size: 14px;
                     }
                 }
+
+
+
+                // shopware 5.3
+                .product--visual-selector {
+                    .select-field.quantity-select {
+                        width: 20%;
+                        vertical-align: bottom;
+                        height: 38px;
+
+                        select {
+                            padding: 0;
+                            text-align-last: center;
+                            font-weight: bold;
+                            font-size: .875rem;
+                            line-height: 38px;
+                        }
+                    }
+                    .select-field.quantity-select:after {
+                        display: none;
+                    }
+                }
+
+
+
+
+
+
 
 
             }

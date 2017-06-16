@@ -204,6 +204,8 @@
                                                 {assign var="max" value={"{if $atsdConfiguratorConfigSaleType == 0}99{else}{if $atsdConfiguratorConfigSaleType == 1}{if $article->isCloseouts() == true}{$article->getStock()}{else}99{/if}{else}{$article->getStock()}{/if}{/if}"}|intval}
                                                 {assign var="selected" value={$selectedQuantity}}
 
+                                                {if $atsdConfiguratorIsShopware53 == true}<div class="select-field quantity-select">{/if}
+
                                                 {* create the select *}
                                                 <select name="{$quantitySelectorName}"
                                                         data-atsd-configurator-article-quantity-selector="true"
@@ -218,6 +220,8 @@
                                                     {/for}
 
                                                 </select>
+
+                                                {if $atsdConfiguratorIsShopware53 == true}</div>{/if}
 
                                             {else}
 

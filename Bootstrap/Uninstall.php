@@ -11,6 +11,9 @@
 namespace Shopware\AtsdConfigurator\Bootstrap;
 
 use Doctrine\ORM\Tools\SchemaTool;
+use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Components\Model\ModelManager;
 
 
 
@@ -21,29 +24,49 @@ use Doctrine\ORM\Tools\SchemaTool;
 class Uninstall
 {
 
-	/**
-	 * Main bootstrap object.
-	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
-	 */
+    /**
+     * Main bootstrap object.
+     *
+     * @var Bootstrap
+     */
 
-	protected $bootstrap;
+    protected $bootstrap;
+
+
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
+
+    protected $modelManager;
+
+
+    /**
+     * ...
+     *
+     * @var CrudService
+     */
+
+    protected $crudService;
 
 
 
-	/**
-	 * ...
-	 *
-	 * @param \Shopware_Components_Plugin_Bootstrap   $bootstrap
-	 *
-	 * @return \Shopware\AtsdConfigurator\Bootstrap\Uninstall
-	 */
+    /**
+     * ...
+     *
+     * @param Bootstrap      $bootstrap
+     * @param ModelManager   $modelManager
+     * @param CrudService    $crudService
+     */
 
-	public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap )
-	{
-		// set params
-		$this->bootstrap = $bootstrap;
-	}
+    public function __construct( Bootstrap $bootstrap, ModelManager $modelManager, CrudService $crudService )
+    {
+        // set params
+        $this->bootstrap    = $bootstrap;
+        $this->modelManager = $modelManager;
+        $this->crudService  = $crudService;
+    }
 
 
 
@@ -62,7 +85,7 @@ class Uninstall
 
 	    // ...
         $this->removeDatabaseTables();
-        $this->removeDatabaseAttributes();
+        $this->uninstallAttributes();
 
 		// done
 		return true;
@@ -76,11 +99,11 @@ class Uninstall
      * @return void
      */
 
-    public function removeUpdate130()
+    private function removeUpdate130()
     {
         try {
             // get entity manager
-            $em = Shopware()->Models();
+            $em = $this->modelManager;
 
             // get our schema tool
             $tool = new SchemaTool( $em );
@@ -94,9 +117,6 @@ class Uninstall
             $tool->dropSchema( $classes );
         }
         catch ( \Exception $exception ) {}
-
-        // done
-        return;
     }
 
 
@@ -108,10 +128,10 @@ class Uninstall
      * @return void
      */
 
-    public function removeDatabaseTables()
+    private function removeDatabaseTables()
     {
         // get entity manager
-        $em = Shopware()->Models();
+        $em = $this->modelManager;
 
         // get our schema tool
         $tool = new SchemaTool( $em );
@@ -128,42 +148,32 @@ class Uninstall
 
         // remove them
         $tool->dropSchema( $classes );
-
-        // done
-        return;
     }
+
+
+
+
+
 
 
 
     /**
-     * Removes the additionally set attributes for the selection.
+     * ...
      *
      * @return void
-     *
      */
 
-    private function removeDatabaseAttributes()
+    private function uninstallAttributes()
     {
-        // order basket
-        Shopware()->Models()->removeAttribute( 's_order_basket_attributes', 'atsd', 'configurator_selection_id' );
+        // ...
+        $this->crudService->delete( "s_order_basket_attributes", "atsd_configurator_selection_id" );
+        $this->crudService->delete( "s_order_details_attributes", "atsd_configurator_selection_id" );
+        $this->crudService->delete( "s_order_details_attributes", "atsd_configurator_selection_master" );
 
         // save our attributes
-        Shopware()->Models()->generateAttributeModels( array(
-            's_order_basket_attributes'
-        ));
-
-        // order details
-        Shopware()->Models()->removeAttribute( 's_order_details_attributes', 'atsd', 'configurator_selection_id' );
-        Shopware()->Models()->removeAttribute( 's_order_details_attributes', 'atsd', 'configurator_selection_master' );
-
-        // and generate the model
-        Shopware()->Models()->generateAttributeModels(array(
-            's_order_details_attributes',
-        ));
-
-        // done
-        return;
+        $this->modelManager->generateAttributeModels( array( "s_order_basket_attributes", "s_order_details_attributes" ) );
     }
+
 
 
 

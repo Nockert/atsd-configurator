@@ -83,7 +83,7 @@
     {if $atsdConfiguratorConfig.articleLinkStatus == true}
 
         {* link to the article *}
-        <a href="{$article.linkDetails|rewrite:$article.articleName}" class="action--details btn is--small is--align-center is--icon-right block" style="width: 35%; float: right;" target="_blank">
+        <a href="{$article.linkDetails}" class="action--details btn is--small is--align-center is--icon-right block" style="width: 35%; float: right;" target="_blank">
             {s name='ButtonToProduct'}Zum Produkt{/s} <i class="icon--arrow-right"></i>
         </a>
 

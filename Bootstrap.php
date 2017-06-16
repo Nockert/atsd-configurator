@@ -115,6 +115,10 @@
  * 1.3.1
  * - renamed internal js components to use plugin namespace
  *
+ * 1.4.0
+ * - added shopware 5.3 compatibility
+ * - dropped shopware 5.1 compatibility
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -132,8 +136,8 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
 {
     
     // info
-    private $plugin_info = array(
-        'version'     => "1.3.1",
+    private $pluginInfo = array(
+        'version'     => "1.4.0",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
@@ -147,8 +151,8 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         'revision'    => null
     );
     
-    // getCapabilities
-    private $plugin_capabilities = array(
+    // get capabilities
+    private $pluginCapabilities = array(
         'install' => true,
         'update'  => true,
         'enable'  => true
@@ -173,7 +177,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     public function getVersion()
     {
-        return $this->plugin_info['version'];
+        return $this->pluginInfo['version'];
     }
 
 
@@ -186,7 +190,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     public function getLabel()
     {
-        return $this->plugin_info['label'];
+        return $this->pluginInfo['label'];
     }
 
 
@@ -199,7 +203,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     public function getInfo()
     {
-        return $this->plugin_info;
+        return $this->pluginInfo;
     } 
      
 
@@ -212,7 +216,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     public function getCapabilities()
     {
-        return $this->plugin_capabilities;
+        return $this->pluginCapabilities;
     }
 
 
@@ -235,7 +239,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             $installer->install();
 
             // update it to current version
-            $updater = new Update( $this );
+            $updater = new Update( $this, $this->get( "shopware.model_manager" ), $this->get( "shopware_attribute.crud_service" ) );
             $updater->install();
 
             // fertig
@@ -273,7 +277,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         $check = null;
 
         // throw an event for the check
-        $check = Shopware()->Events()->filter(
+        $check = $this->get( "events" )->filter(
             'Shopware_AtsdConfigurator_CheckLicense',
             $check,
             array(
@@ -333,7 +337,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
 
     public function afterInit()
     {
-        $this->Application()->Loader()->registerNamespace(
+        $this->get( "loader" )->registerNamespace(
             'Shopware\AtsdConfigurator',
             $this->Path()
         );
@@ -341,46 +345,6 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         // register our models
         $this->registerCustomModels();
     }
-
-
-
-
-    /**
-     * Uninstall our plugin.
-     *
-     * @return boolean
-     */
-
-    public function uninstall()
-    {
-        // uninstall the plugin
-        $uninstaller = new Uninstall( $this );
-        $uninstaller->uninstall();
-
-        // done
-        return true;
-    }
-
-
-
-    /**
-     * Update our plugin if necessary.
-     *
-     * @param string   $version
-     *
-     * @return boolean
-     */
-
-    public function update( $version )
-    {
-        // update it to current version
-        $updater = new Update( $this );
-        $updater->update( $version );
-
-        // all done
-        return true;
-    }
-
 
 
 
@@ -403,7 +367,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             return;
 
         // we need our service subscriber first to get at least our component via container
-        $this->Application()->Events()->addSubscriber(
+        $this->get( "events" )->addSubscriber(
             new Subscriber\ServiceContainer( $this, $this->get( "service_container" ) )
         );
 
@@ -423,8 +387,48 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
         // loop them
         foreach( $subscribers as $subscriber )
             // and add subscriber
-            $this->Application()->Events()->addSubscriber( $subscriber );
+            $this->get( "events" )->addSubscriber( $subscriber );
     }
+
+
+
+
+    /**
+     * Uninstall our plugin.
+     *
+     * @return boolean
+     */
+
+    public function uninstall()
+    {
+        // uninstall the plugin
+        $uninstaller = new Uninstall( $this, $this->get( "shopware.model_manager" ), $this->get( "shopware_attribute.crud_service" ) );
+        $uninstaller->uninstall();
+
+        // done
+        return true;
+    }
+
+
+
+    /**
+     * Update our plugin if necessary.
+     *
+     * @param string   $version
+     *
+     * @return boolean
+     */
+
+    public function update( $version )
+    {
+        // update it to current version
+        $updater = new Update( $this, $this->get( "shopware.model_manager" ), $this->get( "shopware_attribute.crud_service" ) );
+        $updater->update( $version );
+
+        // all done
+        return true;
+    }
+
 
 
 

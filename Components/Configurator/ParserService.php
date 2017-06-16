@@ -70,8 +70,6 @@ class ParserService
      * @param VersionService                $versionService
      * @param ListProductServiceInterface   $listProductService
      * @param ContextService                $contextService
-     *
-     * @return ParserService
      */
 
     public function __construct( VersionService $versionService, ListProductServiceInterface $listProductService, ContextService $contextService, MediaService $mediaService )
@@ -158,36 +156,6 @@ class ParserService
                 {
                     // get the product
                     $product = $products[$article['article']['mainDetail']['number']];
-
-                    // we have to reset the cover thumbnail for shopware 5.1
-                    if ( ( $this->versionService->isShopware51() == true ) and ( $product->getCover() instanceof Struct\Media ) )
-                    {
-                        // do we even have a single thumbnail?
-                        if ( count( $product->getCover()->getThumbnails() ) > 0 )
-                        {
-                            // due to a bug before 5.1.2 we have to create a new thumbnail with the media service
-                            $thumbnail = new Struct\Thumbnail(
-                                $this->mediaService->getUrl( $product->getCover()->getThumbnail( 0 )->getSource() ),
-                                $this->mediaService->getUrl( $product->getCover()->getThumbnail( 0 )->getRetinaSource() ),
-                                $product->getCover()->getThumbnail( 0 )->getMaxWidth(),
-                                $product->getCover()->getThumbnail( 0 )->getMaxHeight()
-                            );
-                        }
-                        // we dont have a thumbnail
-                        else
-                        {
-                            // use the default cover image
-                            $thumbnail = new Struct\Thumbnail(
-                                $product->getCover()->getFile(),
-                                $product->getCover()->getFile(),
-                                $product->getCover()->getWidth(),
-                                $product->getCover()->getHeight()
-                            );
-                        }
-
-                        // and set it
-                        $product->getCover()->setThumbnails( array( $thumbnail ) );
-                    }
 
                     // save it
                     $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['article'] = $product;

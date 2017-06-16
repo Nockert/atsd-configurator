@@ -21,6 +21,8 @@ use Shopware\AtsdConfigurator\Components\Configurator\ArticlePriceService;
 use Exception;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
 use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
+use Shopware\Bundle\AttributeBundle\Service\DataLoader as AttributeDataLoader;
+use Shopware\Bundle\AttributeBundle\Service\DataPersister as AttributeDataPersister;
 
 
 
@@ -67,8 +69,6 @@ class sOrder implements SubscriberInterface
      * @param Container        $container
      * @param Config           $config
      * @param VersionService   $versionService
-	 *
-	 * @return sOrder
 	 */
 
 	public function __construct( Container $container, Config $config, VersionService $versionService )
@@ -150,31 +150,20 @@ class sOrder implements SubscriberInterface
 
 
 
-            // get the detail id
-            // $id = (integer) $article['orderDetailId'];
+            /* @var $attributeDataLoader AttributeDataLoader */
+            $attributeDataLoader = $this->container->get( "shopware_attribute.data_loader" );
 
-            // get the attribute loader
-            /* @var $attributeLoader \Shopware\Bundle\AttributeBundle\Service\DataLoader */
-            // $attributeLoader = $this->container->get( "shopware_attribute.data_loader" );
+            /* @var $attributeDataPersister AttributeDataPersister */
+            $attributeDataPersister = $this->container->get( "shopware_attribute.data_persister" );
 
-            // read the data
-            // $attributeData = $attributeLoader->load( "s_order_basket_attributes", $id );
+            // get attributes
+            $attributes = $attributeDataLoader->load( "s_order_details_attributes", (integer) $article['orderDetailId'] );
 
+            // reset our attribute
+            $attributes[$attr] = $article['atsd_configurator_split_string'];
 
-
-            // try to insert the split string into attributes
-            try
-            {
-                // try it
-                $query = "
-                    UPDATE s_order_details_attributes
-                    SET " . str_replace( array( "'", '"' ), "", $attr ) . " = :attribute
-                    WHERE detailID = :id
-                ";
-                Shopware()->Db()->query( $query, array( 'id' => (integer) $article['orderDetailId'], 'attribute' => $article['atsd_configurator_split_string'] ) );
-            }
-            // ignore exceptions for faulty attribute names
-            catch ( Exception $exception ) {}
+            // save it
+            $attributeDataPersister->persist( $attributes, "s_order_details_attributes", (integer) $article['orderDetailId'] );
         }
 
 
@@ -206,9 +195,6 @@ class sOrder implements SubscriberInterface
 
         // split items and save attribute
         $this->parseOrderBasket( $sOrder );
-
-        // done
-        return;
 	}
 
 
@@ -386,9 +372,6 @@ class sOrder implements SubscriberInterface
 
         // set our new basket
         $sOrder->sBasketData['content'] = $return;
-
-        // done
-        return;
     }
 
 

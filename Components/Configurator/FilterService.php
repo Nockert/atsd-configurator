@@ -46,8 +46,6 @@ class FilterService
      *
      * @param Config         $config
      * @param StockService   $stockService
-     *
-     * @return FilterService
      */
 
     public function __construct( Config $config, StockService $stockService )

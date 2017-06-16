@@ -48,8 +48,6 @@ class CustomerService
      *
      * @param Session        $session
      * @param ModelManager   $modelManager
-     *
-     * @return CustomerService
      */
 
     public function __construct( Session $session, ModelManager $modelManager )

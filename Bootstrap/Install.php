@@ -33,8 +33,6 @@ class Install
 	 * ...
 	 *
 	 * @param \Shopware_Components_Plugin_Bootstrap   $bootstrap
-	 *
-	 * @return \Shopware\AtsdConfigurator\Bootstrap\Install
 	 */
 
 	public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap )
@@ -59,7 +57,6 @@ class Install
         $this->createDatabase();
         $this->subscribeEvents();
         $this->createMainDatabaseRecords();
-        $this->installCreateDatabaseAttributes();
         $this->createConfigForm();
         $this->installCreateMenu();
 
@@ -96,46 +93,7 @@ class Install
 
         // remove them
         $tool->createSchema( $classes );
-
-        // done
-        return;
     }
-
-
-
-
-
-
-
-    /**
-     * Creates the database attributes for our plugin.
-     *
-     * @return void
-     */
-
-    private function installCreateDatabaseAttributes()
-    {
-        // order basket
-        Shopware()->Models()->addAttribute( 's_order_basket_attributes', 'atsd', 'configurator_selection_id', 'int(11)', true, null );
-
-        // save our attributes
-        Shopware()->Models()->generateAttributeModels( array(
-            's_order_basket_attributes'
-        ));
-
-        // order details
-        Shopware()->Models()->addAttribute( 's_order_details_attributes', 'atsd', 'configurator_selection_id', 'int(11)', true, null );
-        Shopware()->Models()->addAttribute( 's_order_details_attributes', 'atsd', 'configurator_selection_master', 'tinyint(1)', true, null );
-
-        // and generate the model
-        Shopware()->Models()->generateAttributeModels(array(
-            's_order_details_attributes',
-        ));
-
-        // and done
-        return;
-    }
-
 
 
 
@@ -176,9 +134,6 @@ class Install
 
         // insert it
         Shopware()->Db()->exec( $sql );
-
-        // and we re done
-        return;
     }
 
 

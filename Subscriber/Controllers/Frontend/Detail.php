@@ -71,8 +71,6 @@ class Detail implements SubscriberInterface
 	 *
      * @param \Shopware_Components_Plugin_Bootstrap                $bootstrap
      * @param \Shopware\Components\DependencyInjection\Container   $container
-	 *
-	 * @return \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Detail
 	 */
 
     public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap, \Shopware\Components\DependencyInjection\Container $container )
@@ -198,6 +196,9 @@ class Detail implements SubscriberInterface
         /* @var $selectionDefaultService Components\Selection\DefaultService */
         $selectionDefaultService = $this->container->get( "atsd_configurator.selection.default-service");
 
+        /* @var $versionService Components\VersionService */
+        $versionService = $this->container->get( "atsd_configurator.version-service");
+
 
 
         // validate it
@@ -243,10 +244,8 @@ class Detail implements SubscriberInterface
 
             // validate it
             if ( $selectionValidatorService->validate( $configurator, $selection ) == false )
-            {
                 // set the view
                 $view->assign( "atsdConfiguratorSelectionError", true );
-            }
         }
 
 
@@ -274,9 +273,7 @@ class Detail implements SubscriberInterface
         $view->assign( "atsdConfiguratorConfigArticleLinkStatus", (boolean) $this->bootstrap->Config()->get( "articleLinkStatus" ) );
         $view->assign( "atsdConfiguratorConfigNoChoicePosition", (integer) $this->bootstrap->Config()->get( "noChoicePosition" ) );
         $view->assign( "atsdConfiguratorConfigSaleType", (integer) $this->bootstrap->Config()->get( "saleType" ) );
-
-        // and we are done
-        return;
+        $view->assign( "atsdConfiguratorIsShopware53", $versionService->isShopware53() );
     }
 
 

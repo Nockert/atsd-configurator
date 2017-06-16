@@ -61,9 +61,23 @@ class VersionService
     public function isShopware52()
     {
         // return it
-        return $this->versionCompare( '5.2.0', '>=' );
+        return ( ( $this->versionCompare( '5.2.0', '>=' ) ) and ( $this->versionCompare( '5.3.0', '<' ) ) );
     }
 
+
+
+
+    /**
+     * ...
+     *
+     * @return boolean
+     */
+
+    public function isShopware53()
+    {
+        // return it
+        return $this->versionCompare( '5.3.0', '>=' );
+    }
 
 
 

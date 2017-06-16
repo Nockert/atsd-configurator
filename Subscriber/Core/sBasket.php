@@ -21,6 +21,7 @@ use Shopware\Models\Article\Detail;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
 use Shopware\CustomModels\AtsdConfigurator\Configurator;
 use Shopware\Models\Order\Basket as BasketItem;
+use Shopware\Bundle\AttributeBundle\Service\DataLoader as AttributeDataLoader;
 
 
 
@@ -165,17 +166,18 @@ class sBasket implements SubscriberInterface
             // nope
             return $queryNewPrice;
 
-        // get the attribute
-        /* @var $attribute \Shopware\Models\Attribute\OrderBasket */
-        $attribute = $basket->getAttribute();
 
-        // we have no attribute?!
-        if ( !$attribute instanceof \Shopware\Models\Attribute\OrderBasket )
-            // stop
-            return $queryNewPrice;
+
+        /* @var $attributeDataLoader AttributeDataLoader */
+        $attributeDataLoader = $this->container->get( "shopware_attribute.data_loader" );
+
+        // get attributes
+        $attributes = $attributeDataLoader->load( "s_order_basket_attributes", $basket->getId() );
 
         // get the selection id
-        $selectionId = (integer) $attribute->getAtsdConfiguratorSelectionId();
+        $selectionId = (integer) $attributes['atsd_configurator_selection_id'];
+
+
 
         // no selection?
         if ( $selectionId == 0 )
@@ -332,8 +334,8 @@ class sBasket implements SubscriberInterface
 
 
             // set the data
-            $basket['content'][$key]['atsdConfiguratorSelection']    = $data;
             $basket['content'][$key]['atsdConfiguratorHasSelection'] = true;
+            $basket['content'][$key]['atsdConfiguratorSelection']    = $data;
 
             // overwrite default values for the basket
             $basket['content'][$key]['instock'] = $data['stock'];

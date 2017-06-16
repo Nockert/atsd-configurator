@@ -71,8 +71,6 @@ class ParserService
      * @param ConfiguratorFilterService   $configuratorFilterService
      * @param ConfiguratorParserService   $configuratorParserService
      * @param ValidatorService            $validatorService
-     *
-     * @return ParserService
      */
 
     public function __construct( Repository $repository, ConfiguratorFilterService $configuratorFilterService, ConfiguratorParserService $configuratorParserService, ValidatorService $validatorService )

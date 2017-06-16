@@ -49,8 +49,6 @@ class CreatorService
      *
      * @param ModelManager      $modelManager
      * @param CustomerService   $customerService
-     *
-     * @return CreatorService
      */
 
     public function __construct( ModelManager $modelManager, CustomerService $customerService )

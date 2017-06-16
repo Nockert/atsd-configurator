@@ -35,8 +35,6 @@ class DefaultService
      * ...
      *
      * @param Repository   $repository
-     *
-     * @return DefaultService
      */
 
     public function __construct( Repository $repository)

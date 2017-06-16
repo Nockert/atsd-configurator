@@ -12,6 +12,8 @@ namespace Shopware\AtsdConfigurator\Bootstrap;
 
 use Shopware_Components_Plugin_Bootstrap as Bootstrap;
 use Exception;
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Components\Model\ModelManager;
 
 
 
@@ -22,33 +24,57 @@ use Exception;
 class Update
 {
 
-	/**
-	 * Main bootstrap object.
-	 *
-	 * @var Bootstrap
-	 */
+    /**
+     * Main bootstrap object.
+     *
+     * @var Bootstrap
+     */
 
-	protected $bootstrap;
-
-
-
-	/**
-	 * ...
-	 *
-	 * @param Bootstrap   $bootstrap
-	 *
-	 * @return Update
-	 */
-
-	public function __construct( Bootstrap $bootstrap )
-	{
-		// set params
-		$this->bootstrap = $bootstrap;
-	}
+    protected $bootstrap;
 
 
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
 
-	/**
+    protected $modelManager;
+
+
+    /**
+     * ...
+     *
+     * @var CrudService
+     */
+
+    protected $crudService;
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param Bootstrap      $bootstrap
+     * @param ModelManager   $modelManager
+     * @param CrudService    $crudService
+     */
+
+    public function __construct( Bootstrap $bootstrap, ModelManager $modelManager, CrudService $crudService )
+    {
+        // set params
+        $this->bootstrap    = $bootstrap;
+        $this->modelManager = $modelManager;
+        $this->crudService  = $crudService;
+    }
+
+
+
+
+
+    /**
 	 * ...
 	 *
 	 * @return boolean
@@ -57,10 +83,7 @@ class Update
 	public function install()
 	{
         // install all updates
-        $this->update( "0.0.0" );
-
-		// done
-		return true;
+        return $this->update( "0.0.0" );
 	}
 
 
@@ -115,6 +138,9 @@ class Update
                 $this->updateSql( "1.3.0-a" );
                 $this->updateSql( "1.3.0-b" );
                 $this->updateSql( "1.3.0-c" );
+            case "1.3.0":
+            case "1.3.1":
+                $this->updateVersion140();
 		}
 
 		// done
@@ -169,9 +195,6 @@ class Update
                 'scope'       => \Shopware\Models\Config\Element::SCOPE_SHOP
             )
         );
-
-        // done
-        return;
     }
 
 
@@ -182,10 +205,10 @@ class Update
     /**
      * Updates the plugin to 1.1.5
      *
-     * @return boolean
+     * @return void
      */
 
-    public function updateVersion1115()
+    private function updateVersion1115()
     {
         // create the form
         $form = $this->bootstrap->Form();
@@ -199,9 +222,6 @@ class Update
                 'required'    => false
             )
         );
-
-        // done
-        return true;
     }
 
 
@@ -211,10 +231,10 @@ class Update
     /**
      * Updates the plugin to 1.1.6
      *
-     * @return boolean
+     * @return void
      */
 
-    public function updateVersion1116()
+    private function updateVersion1116()
     {
         // create the form
         $form = $this->bootstrap->Form();
@@ -242,10 +262,61 @@ class Update
                 )
             )
         );
-
-        // done
-        return true;
     }
+
+
+
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    private function updateVersion140()
+    {
+        // ...
+        $this->crudService->update(
+            "s_order_basket_attributes",
+            "atsd_configurator_selection_id",
+            "integer",
+            array(
+                'displayInBackend' => false,
+                'custom'           => false
+            )
+        );
+
+        // ...
+        $this->crudService->update(
+            "s_order_details_attributes",
+            "atsd_configurator_selection_id",
+            "integer",
+            array(
+                'displayInBackend' => false,
+                'custom'           => false
+            )
+        );
+
+        // ...
+        $this->crudService->update(
+            "s_order_details_attributes",
+            "atsd_configurator_selection_master",
+            "boolean",
+            array(
+                'displayInBackend' => false,
+                'custom'           => false
+            )
+        );
+
+        // save our attributes
+        $this->modelManager->generateAttributeModels( array( "s_order_basket_attributes", "s_order_details_attributes" ) );
+    }
+
+
 
 
 
@@ -264,8 +335,7 @@ class Update
         $sql = @file_get_contents( $this->bootstrap->Path() . "Update/update-" . $version . ".sql" );
 
         // execute the query
-        try
-        { Shopware()->Db()->exec( $sql ); }
+        try { Shopware()->Db()->exec( $sql ); }
         // catch any db exception
         catch ( Exception $exception ) {}
     }

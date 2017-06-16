@@ -31,8 +31,6 @@ class ValidatorService
      * ...
      *
      * @param StockService   $stockService
-     *
-     * @return ValidatorService
      */
 
     public function __construct( StockService $stockService )

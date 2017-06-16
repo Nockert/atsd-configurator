@@ -62,8 +62,6 @@ class BasketService
      * @param ModelManager     $modelManager
      * @param Session          $session
      * @param ContextService   $contextService
-     *
-     * @return BasketService
      */
 
     public function __construct( ModelManager $modelManager, Session $session, ContextService $contextService )

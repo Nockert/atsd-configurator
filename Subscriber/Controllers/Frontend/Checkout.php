@@ -66,8 +66,6 @@ class Checkout implements \Enlight\Event\SubscriberInterface
 	 *
      * @param \Shopware_Components_Plugin_Bootstrap                $bootstrap
      * @param \Shopware\Components\DependencyInjection\Container   $container
-	 *
-	 * @return \Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend\Checkout
 	 */
 
     public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap, \Shopware\Components\DependencyInjection\Container $container )
@@ -136,9 +134,6 @@ class Checkout implements \Enlight\Event\SubscriberInterface
 
         // assign the status
         $view->assign( "atsdConfiguratorShopStatus", (boolean) $this->bootstrap->Config()->get( "shopStatus" ) );
-
-        // and we are done
-        return;
     }
 
 

@@ -35,8 +35,6 @@ class StockService
      * ...
      *
      * @param Config   $config
-     *
-     * @return StockService
      */
 
     public function __construct( Config $config )
