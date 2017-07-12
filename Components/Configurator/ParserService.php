@@ -154,8 +154,21 @@ class ParserService
                 // loop the articles
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
+                    // current article number
+                    $number = $article['article']['mainDetail']['number'];
+
+                    // do we have a product?
+                    if ( !isset( $products[$number] ) )
+                    {
+                        // remove it
+                        unset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] );
+
+                        // next
+                        continue;
+                    }
+
                     // get the product
-                    $product = $products[$article['article']['mainDetail']['number']];
+                    $product = $products[$number];
 
                     // save it
                     $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['article'] = $product;

@@ -76,6 +76,12 @@ class FilterService
         // get category config
         $allowArticlesWithoutCategory = (boolean) $this->config->get( "allowArticlesWithoutCategory" );
 
+        // we cant use articles without category :(
+        // we drop them in the parser service when we have all the data
+        $allowArticlesWithoutCategory = false;
+
+
+
         // loop the fieldsets
         foreach ( $configurator['fieldsets'] as $fieldsetKey => $fieldset )
         {
@@ -127,8 +133,11 @@ class FilterService
 
     private function hasCategory( $articleId )
     {
+        // always return true since this setting is deprecated because we cant use articles without category
+        return true;
+
         // ...
-        return ( (integer) Shopware()->Modules()->Categories()->sGetCategoryIdByArticleId( $articleId ) > 0 );
+        // return ( (integer) Shopware()->Modules()->Categories()->sGetCategoryIdByArticleId( $articleId ) > 0 );
     }
 
 
