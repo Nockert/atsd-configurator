@@ -122,6 +122,9 @@
  * 1.4.1
  * - always drop articles without categories due to shopware restrictions
  *
+ * 1.4.2
+ * - added asynchronous loading of jquery plugin
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -140,7 +143,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.1",
+        'version'     => "1.4.2",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
