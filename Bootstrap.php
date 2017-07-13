@@ -125,6 +125,9 @@
  * 1.4.2
  * - added asynchronous loading of jquery plugin
  *
+ * 1.4.3
+ * - added check if a session exists before decorating product list service
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -143,7 +146,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.2",
+        'version'     => "1.4.3",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

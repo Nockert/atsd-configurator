@@ -428,6 +428,11 @@ class ServiceContainer implements SubscriberInterface
 
     public function afterListProductService()
     {
+        // only if we have a session
+        if ( !$this->container->initialized( "session" ) )
+            // we might be in the backend
+            return;
+
         // get the services
         $coreService         = $this->container->get( "shopware_storefront.list_product_service" );
         $component           = $this->container->get( "atsd_configurator.component" );
