@@ -1489,7 +1489,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
             // remove this article from selection
             $query = "
-                DELETE FROM atsd_configurators_selections_to_articles
+                DELETE FROM atsd_configurators_selections_articles
                 WHERE articleId = ?
             ";
             Shopware()->Db()->query( $query, array( $article->getId() ) );

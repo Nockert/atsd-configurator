@@ -128,6 +128,9 @@
  * 1.4.3
  * - added check if a session exists before decorating product list service
  *
+ * 1.4.4
+ * - fixed removing articles from a configurator
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
