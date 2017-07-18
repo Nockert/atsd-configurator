@@ -130,6 +130,7 @@
  *
  * 1.4.4
  * - fixed removing articles from a configurator
+ * - fixed product slider
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

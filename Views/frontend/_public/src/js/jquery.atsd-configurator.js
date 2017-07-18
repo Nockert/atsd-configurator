@@ -109,9 +109,6 @@
             // startup the default selection
             me.parseCurrentSelection();
 
-            // init the product slider and its configurations
-            me.initProductSlider();
-
             // bind all events
             me.bindEvents();
         },
@@ -426,14 +423,6 @@
             this.parseCurrentSelection();
         },
 
-
-
-        // init the product slider and its configurations
-        initProductSlider: function ()
-        {
-            // add plugin
-            StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "atsdConfiguratorProductSlider" );
-        },
 
 
 
@@ -927,8 +916,13 @@
 
     // wait till the document is ready
     document.asyncReady( function() {
+
+        // init the product slider
+        StateManager.addPlugin( '*[data-atsd-configurator-product-slider="true"]', "atsdConfiguratorProductSlider" );
+
         // call our plugin
         StateManager.addPlugin( '*[data-atsd-configurator="true"]', "atsdConfigurator", {} );
+
     });
 
 })(jQuery);
