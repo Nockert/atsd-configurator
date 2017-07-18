@@ -8,7 +8,10 @@
 
 
 {* append our main menu to the sidebar *}
-{block name='frontend_account_menu_link_orders' append}
+{block name='frontend_account_menu_link_orders'}
+
+    {* parent *}
+    {$smarty.block.parent}
 
     {* activated for this shop? *}
     {if $atsdConfiguratorShopStatus == true}

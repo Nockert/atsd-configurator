@@ -264,11 +264,6 @@ class sBasket implements SubscriberInterface
 
         // disable default addArticle()
         $arguments->set( "id", "0" );
-
-        //done here
-        return;
-
-
     }
 
 

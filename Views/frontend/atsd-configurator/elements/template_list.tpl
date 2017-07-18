@@ -83,8 +83,13 @@
                     {* every calculated price *}
                     {assign var="prices" value=[]}
 
+
+
                     {* loop every available price and save it *}
                     {foreach $article->getPrices() as $price}
+
+
+
 
                         {assign var="currentPrice" value=[]}
 
