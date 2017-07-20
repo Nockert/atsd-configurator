@@ -448,9 +448,6 @@ class ServiceContainer implements SubscriberInterface
 
         // and replace it
         $this->container->set( "shopware_storefront.list_product_service", $service );
-
-        // done
-        return;
     }
 
 

@@ -156,26 +156,15 @@ class sBasket implements SubscriberInterface
         // get the id
         $id = (integer) $arguments->get( "id" );
 
-        // get the basket
-        /* @var $basket BasketItem */
-        $basket = Shopware()->Models()
-            ->find( '\Shopware\Models\Order\Basket', $id );
 
-        // not found?
-        if ( !$basket instanceof BasketItem )
-            // nope
-            return $queryNewPrice;
-
-
-
-        /* @var $attributeDataLoader AttributeDataLoader */
-        $attributeDataLoader = $this->container->get( "shopware_attribute.data_loader" );
-
-        // get attributes
-        $attributes = $attributeDataLoader->load( "s_order_basket_attributes", $basket->getId() );
 
         // get the selection id
-        $selectionId = (integer) $attributes['atsd_configurator_selection_id'];
+        $query = "
+            SELECT atsd_configurator_selection_id
+            FROM s_order_basket_attributes
+            WHERE basketID = ?
+        ";
+        $selectionId = (integer) Shopware()->Db()->fetchOne( $query, array( $id ) );
 
 
 
@@ -183,6 +172,8 @@ class sBasket implements SubscriberInterface
         if ( $selectionId == 0 )
             // nothing to do
             return $queryNewPrice;
+
+
 
         // get the selection
         /* @var $selection Selection */
