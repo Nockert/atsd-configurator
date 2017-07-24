@@ -36,7 +36,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Window",
 
     // style
     width: 1100,
-    height: 450,
+    height: 500,
     
     // title
     title: "Element bearbeiten",

@@ -132,7 +132,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
         // create items
         var items =
             [
-                me.getFormFieldsetDetails()
+                me.getFormFieldsetDetails(),
+                me.getFormFieldsetNotice()
             ];
 
         // return the items
@@ -140,6 +141,46 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
     },
 
 
+
+
+
+
+    //
+    getFormFieldsetNotice: function()
+    {
+        // get this
+        var me = this;
+
+        // create the form fieldset
+        var field = Ext.create( "Ext.form.FieldSet",
+            {
+                collapsible: false,
+                title: 'Hinweise zu Artikeln',
+                layout: "column",
+                defaults:
+                    {
+                        columnWidth: 1,
+                        flex: 1,
+                        anchor: '100%'
+                    },
+                items:
+                    [
+                        Ext.create( "Ext.container.Container",
+                            {
+                                html:
+                                '<span style="font-weight: bold;">Auswahl:</span> darf der Kunde die Stückzahl des Artikels selber wählen?<br />' +
+                                '<span style="font-weight: bold;">Multiplikator:</span> hat der Kunde eine freie Auswahl der Stückzahl oder muss es ein Vielfaches der definierten Anzahl sein?<br />' +
+                                '<span style="font-weight: bold;">Anzahl:</span> die Stückzahl des Artikels.',
+                                style: ''
+                            }
+                        )
+                    ]
+            }
+        );
+
+        // return it
+        return field;
+    },
 
 
 

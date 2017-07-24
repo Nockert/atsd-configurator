@@ -158,7 +158,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
     {
         // get this
         var me = this;
-        
+
         // create items
         var items =
             [

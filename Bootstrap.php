@@ -135,6 +135,9 @@
  * 1.4.5
  * - optimized performance for price update in sBasket
  *
+ * 1.4.6
+ * - added help notice for article columns in backend view
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -153,7 +156,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.5",
+        'version'     => "1.4.6",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
