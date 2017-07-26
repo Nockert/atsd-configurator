@@ -53,7 +53,7 @@ class AtsdConfigurator
      * @var boolean
      */
 
-    private $cache = true;
+    private $cache;
 
 
 
@@ -63,7 +63,7 @@ class AtsdConfigurator
      * @var integer
      */
 
-    private $cacheTime = 900;
+    private $cacheTime;
 
 
 
@@ -74,13 +74,17 @@ class AtsdConfigurator
      *
      * @param Container      $container
      * @param ModelManager   $modelManager
+     * @param boolean        $cache
+     * @param integer        $cacheTime
      */
 
-    public function __construct( Container $container, ModelManager $modelManager )
+    public function __construct( Container $container, ModelManager $modelManager, $cache, $cacheTime )
     {
         // set params
         $this->container    = $container;
         $this->modelManager = $modelManager;
+        $this->cache        = $cache;
+        $this->cacheTime    = $cacheTime;
     }
 
 

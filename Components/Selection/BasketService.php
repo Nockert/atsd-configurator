@@ -17,6 +17,8 @@ use Shopware\Models\Attribute\OrderBasket as Attribute;
 use Enlight_Components_Session_Namespace as Session;
 use Shopware\Bundle\StoreFrontBundle\Struct;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
+use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
+use Shopware\AtsdConfigurator\Components\AtsdConfigurator;
 
 
 
@@ -59,17 +61,29 @@ class BasketService
     /**
      * ...
      *
-     * @param ModelManager     $modelManager
-     * @param Session          $session
-     * @param ContextService   $contextService
+     * @var AtsdConfigurator
      */
 
-    public function __construct( ModelManager $modelManager, Session $session, ContextService $contextService )
+    protected $component;
+
+
+
+    /**
+     * ...
+     *
+     * @param ModelManager       $modelManager
+     * @param Session            $session
+     * @param ContextService     $contextService
+     * @param AtsdConfigurator   $component
+     */
+
+    public function __construct( ModelManager $modelManager, Session $session, ContextService $contextService, AtsdConfigurator $component )
     {
         // set params
         $this->modelManager   = $modelManager;
         $this->session        = $session;
         $this->contextService = $contextService;
+        $this->component      = $component;
     }
 
 
@@ -148,6 +162,91 @@ class BasketService
         // save shit
         $this->modelManager->flush();
     }
+
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param string   $sessionId
+     *
+     * @return float
+     */
+
+    public function getBasketWeight( $sessionId )
+    {
+        // we dont need this because the selections are cached within the session which is even faster
+        /*
+        $query = "
+            SELECT *
+            FROM s_order_basket AS basket
+                LEFT JOIN s_order_basket_attributes AS attribute
+                    ON basket.id = attribute.basketID
+                LEFT JOIN atsd_configurators_selections_articles AS selectionArticle
+                    ON attribute.atsd_configurator_selection_id = selectionArticle.selectionId
+                LEFT JOIN atsd_configurators_fieldsets_elements_articles AS elementArticle
+                    ON selectionArticle.articleId = elementArticle.id
+                LEFT JOIN s_articles_details AS article
+                    ON elementArticle.articleId = article.articleID AND article.kind = 1
+            WHERE basket.sessionID = :sessionId
+                AND attribute.atsd_configurator_selection_id IS NOT NULL
+        ";
+        */
+
+
+
+        // weight
+        $weight = 0.0;
+
+
+
+        // get every article again
+        $query = "
+            SELECT *
+            FROM s_order_basket AS basket
+                LEFT JOIN s_order_basket_attributes AS attribute
+                    ON basket.id = attribute.basketID
+            WHERE basket.sessionID = :sessionId
+                AND attribute.atsd_configurator_selection_id IS NOT NULL
+        ";
+        $articles = Shopware()->Db()->fetchAll( $query, array( 'sessionId' => $sessionId ) );
+
+        // loop them
+        foreach ( $articles as $article )
+        {
+            // get the selection
+            /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+            $selection = Shopware()->Models()
+                ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+                ->find( (integer) $article['atsd_configurator_selection_id'] );
+
+            // get selection data and ignore it when an error occurs
+            try
+            {
+                // get the selection data
+                $data = $this->component->getSelectionData( $selection );
+            }
+                // catch validation errors
+            catch ( ValidatorException $exception )
+            {
+                // set 0 as weight
+                $data = array( 'weight' => 0 );
+            }
+
+            // add the weight
+            $weight = (float) $weight + (float) $data['weight'];
+        }
+
+
+
+        // return the configurator weight
+        return $weight;
+    }
+
+
 
 
 

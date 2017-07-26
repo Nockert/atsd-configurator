@@ -213,7 +213,8 @@ class ServiceContainer implements SubscriberInterface
         return new Components\Selection\BasketService(
             $this->container->get( "shopware.model_manager" ),
             $this->container->get( "session" ),
-            $this->container->get( "shopware_storefront.context_service" )
+            $this->container->get( "shopware_storefront.context_service" ),
+            $this->container->get( "atsd_configurator.component" )
         );
     }
 
@@ -391,7 +392,9 @@ class ServiceContainer implements SubscriberInterface
         // ...
         return new Components\AtsdConfigurator(
             $this->container,
-            $this->container->get( "shopware.model_manager" )
+            $this->container->get( "shopware.model_manager" ),
+            true,
+            900
         );
     }
 

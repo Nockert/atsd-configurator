@@ -71,8 +71,6 @@ class sBasket implements SubscriberInterface
 	 * @param Bootstrap   $bootstrap
 	 * @param Container   $container
 	 * @param Component   $component
-	 *
-	 * @return sBasket
 	 */
 
 	public function __construct( Bootstrap $bootstrap, Container $container, Component $component )

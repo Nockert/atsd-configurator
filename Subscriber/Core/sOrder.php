@@ -165,11 +165,6 @@ class sOrder implements SubscriberInterface
             // save it
             $attributeDataPersister->persist( $attributes, "s_order_details_attributes", (integer) $article['orderDetailId'] );
         }
-
-
-
-        // done
-        return;
     }
 
 

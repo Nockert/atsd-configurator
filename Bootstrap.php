@@ -138,6 +138,9 @@
  * 1.4.6
  * - added help notice for article columns in backend view
  *
+ * 1.4.7
+ * - moved basket weight calculation to basket service
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -397,7 +400,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             new Subscriber\Controllers\Frontend\Checkout( $this, $this->get( "service_container" ) ),
             new Subscriber\Controllers\Frontend\Detail( $this, $this->get( "service_container" ) ),
             new Subscriber\Controllers\Frontend\Listing( $this, $this->get( "service_container" ) ),
-            new Subscriber\Core\sAdmin( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
+            new Subscriber\Core\sAdmin( $this, $this->get( "service_container" ) ),
             new Subscriber\Core\sBasket( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
             new Subscriber\Core\sOrder( $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.config" ), $this->get( "service_container" )->get( "atsd_configurator.version-service" ) ),
             new Subscriber\Controllers( $this )
