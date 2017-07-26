@@ -141,6 +141,14 @@ class Update
             case "1.3.0":
             case "1.3.1":
                 $this->updateVersion140();
+            case "1.4.0":
+            case "1.4.1":
+            case "1.4.2":
+            case "1.4.3":
+            case "1.4.4":
+            case "1.4.5":
+            case "1.4.6":
+                $this->updateVersion147();
 		}
 
 		// done
@@ -314,6 +322,47 @@ class Update
 
         // save our attributes
         $this->modelManager->generateAttributeModels( array( "s_order_basket_attributes", "s_order_details_attributes" ) );
+    }
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    public function updateVersion147()
+    {
+        // create the form
+        $form = $this->bootstrap->Form();
+
+        // info
+        $form->setElement( "button", "cacheButton",
+            array(
+                'label' => "<b>Cache</b>"
+            )
+        );
+
+        // default locale
+        $form->setElement( "boolean", "cacheStatus",
+            array(
+                'label'       => "Cache aktivieren",
+                'description' => "Sollen Konfiguratoren und Konfigurationen gecached werden? Eine Deaktivierung des caches wirkt sich massiv auf die Performance aus.",
+                'value'       => true
+            )
+        );
+
+        //
+        $form->setElement( "integer", "cacheTime",
+            array(
+                'label'       => "Cache Zeit",
+                'description' => "Wie lange soll ein Konfigurator / eine Konfiguration (in Sekunden) im cache behalten werden?",
+                'value'       => 3600
+            )
+        );
     }
 
 

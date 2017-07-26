@@ -140,6 +140,7 @@
  *
  * 1.4.7
  * - moved basket weight calculation to basket service
+ * - added plugin configuration for cache status and time
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator

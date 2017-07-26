@@ -393,8 +393,8 @@ class ServiceContainer implements SubscriberInterface
         return new Components\AtsdConfigurator(
             $this->container,
             $this->container->get( "shopware.model_manager" ),
-            true,
-            900
+            (boolean) $this->bootstrap->Config()->get( "cacheStatus" ),
+            (integer) $this->bootstrap->Config()->get( "cacheTime" )
         );
     }
 
