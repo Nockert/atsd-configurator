@@ -8,9 +8,13 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Subscriber\Core;
+namespace Shopware\AtsdConfigurator\Subscriber\Plugins\AtsdShippingUpsXml;
 
+use Enlight\Event\SubscriberInterface;
+use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+use Shopware\Components\DependencyInjection\Container;
 use Shopware\AtsdConfigurator\Components\Selection\BasketService;
+use Enlight_Event_EventArgs as EventArgs;
 
 
 
@@ -18,13 +22,13 @@ use Shopware\AtsdConfigurator\Components\Selection\BasketService;
  * Aquatuning Software Development - Configurator - Subscriber
  */
 
-class sAdmin implements \Enlight\Event\SubscriberInterface
+class ModifyWeight implements SubscriberInterface
 {
 
 	/**
 	 * Main bootstrap object.
 	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
+	 * @var Bootstrap
 	 */
 
 	protected $bootstrap;
@@ -34,10 +38,11 @@ class sAdmin implements \Enlight\Event\SubscriberInterface
 	/**
 	 * DI container.
 	 *
-	 * @var \Shopware\Components\DependencyInjection\Container
+	 * @var Container
 	 */
 
 	protected $container;
+
 
 
 
@@ -71,7 +76,7 @@ class sAdmin implements \Enlight\Event\SubscriberInterface
 	{
 		// return the events
 		return array(
-			'sAdmin::sGetDispatchBasket::after' => "afterGetDispatchBasket"
+			'Shopware_AtsdShippingUpsXml_ModifyWeight' => "onModifyWeight"
 		);
 	}
 
@@ -82,30 +87,45 @@ class sAdmin implements \Enlight\Event\SubscriberInterface
 
 
 	/**
-	 * Add the weight to the dispatch basket to get correct shipping costs.
+	 * ...
 	 *
-	 * @param \Enlight_Hook_HookArgs   $arguments
+	 * @param EventArgs   $arguments
 	 *
-	 * @return array
+	 * @return float
 	 */
 
-	public function afterGetDispatchBasket( \Enlight_Hook_HookArgs $arguments )
+	public function onModifyWeight( EventArgs $arguments )
 	{
 	    /* @var $basketService BasketService */
 	    $basketService = $this->container->get( "atsd_configurator.selection.basket-service" );
 
-		// get the query
-		$basket = $arguments->getReturn();
+		// get the weight
+		$weight = $arguments->getReturn();
 
-		// add the weight
-        $basket['weight'] = (float) $basket['weight'] + $basketService->getBasketWeight( $basket['sessionID'] );
+		// add our weight
+        $weight = (float) $weight + $basketService->getBasketWeight( $this->getSessionId() );
 
-		// return the correct basket
-		return $basket;
+		// return the correct weight
+		return $weight;
 	}
 
 
 
+
+
+
+
+    /**
+     * ...
+     *
+     * @return string
+     */
+
+    private function getSessionId()
+    {
+        // return via context service
+        return $this->container->get( "session" )->get( "sessionId" );
+    }
 
 
 

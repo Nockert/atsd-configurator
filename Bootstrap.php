@@ -141,6 +141,7 @@
  * 1.4.7
  * - moved basket weight calculation to basket service
  * - added plugin configuration for cache status and time
+ * - added subscribe to ups xml plugin to add selection weights to the basket
  *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
@@ -160,7 +161,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.6",
+        'version'     => "1.4.7",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
@@ -404,6 +405,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
             new Subscriber\Core\sAdmin( $this, $this->get( "service_container" ) ),
             new Subscriber\Core\sBasket( $this, $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.component" ) ),
             new Subscriber\Core\sOrder( $this->get( "service_container" ), $this->get( "service_container" )->get( "atsd_configurator.config" ), $this->get( "service_container" )->get( "atsd_configurator.version-service" ) ),
+            new Subscriber\Plugins\AtsdShippingUpsXml\ModifyWeight( $this, $this->get( "service_container" ) ),
             new Subscriber\Controllers( $this )
         );
 
