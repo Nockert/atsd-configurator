@@ -97,6 +97,11 @@ class sAdmin implements \Enlight\Event\SubscriberInterface
 		// get the query
 		$basket = $arguments->getReturn();
 
+		// no basket given?
+        if ( ( !is_array( $basket ) ) or ( !isset( $basket['weight'] ) ) )
+            // return default
+            return $basket;
+
 		// add the weight
         $basket['weight'] = (float) $basket['weight'] + $basketService->getBasketWeight( $basket['sessionID'] );
 
