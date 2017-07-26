@@ -356,7 +356,7 @@ class Update
         );
 
         //
-        $form->setElement( "integer", "cacheTime",
+        $form->setElement( "number", "cacheTime",
             array(
                 'label'       => "Cache Zeit",
                 'description' => "Wie lange soll ein Konfigurator / eine Konfiguration (in Sekunden) im cache behalten werden?",

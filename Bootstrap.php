@@ -143,6 +143,9 @@
  * - added plugin configuration for cache status and time
  * - added subscribe to ups xml plugin to add selection weights to the basket
  *
+ * 1.4.8
+ * - fixed plugin configuration 1.4.7 update
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -161,7 +164,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.7",
+        'version'     => "1.4.8",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
