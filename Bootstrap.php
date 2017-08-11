@@ -149,6 +149,9 @@
  * 1.4.9
  * - fixed sGetDispatchBasket hook for empty basket
  *
+ * 1.4.10
+ * - fixed non-escaped buy button
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -167,7 +170,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.9",
+        'version'     => "1.4.10",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

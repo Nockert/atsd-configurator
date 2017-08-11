@@ -88,9 +88,6 @@
                     {* loop every available price and save it *}
                     {foreach $article->getPrices() as $price}
 
-
-
-
                         {assign var="currentPrice" value=[]}
 
                         {append var='currentPrice' index='from' value=$price->getRule()->getFrom()|intval}

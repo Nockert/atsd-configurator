@@ -44,8 +44,8 @@
                     <input type="hidden" name="selection" value="" data-atsd-configurator-hidden-selection="true" />
 
                     {* the button *}
-                    <button class="buybox--button block btn is--primary is--icon-right is--center is--large" name="{s name="DetailBuyActionAdd" namespace="frontend/detail/buy"}{/s}" onclick="$.loadingIndicator.open( { 'closeOnClick': false } );">
-                        {s name="DetailBuyActionAdd" namespace="frontend/detail/buy"}{/s} <i class="icon--arrow-right"></i>
+                    <button class="buybox--button block btn is--primary is--icon-right is--center is--large" name="{s name="DetailBuyActionAdd"}In den Warenkorb{/s}" onclick="$.loadingIndicator.open( { 'closeOnClick': false } );">
+                        {s name="DetailBuyActionAdd"}In den Warenkorb{/s} <i class="icon--arrow-right"></i>
                     </button>
 
                 </form>
