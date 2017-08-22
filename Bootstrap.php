@@ -152,6 +152,9 @@
  * 1.4.10
  * - fixed non-escaped buy button
  *
+ * 1.4.11
+ * - fixed not allowed php functions for activated smarty security
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -170,7 +173,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.10",
+        'version'     => "1.4.11",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

@@ -11,7 +11,7 @@
 {block name='frontend_listing_box_article_price_info'}
 
     {* do we have a configurator for this article? *}
-    {if isset( $sArticle.attributes.atsd_configurator ) && is_object( $sArticle.attributes.atsd_configurator ) && $sArticle.attributes.atsd_configurator->get( "hasConfigurator" ) == true}
+    {if isset( $sArticle.attributes.atsd_configurator ) && !is_null( $sArticle.attributes.atsd_configurator ) && $sArticle.attributes.atsd_configurator->get( "hasConfigurator" ) == true}
 
         {* get the configurator *}
         {assign var="configurator" value=$sArticle.attributes.atsd_configurator->get( "defaultConfigurator" )}

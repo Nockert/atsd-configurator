@@ -102,7 +102,7 @@
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"
                          data-atsd-configurator-article-weight="{$article->getWeight()}"
-                         data-atsd-configurator-article-image="{if is_object( $article->getCover() )}{$article->getCover()->getThumbnail( 0 )->getSource()}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
+                         data-atsd-configurator-article-image="{if !is_null( $article->getCover() )}{$article->getCover()->getThumbnail( 0 )->getSource()}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
                          data-atsd-configurator-article-selector="slider"
                     >
 
@@ -125,7 +125,7 @@
                                             <span class="image--media">
 
                                                 {* do we have an image? *}
-                                                {if is_object( $article->getCover() )}
+                                                {if !is_null( $article->getCover() )}
 
                                                     {* show it *}
                                                     <img srcset="{$article->getCover()->getThumbnail( 0 )->getSource()}"
