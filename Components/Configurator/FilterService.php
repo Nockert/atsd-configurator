@@ -88,9 +88,17 @@ class FilterService
             // loop the elements
             foreach ( $fieldset['elements'] as $elementKey => $element )
             {
+                // count the articles because the first one might be the dependecy master
+                $articleCount = 0;
+
                 // loop the articles
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
+                    // surchage set but deactivated?
+                    if ( ( $element['surcharge'] == false ) and ( $article['surcharge'] > 0 ) )
+                        // disable surcharge for this article
+                        $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['surcharge'] = 0;
+
                     // can we use this article?
                     if ( ( $article['article']['active'] == false ) or ( $article['article']['mainDetail']['active'] == false ) or ( $this->stockService->getMaxArticleStock( $article['article']['mainDetail']['inStock'], $article['article']['lastStock'], $article['quantity'] ) < 1 ) )
                         // no we cant
@@ -100,7 +108,25 @@ class FilterService
                     if ( ( $allowArticlesWithoutCategory == false ) and ( $this->hasCategory( $article['article']['id'] ) == false ) )
                         // remove the article
                         unset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] );
+
+                    // did we remove it and this was the father?!
+                    if ( ( $articleCount == 0 ) and ( $element['dependency'] == true ) and ( !isset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] ) ) )
+                    {
+                        // remove every article so that the element will be removed
+                        $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'] = array();
+
+                        // break the article loop
+                        break;
+                    }
+
+                    // next counter
+                    $articleCount++;
                 }
+
+                // does this element have a dependency and less than 2 articles (at least master and one child)
+                if ( ( $element['dependency'] == true ) and ( count( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'] ) < 2 ) )
+                    // remove every article so that the element will be removed
+                    $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'] = array();
 
                 // no articles left for this element?
                 if ( count( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'] ) == 0 )

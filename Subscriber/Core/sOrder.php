@@ -17,6 +17,7 @@ use Enlight_Config as Config;
 use Enlight_Event_EventArgs as EventArgs;
 use Enlight_Hook_HookArgs as HookArgs;
 use Shopware\AtsdConfigurator\Components\Selection\ParserService;
+use Shopware\AtsdConfigurator\Components\Selection\CalculatorService;
 use Shopware\AtsdConfigurator\Components\Configurator\ArticlePriceService;
 use Exception;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
@@ -213,9 +214,11 @@ class sOrder implements SubscriberInterface
         $split = (boolean) $this->config->get( "splitConfigurator" );
         $attr  = (string)  $this->config->get( "saveInAttribute" );
 
-        // get the parser service
         /* @var $parserService ParserService */
         $parserService = $this->container->get( "atsd_configurator.selection.parser-service" );
+
+        /* @var $calculatorService CalculatorService */
+        $calculatorService = $this->container->get( "atsd_configurator.selection.calculator-service" );
 
 
 
@@ -251,6 +254,11 @@ class sOrder implements SubscriberInterface
 
 
 
+            // get the calculated selection
+            $calculatedSelection = $calculatorService->calculateSelectionDataBySelection( $selection );
+
+
+
             // the selection array
             $selectionArr = array();
 
@@ -270,7 +278,7 @@ class sOrder implements SubscriberInterface
                 $article = $configurator['article'];
 
                 // get the corrected item
-                $item = $this->getBasketItem( $selection, $article, 1, 0, true, (integer) $item['id'] );
+                $item = $this->getBasketItem( $selection, $calculatedSelection['article'], $article, 1, 0, true, (integer) $item['id'] );
             }
 
 
@@ -318,9 +326,16 @@ class sOrder implements SubscriberInterface
                             // next one
                             continue;
 
+                        // get the configurator article id
+                        $configuratorArticleId = $articleArr['id'];
+
+                        // ...
+                        $selectionArticle = $this->getSelectionArticleByConfiguratorArticleId( $calculatedSelection, $configuratorArticleId );
+
                         // get the item
                         $splitArticleItem = $this->getBasketItem(
                             $selection,
+                            $selectionArticle,
                             $article,
                             (integer) $quantity,
                             (integer) $configurator['rebate'],
@@ -375,10 +390,51 @@ class sOrder implements SubscriberInterface
 
 
 
+
+    /**
+     * ...
+     *
+     * @param array     $calculatedSelection
+     * @param integer   $configuratorArticleId
+     *
+     * @return array
+     */
+
+    private function getSelectionArticleByConfiguratorArticleId( array $calculatedSelection, $configuratorArticleId )
+    {
+        // ...
+        foreach ( $calculatedSelection['fieldsets'] as $fieldset )
+        {
+            // ...
+            foreach ( $fieldset['elements'] as $element )
+            {
+                // ...
+                foreach ( $element['articles'] as $article )
+                {
+                    // ...
+                    if ( $article['configuratorArticleId'] == $configuratorArticleId )
+                        // return it
+                        return $article;
+                }
+            }
+        }
+
+        // ...
+        return array();
+    }
+
+
+
+
+
+
+
+
     /**
      * ...
      *
      * @param Selection     $selection
+     * @param array         $selectionArticle
      * @param ListProduct   $article
      * @param integer       $quantity
      * @param integer       $rebate
@@ -388,7 +444,7 @@ class sOrder implements SubscriberInterface
      * @return array
      */
 
-    private function getBasketItem( Selection $selection, ListProduct $article, $quantity, $rebate, $master, $basketId )
+    private function getBasketItem( Selection $selection, array $selectionArticle, ListProduct $article, $quantity, $rebate, $master, $basketId )
     {
         // get the price service
         /* @var $articlePriceService ArticlePriceService */
@@ -397,8 +453,8 @@ class sOrder implements SubscriberInterface
 
 
         // get price data
-        $price    = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $articlePriceService->getArticlePrice( $article, $quantity, (integer) $rebate ) : 0.0;
-        $priceNet = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $articlePriceService->getArticleNetPrice( $article, $quantity, (integer) $rebate ) : 0.0;
+        $price    = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $selectionArticle['price'] : 0.0;
+        $priceNet = ( ( $master == false ) or ( $master == true && $selection->getConfigurator()->getChargeArticle() == true ) ) ? $selectionArticle['priceNet'] : 0.0;
 
         // default item
         $item = array(

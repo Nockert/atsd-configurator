@@ -454,6 +454,19 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
                 },
 
                 {
+                    header: "Aufschlag",
+                    width: 60,
+                    dataIndex: 'surcharge',
+                    renderer: me.renderSurcharge,
+                    editor:
+                        {
+                            xtype: "numberfield",
+                            minValue: 0,
+                            maxValue: 99
+                        }
+                },
+
+                {
                     header: "Auswahl",
                     dataIndex: "quantitySelect",
                     width: 60,
@@ -527,7 +540,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
 
 
 
-    //
+    // ...
     renderArticleQuantitySelect: function( value, metaData, record )
     {
         return ( value == 1 ) ? "Ja" : "Nein";
@@ -535,10 +548,18 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Articles",
 
 
 
-    //
+    // ...
     renderArticleQuantityMultiply: function( value, metaData, record )
     {
         return ( value == 1 ) ? "Ja" : "Nein";
+    },
+
+
+
+    // ...
+    renderSurcharge: function( value, metaData, record )
+    {
+        return ( value > 0 ) ? value + "%" : "";
     },
 
 

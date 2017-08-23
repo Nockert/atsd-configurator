@@ -44,6 +44,14 @@
 
 
 
+                {* dependency status for this element *}
+                {assign var="dependencyStatus" value=$element.dependency}
+
+                {* first article of the element selected? *}
+                {assign var="dependencySelected" value=false}
+
+
+
                 {* loop every article *}
                 {foreach $element.articles as $elementArticle}
 
@@ -90,20 +98,31 @@
 
 
 
+                    {* first article of the element selected? *}
+                    {if $elementArticle@first == true}
+                        {assign var="dependencySelected" value=$isSelected}
+                    {/if}
+
+
+
                     {* the item container *}
-                    <div class="product-slider--item{if $outputQuantity == true} has--quantity-output{/if}"
+                    <div class="product-slider--item{if $outputQuantity == true} has--quantity-output{/if}{if $dependencyStatus == true && $dependencySelected == false && $elementArticle@first == false} is--disabled{/if}"
                          data-atsd-configurator-article="true"
                          data-atsd-configurator-fieldset-id="{$fieldset.id}"
                          data-atsd-configurator-element-id="{$element.id}"
                          data-atsd-configurator-article-id="{$elementArticle.id}"
                          data-atsd-configurator-article-price="{$article->getCheapestPrice()->getCalculatedPrice()}"
                          data-atsd-configurator-article-prices='{$prices|json_encode}'
+                         data-atsd-configurator-article-surcharge='{$elementArticle.surcharge}'
                          data-atsd-configurator-article-quantity="{$elementArticle.quantity}"
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"
                          data-atsd-configurator-article-weight="{$article->getWeight()}"
                          data-atsd-configurator-article-image="{if !is_null( $article->getCover() )}{$article->getCover()->getThumbnail( 0 )->getSource()}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
                          data-atsd-configurator-article-selector="slider"
+                         data-atsd-configurator-article-dependency="{if $element.dependency == true}true{else}false{/if}"
+                         data-atsd-configurator-article-dependency-master="{if $element.dependency == true && $elementArticle@first == true}true{else}false{/if}"
+                         data-atsd-configurator-article-dependency-child="{if $element.dependency == true && $elementArticle@first == false}true{else}false{/if}"
                     >
 
 
@@ -147,7 +166,7 @@
                                     </div>
 
                                     {* article name with modal popup *}
-                                    <span style="cursor: pointer;" class="product--title"
+                                    <span class="product--title"
                                           data-atsd-configurator-selector-info-button="true"
                                           data-atsd-configurator-selector-info-button-article-id="{$elementArticle.id}"
                                     >

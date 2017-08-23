@@ -114,6 +114,30 @@ class Element extends ModelEntity
 
 
     /**
+     * ...
+     *
+     * @var boolean
+     *
+     * @ORM\Column(name="dependency", type="boolean", nullable=false, options={"default":0})
+     **/
+
+    private $dependency = false;
+
+
+
+    /**
+     * ...
+     *
+     * @var boolean
+     *
+     * @ORM\Column(name="surcharge", type="boolean", nullable=false, options={"default":0})
+     **/
+
+    private $surcharge = false;
+
+
+
+    /**
      * Displayed comment on the element (i.e. help)
      *
      * @var string $comment
@@ -360,6 +384,50 @@ class Element extends ModelEntity
     public function setMultiple($multiple)
     {
         $this->multiple = $multiple;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return bool
+     */
+    public function getDependency()
+    {
+        return $this->dependency;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param bool $dependency
+     *
+     * return void
+     */
+    public function setDependency($dependency)
+    {
+        $this->dependency = $dependency;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return bool
+     */
+    public function getSurcharge()
+    {
+        return $this->surcharge;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param bool $surcharge
+     *
+     * return void
+     */
+    public function setSurcharge($surcharge)
+    {
+        $this->surcharge = $surcharge;
     }
 
 

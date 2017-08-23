@@ -149,6 +149,13 @@ class Update
             case "1.4.5":
             case "1.4.6":
                 $this->updateVersion147();
+            case "1.4.7":
+            case "1.4.8":
+            case "1.4.9":
+            case "1.4.10":
+            case "1.4.11":
+                $this->updateSql( "1.5.0-a" );
+                $this->updateSql( "1.5.0-b" );
 		}
 
 		// done

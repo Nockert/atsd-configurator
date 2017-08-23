@@ -155,6 +155,10 @@
  * 1.4.11
  * - fixed not allowed php functions for activated smarty security
  *
+ * 1.5.0
+ * - added simple dependency for master and slave components within one element
+ * - added percental surcharge for components
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -173,7 +177,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.4.11",
+        'version'     => "1.5.0",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

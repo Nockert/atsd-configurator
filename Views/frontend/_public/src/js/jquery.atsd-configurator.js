@@ -30,6 +30,13 @@
                         discount:  "price--discount"
                     },
 
+                // surcharge snippets
+                surcharge:
+                    {
+                        pre:  null,
+                        post: null
+                    },
+
                 // stock/delivery selector
                 deliverySelector: ".product--buybox .product--delivery",
 
@@ -128,6 +135,8 @@
             me.configuration.priceFormat.template      = configuration.priceTemplate;
             me.configuration.priceTemplates.default    = configuration.priceDefault;
             me.configuration.priceTemplates.pseudo     = configuration.pricePseudo;
+            me.configuration.surcharge.pre             = configuration.surchargePre;
+            me.configuration.surcharge.post            = configuration.surchargePost;
             me.configuration.article.stockAvailable    = configuration.stockAvailable;
             me.configuration.article.stockNotAvailable = configuration.stockNotAvailable;
             me.configuration.selectorButton.selected   = configuration.selectorButtonSelected;
@@ -225,6 +234,14 @@
             // get the div
             var div = $( event.currentTarget );
 
+            // get row parent
+            var row = div.parents( 'div[data-atsd-configurator-article="true"]' ).first();
+
+            // is this one disabled?!
+            if ( row.hasClass( "is--disabled" ) )
+                // dont do anything
+                return;
+
             // get the article id
             var articleId = div.attr( "data-atsd-configurator-article-row-article-id" );
 
@@ -291,6 +308,14 @@
             // get the div
             var div = $( event.currentTarget );
 
+            // get row parent
+            var row = div.parents( 'div[data-atsd-configurator-article="true"]' ).first();
+
+            // is this one disabled?!
+            if ( row.hasClass( "is--disabled" ) )
+                // dont do anything
+                return;
+
             // get the article id
             var articleId = div.attr( "data-atsd-configurator-selector-info-article-id" );
 
@@ -353,6 +378,39 @@
 
 
 
+            // get the parent slider item
+            var item = button.parents( 'div[data-atsd-configurator-article="true"]' ).first();
+
+            // is this one disabled?!
+            if ( item.hasClass( "is--disabled" ) )
+                // dont do anything
+                return;
+
+
+
+            // check if this is a master article
+            if ( item.data( "atsd-configurator-article-dependency" ) == true && item.data( "atsd-configurator-article-dependency-master" ) == true )
+            {
+                // the new status will be checked
+                if ( button.hasClass( "is--primary" ) == false )
+                {
+                    // find every child and enable it
+                    item.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"]' ).removeClass( "is--disabled" );
+                }
+                // new status will be unchecked
+                else
+                {
+                    // disable every sibling
+                    item.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"] button[data-atsd-configurator-selector-button="true"]' ).removeClass( "is--primary" );
+                    item.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"] button[data-atsd-configurator-selector-button="true"]' ).html( me.configuration.selectorButton.selectable );
+
+                    // disable every sibling
+                    item.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"]' ).addClass( "is--disabled" );
+                }
+            }
+
+
+
             // is it not multiple and already checken?!
             if ( ( multiple == false ) && ( button.hasClass( "is--primary" ) ) )
                 // we cant click it again
@@ -403,6 +461,14 @@
             // get the button
             var button = $( event.currentTarget );
 
+            // get row parent
+            var row = button.parents( 'div[data-atsd-configurator-article="true"]' ).first();
+
+            // is this one disabled?!
+            if ( row.hasClass( "is--disabled" ) )
+                // dont do anything
+                return;
+
             // get parameters
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
@@ -419,8 +485,53 @@
         // ...
         onSelectionChange: function ( event )
         {
+            // get this
+            var me = this;
+
+            // get the input
+            var input = $( event.currentTarget );
+
+            // get row parent
+            var row = input.parents( 'div[data-atsd-configurator-article="true"]' ).first();
+
+            // is this one disabled?!
+            if ( row.hasClass( "is--disabled" ) )
+            {
+                // dont allow it to be checked
+                input.prop( "checked", false );
+
+                // dont do anything
+                return;
+            }
+
+
+
+            // check if this is a master article
+            if ( row.data( "atsd-configurator-article-dependency" ) == true && row.data( "atsd-configurator-article-dependency-master" ) == true )
+            {
+                // did we just activate the master?
+                if ( input.prop( "checked" ) == true )
+                {
+                    // find every child and enable it
+                    row.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"]' ).removeClass( "is--disabled" );
+                }
+                else
+                {
+                    // close every info box
+                    row.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"] div[data-atsd-configurator-selector-info-panel="true"]:visible' ).toggle( 500 );
+
+                    // disable every child checkbox
+                    row.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"] input[data-atsd-configurator-selector="true"]:checked' ).prop( "checked", false );
+
+                    // disable every sibling
+                    row.parent().find( 'div[data-atsd-configurator-article="true"][data-atsd-configurator-article-dependency-child="true"]' ).addClass( "is--disabled" );
+                }
+            }
+
+
+
             // parse the complete selection
-            this.parseCurrentSelection();
+            me.parseCurrentSelection();
         },
 
 
@@ -444,6 +555,8 @@
             me.parseCurrentSelectionHiddenSelection();
             me.parseCurrentSelectionStock();
             me.parseCurrentSelectionWeight();
+
+
 
             // do we want to show the loading indicator?
             if ( me.configuration.showLoadingIndicator == true )
@@ -674,23 +787,53 @@
             var price       = mainPrice;
             var pseudoPrice = mainPrice;
 
+            // surcharges to add later
+            var surcharges = [];
+
             // get every selected input
             me.$el.find( 'input[data-atsd-configurator-selector="true"]:checked' ).each ( function()
                 {
                     // get the article
                     var article = me.getArticleById( $( this ).attr( "data-atsd-configurator-selector-article-id" ) );
 
-                    // get the quantity
-                    var quantity = me.getArticleQuantityByArticle( article );
+                    // get a possible surcharge
+                    var surcharge = parseInt( article.attr( "data-atsd-configurator-article-surcharge" ) );
 
-                    // get current article scaled price
-                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
+                    // do we have a surcharge?
+                    if ( surcharge > 0 )
+                    {
+                        // add to surcharges
+                        surcharges.push( surcharge );
+                    }
+                    else
+                    {
+                        // get the quantity
+                        var quantity = me.getArticleQuantityByArticle( article );
 
-                    // add prices
-                    price       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
-                    pseudoPrice += quantity * parseFloat( articlePrice );
+                        // get current article scaled price
+                        var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
+
+                        // add prices
+                        price       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                        pseudoPrice += quantity * parseFloat( articlePrice );
+                    }
                 }
             );
+
+
+
+            // loop the surcharges
+            for ( var i in surcharges )
+            {
+                // calculate surcharge
+                var surcharge = ( 100 + surcharges[i] ) / 100;
+
+                // add to prices
+                price       = price * surcharge;
+                pseudoPrice = pseudoPrice * surcharge;
+            }
+
+
 
             // format them
             var formattedPrice       = me.formatPrice( price );
@@ -742,19 +885,33 @@
                     // the article
                     var article = $( this );
 
-                    // get the quantity
-                    var quantity = me.getArticleQuantityByArticle( article );
+                    // get possible surcharge
+                    var surcharge = parseInt( article.attr( "data-atsd-configurator-article-surcharge" ) );
 
-                    // get the article price for it
-                    var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
+                    // do we have a surcharge?
+                    if ( surcharge > 0 )
+                    {
+                        // output surcharge
+                        article.find( '.price--placeholder' ).html(
+                            me.configuration.surcharge.pre + surcharge.toString() + me.configuration.surcharge.post
+                        );
+                    }
+                    else
+                    {
+                        // get the quantity
+                        var quantity = me.getArticleQuantityByArticle( article );
 
-                    // get the price
-                    var price = quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                        // get the article price for it
+                        var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
 
-                    // set the price
-                    article.find( '.price--placeholder' ).html(
-                        me.formatPrice( price )
-                    );
+                        // get the price
+                        var price = quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+
+                        // set the price
+                        article.find( '.price--placeholder' ).html(
+                            me.formatPrice( price )
+                        );
+                    }
                 }
             );
         },
@@ -811,7 +968,6 @@
             // call by id
             return this.getArticleQuantityById( article.attr( "data-atsd-configurator-article-id" ) );
         },
-
 
 
 

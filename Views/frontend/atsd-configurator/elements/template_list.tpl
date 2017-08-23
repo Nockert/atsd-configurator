@@ -66,6 +66,14 @@
 
 
 
+                {* dependency status for this element *}
+                {assign var="dependencyStatus" value=$element.dependency}
+
+                {* first article of the element selected? *}
+                {assign var="dependencySelected" value=false}
+
+
+
                 {* loop every article *}
                 {foreach $element.articles as $elementArticle}
 
@@ -114,20 +122,31 @@
 
 
 
+                    {* first article of the element selected? *}
+                    {if $elementArticle@first == true}
+                        {assign var="dependencySelected" value=$isSelected}
+                    {/if}
+
+
+
                     {* the article row *}
-                    <div class="block-group article--row"
+                    <div class="block-group article--row{if $dependencyStatus == true && $dependencySelected == false && $elementArticle@first == false} is--disabled{/if}"
                          data-atsd-configurator-article="true"
                          data-atsd-configurator-fieldset-id="{$fieldset.id}"
                          data-atsd-configurator-element-id="{$element.id}"
                          data-atsd-configurator-article-id="{$elementArticle.id}"
                          data-atsd-configurator-article-price="{$article->getCheapestPrice()->getCalculatedPrice()}"
                          data-atsd-configurator-article-prices='{$prices|json_encode}'
+                         data-atsd-configurator-article-surcharge='{$elementArticle.surcharge}'
                          data-atsd-configurator-article-quantity="{$elementArticle.quantity}"
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"
                          data-atsd-configurator-article-weight="{$article->getWeight()}"
                          data-atsd-configurator-article-image="{if !is_null( $article->getCover() )}{$article->getCover()->getThumbnail( 0 )->getSource()}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
                          data-atsd-configurator-article-selector="list"
+                         data-atsd-configurator-article-dependency="{if $element.dependency == true}true{else}false{/if}"
+                         data-atsd-configurator-article-dependency-master="{if $element.dependency == true && $elementArticle@first == true}true{else}false{/if}"
+                         data-atsd-configurator-article-dependency-child="{if $element.dependency == true && $elementArticle@first == false}true{else}false{/if}"
                     >
 
                         {* the input field *}
@@ -145,7 +164,7 @@
 
 
                         {* article name and number *}
-                        <div class="block article--column--name" style="cursor: pointer;"
+                        <div class="block article--column--name"
                              data-atsd-configurator-article-row="true"
                              data-atsd-configurator-article-row-article-id="{$elementArticle.id}"
                         >

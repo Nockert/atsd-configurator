@@ -413,7 +413,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
     protected function prepareConfiguratorList( $configurators )
     {
-        //
+        // ...
         foreach ( $configurators as &$configurator )
         {
             // force integer
@@ -427,7 +427,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             unset( $configurator['article'] );
         }
 
-        //
+        // ...
         return $configurators;
     }
 
@@ -540,8 +540,10 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             $element['templateName']  = (string) $element['template']['name'];
 
             // make stuff integer
-            $element['mandatory'] = (integer) $element['mandatory'];
-            $element['multiple']  = (integer) $element['multiple'];
+            $element['mandatory']  = (integer) $element['mandatory'];
+            $element['multiple']   = (integer) $element['multiple'];
+            $element['dependency'] = (integer) $element['dependency'];
+            $element['surcharge']  = (integer) $element['surcharge'];
 
             // remove 1:n
             unset( $element['template'] );
@@ -1148,8 +1150,17 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             $update = array(
                 'quantity'         => (integer) $data['quantity'],
                 'quantitySelect'   => (boolean) $data['quantitySelect'],
-                'quantityMultiply' => ( ( (boolean) $data['quantityMultiply'] ) and ( (boolean) $data['quantitySelect'] ) )
+                'quantityMultiply' => ( ( (boolean) $data['quantityMultiply'] ) and ( (boolean) $data['quantitySelect'] ) ),
+                'surcharge'        => (integer) $data['surcharge']
             );
+
+            // do we have a surcharge?
+            if ( $update['surcharge'] > 0 )
+                // force only one
+                $update = array_merge(
+                    $update,
+                    array( 'quantity' => 1, 'quantitySelect' => false, 'quantityMultiply' => false )
+                );
 
             // update
             $article->fromArray( $update );
@@ -1246,9 +1257,19 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 'mediaFile'   => (string)  $data['mediaFile'],
                 'mandatory'   => (boolean) $data['mandatory'],
                 'multiple'    => (boolean) $data['multiple'],
+                'dependency'  => (boolean) $data['dependency'],
+                'surcharge'   => (boolean) $data['surcharge'],
                 'comment'     => (string)  "",
                 'template'    => $template
             );
+
+            // force options for dependency
+            if ( $update['dependency'] == true )
+                // force
+                $update = array_merge(
+                    $update,
+                    array( 'multiple' => true, 'mandatory' => false )
+                );
 
             // update
             $element->fromArray( $update );
@@ -1384,6 +1405,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             $model->setQuantity( 1 );
             $model->setQuantityMultiply( false );
             $model->setQuantitySelect( false );
+            $model->setSurcharge( 0 );
 
             // persist it
             Shopware()->Models()->persist( $model );

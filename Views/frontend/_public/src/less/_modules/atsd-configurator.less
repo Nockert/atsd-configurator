@@ -132,6 +132,22 @@
 
 
 
+                        // disabled row
+                        .article--row.is--disabled {
+                            opacity: 0.3;
+                            pointer-events: none;
+
+                            .article--column--name {
+                                cursor: default;
+                            }
+
+                            .article--column--info-icon {
+                                cursor: default;
+                            }
+                        }
+
+
+
                         // every other row
                         .article--row:nth-child(2n) {
 
@@ -172,6 +188,7 @@
                                 margin-left: 0;
                                 min-height: 24px;
                                 line-height: 24px;
+                                cursor: pointer;
 
                             }
 
@@ -210,9 +227,8 @@
                             // ...
                             .article--column--quantity {
 
-
+                                // default settings
                                 width: 8%;
-
 
                                 // shopware 5.1 and 5.2
                                 .js--fancy-select {
@@ -257,13 +273,6 @@
                                 .select-field.quantity-select:after {
                                     display: none;
                                 }
-
-
-
-
-
-
-
 
 
 
@@ -317,8 +326,30 @@
 
 
 
+                // disabled row
+                .product-slider--item.is--disabled {
+                    opacity: 0.3;
+                    pointer-events: none;
+
+                    .product--title {
+                        cursor: default;
+                    }
+
+                    .product--visual-selector button.selector--button {
+                        .btn.is--disabled;
+                        opacity: 1;
+                    }
+                }
+
+
+
                 // visual selector
                 .product-slider--item {
+
+                    // ...
+                    .product--title {
+                        cursor: pointer;
+                    }
 
                     // the quantity button
                     .product--visual-selector button.quantity--button {
@@ -340,8 +371,6 @@
                         }
                     }
                 }
-
-
 
 
 
@@ -483,6 +512,11 @@
             float: left;
             text-align: center;
             display: none;
+
+            // outer price container
+            .product--price.price--default {
+                min-height: 28px;
+            }
 
             // we need a few/copy paste css assignments from the original
             .price--content {

@@ -133,7 +133,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
         var items =
             [
                 me.getFormFieldsetDetails(),
-                me.getFormFieldsetNotice()
+                me.getFormFieldsetArticleNotice()
             ];
 
         // return the items
@@ -146,7 +146,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
     //
-    getFormFieldsetNotice: function()
+    getFormFieldsetArticleNotice: function()
     {
         // get this
         var me = this;
@@ -168,6 +168,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                         Ext.create( "Ext.container.Container",
                             {
                                 html:
+                                '<span style="font-weight: bold;">Aufschlag:</span> ein Aufschlag ersetzt den Preis der Komponente durch einen prozentualen Wert, der den kompletten Konfigurator um den angegebenen Prozentwert teurer macht.<br />' +
                                 '<span style="font-weight: bold;">Auswahl:</span> darf der Kunde die Stückzahl des Artikels selber wählen?<br />' +
                                 '<span style="font-weight: bold;">Multiplikator:</span> hat der Kunde eine freie Auswahl der Stückzahl oder muss es ein Vielfaches der definierten Anzahl sein?<br />' +
                                 '<span style="font-weight: bold;">Anzahl:</span> die Stückzahl des Artikels.',
@@ -181,7 +182,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
         // return it
         return field;
     },
-
 
 
 
@@ -208,11 +208,13 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                 },
                 items:
                     [
-                        me.createFormField( "name", "Interner Name", false, "L" ),
-                        me.createFormField( "description", "Beschreibung", false, "R" ),
-                        me.createFormCombobox( "mandatory", "Pflichtfeld", "L" ),
-                        me.createFormCombobox( "multiple", "Mehrfach Auswahl", "R" ),
-                        me.createFormCombobox( "templateId", "Template", "L", Ext.create( "Shopware.apps.AtsdConfigurator.store.Templates").load() ),
+                        me.createFormField( "name", "Interner Name", false, "L", "Eine ausschließlich intern genutzte Beschreibung, die nicht vom Kunden sichtbar ist." ),
+                        me.createFormField( "description", "Beschreibung", false, "R", "Eine Beschreibung, die im Konfigurator ausgegeben wird." ),
+                        me.createFormCombobox( "mandatory", "Pflichtfeld", "L", undefined, "Muss mindestens eine Komponente dieses Elements gewählt werden?" ),
+                        me.createFormCombobox( "multiple", "Mehrfach Auswahl", "R", undefined, "Darf der Kunde eine Komponente oder mehrere Komponenten wählen?" ),
+                        me.createFormCombobox( "dependency", "Abhängigkeit aktivieren", "L", undefined, "Wenn diese Option aktiviert ist, dann gilt die oberste / erste Komponente als Vater und alle anderen Komponenten als Kinder. Die Kinder können nur ausgewählt werden, wenn der Vater ausgewählt ist. Diese Option ist nur möglich bei deaktivertem Pflichtfeld und aktivierter Mehrfach Auswahl. Sollte der Vater nicht verfügbar sein oder sollte es keine gültigen Kinder geben, dann wird das komplette Element deaktiviert." ),
+                        me.createFormCombobox( "surcharge", "Aufschlag berechnen", "R", undefined, "Sollen definierte Aufschläge von Komponenten aktiviert werden?" ),
+                        me.createFormCombobox( "templateId", "Template", "L", Ext.create( "Shopware.apps.AtsdConfigurator.store.Templates").load(), "Soll die Auswahl der Komponenten als Liste oder als Slider dargestellt werden?" ),
                         Ext.create( 'Shopware.MediaManager.MediaSelection',
                             {
                                 name: 'mediaFile',
@@ -242,13 +244,13 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
 
-    //
-    createFormField: function( name, label, optional, position )
+    // ...
+    createFormField: function( name, label, optional, position, helpText )
     {
         // get this
         var me = this;
 
-        //
+        // ...
         var allowBlank = ( typeof optional !== 'undefined' )
             ? optional
             : true;
@@ -265,7 +267,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                 fieldLabel: label,
                 margin:     margin,
                 allowBlank: allowBlank,
-                labelWidth: me.labelWidth
+                labelWidth: me.labelWidth,
+                helpText:   helpText
             }
         );
 
@@ -284,7 +287,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
     //
-    createFormCombobox: function( name, label, position, store )
+    createFormCombobox: function( name, label, position, store, helpText )
     {
         // get this
         var me = this;
@@ -316,7 +319,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                 mode:          "local",
                 triggerAction: "all",
                 editable:      false,
-                store:         store
+                store:         store,
+                helpText:      helpText
             }
         );
 

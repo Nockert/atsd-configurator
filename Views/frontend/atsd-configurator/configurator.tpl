@@ -83,6 +83,7 @@
                      data-atsd-configurator-has-image="{if $element.template.key == "list"}true{else}false{/if}"
                      data-atsd-configurator-fieldset-id="{$fieldset.id}"
                      data-atsd-configurator-element-id="{$element.id}"
+                     data-atsd-configurator-element-dependency="{if $element.dependency == true}true{else}false{/if}"
                 >
 
                     {* load the element by template key *}

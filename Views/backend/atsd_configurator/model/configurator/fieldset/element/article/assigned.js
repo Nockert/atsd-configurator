@@ -19,13 +19,14 @@ Ext.define( "Shopware.apps.AtsdConfigurator.model.configurator.fieldset.element.
         [
 
             // data
-            { name: "id",            type: "int" },
-            { name: "articleNumber", type: "string" },
-            { name: "articleName",   type: "string" },
-            { name: "elementId",     type: "int" },
-            { name: "quantity",      type: "int" },
-            { name: "quantitySelect",      type: "int" },
-            { name: "quantityMultiply",      type: "int" }
+            { name: "id",               type: "int" },
+            { name: "articleNumber",    type: "string" },
+            { name: "articleName",      type: "string" },
+            { name: "elementId",        type: "int" },
+            { name: "quantity",         type: "int" },
+            { name: "quantitySelect",   type: "int" },
+            { name: "quantityMultiply", type: "int" },
+            { name: "surcharge",        type: "int" }
 
         ],
 

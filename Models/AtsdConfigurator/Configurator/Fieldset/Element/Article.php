@@ -80,6 +80,16 @@ class Article extends ModelEntity
     private $quantityMultiply = false;
 
     /**
+     * ...
+     *
+     * @var boolean
+     *
+     * @ORM\Column(name="surcharge", type="integer", nullable=false, options={"default":0})
+     **/
+
+    private $surcharge = 0;
+
+    /**
      * OWNING SIDE
      *
      * Element model
@@ -223,6 +233,27 @@ class Article extends ModelEntity
         $this->quantityMultiply = $quantityMultiply;
     }
 
+    /**
+     * Getter method for the property.
+     *
+     * @return bool
+     */
+    public function getSurcharge()
+    {
+        return $this->surcharge;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param bool $surcharge
+     *
+     * return void
+     */
+    public function setSurcharge($surcharge)
+    {
+        $this->surcharge = $surcharge;
+    }
 
 
 

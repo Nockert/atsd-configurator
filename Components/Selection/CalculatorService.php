@@ -118,8 +118,8 @@ class CalculatorService
                 'number'   => $article->getNumber(),
                 'name'     => $article->getName(),
                 'quantity' => 1,
-                'price'    => ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticlePrice( $article, 1, $configurator['rebate'] ) : 0.0,
-                'priceNet' => ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticleNetPrice( $article, 1, $configurator['rebate'] ) : 0.0
+                'price'    => ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticlePrice( $article, 1, 0 ) : 0.0,
+                'priceNet' => ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticleNetPrice( $article, 1, 0 ) : 0.0
             );
         }
 
@@ -152,8 +152,9 @@ class CalculatorService
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
                     // some vars
-                    $quantity = (integer) $selection[$article['id']];
-                    $rebate   = (integer) $configurator['rebate'];
+                    $quantity  = (integer) $selection[$article['id']];
+                    $rebate    = (integer) $configurator['rebate'];
+                    $surcharge = ( $element['surcharge'] == true ) ? (integer) $article['surcharge'] : 0;
 
                     // article struct
                     /* @var $articleStruct Struct\ListProduct */
@@ -169,24 +170,40 @@ class CalculatorService
                     $price    = $this->articlePriceService->getArticlePrice( $articleStruct, $quantity );
                     $priceNet = $this->articlePriceService->getArticleNetPrice( $articleStruct, $quantity );
 
+                    // rebated prices
+                    $priceRebate    = $price * ( ( 100 - $rebate ) / 100 );
+                    $priceNetRebate = $priceNet * ( ( 100 - $rebate ) / 100 );
+
+                    // do we have a surcharge?!
+                    if ( $surcharge > 0 )
+                    {
+                        // remove prices
+                        $price          = 0;
+                        $priceNet       = 0;
+                        $priceRebate    = 0;
+                        $priceNetRebate = 0;
+                    }
+
                     // set prices
                     $return['pseudoPrice'] += $price;
-                    $return['price']       += $price * ( ( 100 - $rebate ) / 100 );
+                    $return['price']       += $priceRebate;
 
                     // set net prices
                     $return['pseudoPriceNet'] += $priceNet;
-                    $return['priceNet']       += $priceNet * ( ( 100 - $rebate ) / 100 );
+                    $return['priceNet']       += $priceNetRebate;
 
                     // save article
                     array_push(
                         $returnElement['articles'],
                         array(
-                            'id'       => $articleStruct->getId(),
-                            'number'   => $articleStruct->getNumber(),
-                            'name'     => $articleStruct->getName(),
-                            'quantity' => $quantity,
-                            'price'    => $price * ( ( 100 - $rebate ) / 100 ),
-                            'priceNet' => $priceNet * ( ( 100 - $rebate ) / 100 )
+                            'id'                    => $articleStruct->getId(),
+                            'number'                => $articleStruct->getNumber(),
+                            'name'                  => $articleStruct->getName(),
+                            'quantity'              => $quantity,
+                            'price'                 => $priceRebate,
+                            'priceNet'              => $priceNetRebate,
+                            'surcharge'             => $surcharge,
+                            'configuratorArticleId' => $article['id']
                         )
                     );
                 }
@@ -228,6 +245,41 @@ class CalculatorService
             // set net prices
             $return['pseudoPriceNet'] += $priceNet;
             $return['priceNet']       += $priceNet;
+        }
+
+
+
+        // loop it again to find surcharges
+        foreach ( $return['fieldsets'] as $fieldsetKey => $fieldset )
+        {
+            // loop the elements
+            foreach ( $fieldset['elements'] as $elementKey => $element )
+            {
+                // loop the articles
+                foreach ( $element['articles'] as $articleKey => $article )
+                {
+                    // does this article have a surcharge?!
+                    if ( $article['surcharge'] == 0 )
+                        // nope
+                        continue;
+
+                    // calculate gross and net prices for this surcharge
+                    $price          = $return['pseudoPrice'] * ( $article['surcharge'] / 100 );
+                    $priceRebate    = $return['price'] * ( $article['surcharge'] / 100 );
+                    $netPrice       = $return['pseudoPriceNet'] * ( $article['surcharge'] / 100 );
+                    $netPriceRebate = $return['priceNet'] * ( $article['surcharge'] / 100 );
+
+                    // set it in the article
+                    $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['price']    = $priceRebate;
+                    $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['priceNet'] = $netPriceRebate;
+
+                    // add to selection
+                    $return['pseudoPrice']    += $price;
+                    $return['price']          += $priceRebate;
+                    $return['pseudoPriceNet'] += $netPrice;
+                    $return['priceNet']       += $netPriceRebate;
+                }
+            }
         }
 
 

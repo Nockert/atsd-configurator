@@ -27,6 +27,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator.model.configurator.fieldset.Element"
             { name: "position",      type: "int" },
             { name: "mandatory",     type: "int",    defaultValue: 0 },
             { name: "multiple",      type: "int",    defaultValue: 0 },
+            { name: "dependency",    type: "int",    defaultValue: 0 },
+            { name: "surcharge",     type: "int",    defaultValue: 0 },
             { name: "comment",       type: "string", defaultValue: "" },
             { name: "countArticles", type: "int" },
             { name: "templateId",    type: "int" },
