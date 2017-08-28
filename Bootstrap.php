@@ -159,6 +159,9 @@
  * - added simple dependency for master and slave components within one element
  * - added percental surcharge for components
  *
+ * 1.5.1
+ * - added controller actions to csrf whitelist
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -177,7 +180,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.5.0",
+        'version'     => "1.5.1",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
