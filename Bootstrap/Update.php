@@ -140,6 +140,7 @@ class Update
                 $this->updateSql( "1.3.0-c" );
             case "1.3.0":
             case "1.3.1":
+            case "1.3.2":
                 $this->updateVersion140();
             case "1.4.0":
             case "1.4.1":

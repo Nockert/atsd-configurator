@@ -162,6 +162,9 @@
  * 1.5.1
  * - added controller actions to csrf whitelist
  *
+ * 1.5.2
+ * - fixed updating from version 1.3.2
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -180,7 +183,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.5.1",
+        'version'     => "1.5.2",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
