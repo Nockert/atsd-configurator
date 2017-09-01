@@ -66,9 +66,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.details.Elements",
                 }
             }
         );
-        
-        // done
-        return;
     },
 
 

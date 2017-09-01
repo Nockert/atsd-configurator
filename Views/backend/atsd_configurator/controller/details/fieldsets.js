@@ -62,13 +62,11 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.details.Fieldsets",
                     'addFieldset':    me.onAddFieldset,
                     'selectFieldset': me.onSelectFieldset,
                     'deleteFieldset': me.onDeleteFieldset,
-                    'updateFieldset': me.onUpdateFieldset
+                    'updateFieldset': me.onUpdateFieldset,
+                    'editFieldset':   me.onEditFieldset
                 }
             }
         );
-        
-        // done
-        return;
     },
 
 
@@ -209,9 +207,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.details.Fieldsets",
                     me.getFieldsetGrid().getStore().reload();
                 }
             });
-
-        // done
-        return;
     },
 
 
@@ -291,10 +286,48 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.details.Fieldsets",
                 }
             }
         );
+    },
+
+
+
+
+
+    // ...
+    onEditFieldset: function( scope, grid, rowIndex, colIndex, button )
+    {
+        // get this
+        var me = this;
+
+        // get the store
+        var store = grid.getStore();
+
+        // get the record
+        var record = store.getAt( rowIndex );
+
+        // create a window
+        var window = me.createDetailsWindow( record );
+
+        // and show it
+        window.show();
+    },
+
+
+
+
+
+    // create window
+    createDetailsWindow: function( record )
+    {
+        // get this
+        var me = this;
+
+        // create the view
+        return me.getView( "Shopware.apps.AtsdConfigurator.view.details.fieldset.Window" ).create(
+            {
+                record: record
+            }
+        );
     }
-
-
-
 
 
 

@@ -77,7 +77,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.Elements",
 
 
 
-
     // register all events
     registerEvents: function()
     {

@@ -15,6 +15,8 @@ use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use Shopware\Bundle\MediaBundle\MediaService;
 use Shopware\Bundle\StoreFrontBundle\Struct;
 use Shopware\AtsdConfigurator\Components\VersionService;
+use Shopware_Components_Translation as Translation;
+
 
 
 /**
@@ -67,6 +69,16 @@ class ParserService
     /**
      * ...
      *
+     * @var Translation
+     */
+
+    protected $translation;
+
+
+
+    /**
+     * ...
+     *
      * @param VersionService                $versionService
      * @param ListProductServiceInterface   $listProductService
      * @param ContextService                $contextService
@@ -79,6 +91,7 @@ class ParserService
         $this->listProductService = $listProductService;
         $this->contextService     = $contextService;
         $this->mediaService       = $mediaService;
+        $this->translation        = new Translation();
     }
 
 
@@ -148,9 +161,25 @@ class ParserService
         // save the products back to the configurator
         foreach ( $configurator['fieldsets'] as $fieldsetKey => $fieldset )
         {
+            // translate
+            $configurator['fieldsets'][$fieldsetKey]['description'] = $this->getTranslation(
+                $fieldset['id'],
+                "atsd-configurator.fieldset",
+                "description",
+                $fieldset['description']
+            );
+
             // loop the elements
             foreach ( $fieldset['elements'] as $elementKey => $element )
             {
+                // translate
+                $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['description'] = $this->getTranslation(
+                    $element['id'],
+                    "atsd-configurator.element",
+                    "description",
+                    $element['description']
+                );
+
                 // loop the articles
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
@@ -186,6 +215,51 @@ class ParserService
         // return it
         return $configurator;
     }
+
+
+
+
+
+
+
+
+    /**
+     * ...
+     *
+     * @param integer   $id
+     * @param string    $type
+     * @param string    $key
+     * @param string    $default
+     *
+     * @return string
+     */
+
+    private function getTranslation( $id, $type, $key, $default )
+    {
+        // shop context
+        $shop = $this->contextService->getShopContext()->getShop();
+
+        // no translation needed?
+        if ( $shop->getId() == 1 )
+            // nope
+            return $default;
+
+        // get translation
+        $translation = $this->translation->read(
+            $shop->getId(),
+            $type,
+            $id
+        );
+
+        // not valid?
+        if ( ( !is_array( $translation ) ) or ( !isset( $translation[$key] ) ) or ( empty( $translation[$key] ) ) )
+            // default
+            return $default;
+
+        // return translation
+        return $translation[$key];
+    }
+
 
 
 

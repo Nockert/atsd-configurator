@@ -33,7 +33,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator",
             "details.Window",
             "details.Elements",
             "details.Fieldsets",
-            "details.element.Window"
+            "details.element.Window",
+            "details.fieldset.Window"
         ],
     
     // stores
@@ -62,7 +63,8 @@ Ext.define( "Shopware.apps.AtsdConfigurator",
             "details.Elements",
             "details.Fieldsets",
             "details.element.Details",
-            "details.element.Articles"
+            "details.element.Articles",
+            "details.fieldset.Details"
         ],
  
  

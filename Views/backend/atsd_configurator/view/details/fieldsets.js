@@ -86,7 +86,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.Fieldsets",
     registerEvents: function()
     {
 		// add events
-        this.addEvents( "addFieldset", "selectFieldset", "deleteFieldset", "updateFieldset" );
+        this.addEvents( "addFieldset", "selectFieldset", "deleteFieldset", "updateFieldset", "editFieldset" );
     },
 
 
@@ -309,8 +309,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.Fieldsets",
                 {
                     header: "",
                     xtype: "actioncolumn",
-                    // width: 55,
-                    width: 30,
+                    width: 55,
                     items:
                         [
                             {
@@ -323,17 +322,15 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.Fieldsets",
                                     me.fireEvent( "deleteFieldset", me, grid, rowIndex, colIndex, button );
                                 }
 
-                            }
-                            /*
+                            },
                             {
                                 iconCls : 'sprite-pencil',
                                 tooltip : 'Gruppe editieren',
                                 handler: function( grid, rowIndex, colIndex, button )
                                 {
-                                    // me.rowEditorPlugin.startEdit( record,0 );
+                                    me.fireEvent( "editFieldset", me, grid, rowIndex, colIndex, button );
                                 }
                             }
-                            */
                         ]
                 }
             ];

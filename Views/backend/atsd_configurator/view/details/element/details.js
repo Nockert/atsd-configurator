@@ -22,13 +22,20 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
     itemId: "atsdconfigurator-details-element-details",
     stateId: "atsdconfigurator-details-element-details",
 
-
+    // load translation component
+    plugins: [
+        {
+            pluginId: 'translation',
+            ptype: 'translation',
+            translationType: "atsd-configurator.element"
+        }
+    ],
 
     // css
     border: false,
     bodyPadding: 10,
 
-    //
+    // ...
     autoScroll: true,
 
     // default label width
@@ -70,7 +77,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
     // register all events
     registerEvents: function()
     {
-        //
+        // ...
         this.addEvents( "saveElement", "closeElement" );
     },
 
@@ -145,14 +152,11 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
 
-    //
+    // ...
     getFormFieldsetArticleNotice: function()
     {
-        // get this
-        var me = this;
-
         // create the form fieldset
-        var field = Ext.create( "Ext.form.FieldSet",
+        return Ext.create( "Ext.form.FieldSet",
             {
                 collapsible: false,
                 title: 'Hinweise zu Artikeln',
@@ -178,9 +182,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                     ]
             }
         );
-
-        // return it
-        return field;
     },
 
 
@@ -188,14 +189,14 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
 
-    //
+    // ...
     getFormFieldsetDetails: function()
     {
 		// get this
         var me = this;
         
         // create the form fieldset
-        var field = Ext.create( "Ext.form.FieldSet",
+        return Ext.create( "Ext.form.FieldSet",
             {
                 collapsible: false,
                 title: 'Details',
@@ -229,9 +230,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                     ]
             }
         );
-        
-        // return it
-        return field;        
     },
 
 
@@ -261,19 +259,17 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
             : "0px";
 
         // create the form field
-        var field = Ext.create( "Ext.form.field.Text",
+        return Ext.create( "Ext.form.field.Text",
             {
-                name:       name,
-                fieldLabel: label,
-                margin:     margin,
-                allowBlank: allowBlank,
-                labelWidth: me.labelWidth,
-                helpText:   helpText
+                name:         name,
+                fieldLabel:   label,
+                margin:       margin,
+                allowBlank:   allowBlank,
+                labelWidth:   me.labelWidth,
+                helpText:     helpText,
+                translatable: ( name === "description" )
             }
         );
-
-        // return it
-        return field;
     },
 
 
@@ -286,7 +282,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
 
 
 
-    //
+    // ...
     createFormCombobox: function( name, label, position, store, helpText )
     {
         // get this
@@ -308,7 +304,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
             );
 
         // create the form field
-        var field = Ext.create( "Ext.form.field.ComboBox",
+        return Ext.create( "Ext.form.field.ComboBox",
             {
                 labelWidth:    me.labelWidth,
                 name:          name,
@@ -323,9 +319,6 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                 helpText:      helpText
             }
         );
-
-        // return it
-        return field;
     }
 
 
