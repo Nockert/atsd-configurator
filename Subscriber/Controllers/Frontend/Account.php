@@ -10,19 +10,25 @@
 
 namespace Shopware\AtsdConfigurator\Subscriber\Controllers\Frontend;
 
+use Enlight\Event\SubscriberInterface;
+use Shopware_Components_Plugin_Bootstrap as Bootstrap;
+use Shopware\Components\DependencyInjection\Container;
+use Enlight_Event_EventArgs as EventArgs;
+use Enlight_Controller_Action as Controller;
+
 
 
 /**
  * Aquatuning Software Development - Configurator - Subscriber
  */
 
-class Account implements \Enlight\Event\SubscriberInterface
+class Account implements SubscriberInterface
 {
 
 	/**
 	 * Main bootstrap object.
 	 *
-	 * @var \Shopware_Components_Plugin_Bootstrap
+	 * @var Bootstrap
 	 */
 
 	protected $bootstrap;
@@ -32,7 +38,7 @@ class Account implements \Enlight\Event\SubscriberInterface
     /**
      * DI container.
      *
-     * @var \Shopware\Components\DependencyInjection\Container
+     * @var Container
      */
 
     protected $container;
@@ -44,11 +50,11 @@ class Account implements \Enlight\Event\SubscriberInterface
     /**
 	 * ...
 	 *
-     * @param \Shopware_Components_Plugin_Bootstrap                $bootstrap
-     * @param \Shopware\Components\DependencyInjection\Container   $container
+     * @param Bootstrap   $bootstrap
+     * @param Container   $container
 	 */
 
-    public function __construct( \Shopware_Components_Plugin_Bootstrap $bootstrap, \Shopware\Components\DependencyInjection\Container $container )
+    public function __construct( Bootstrap $bootstrap, Container $container )
 	{
         // set params
         $this->bootstrap = $bootstrap;
@@ -70,7 +76,8 @@ class Account implements \Enlight\Event\SubscriberInterface
 	{
 		// return the events
 		return array(
-            'Enlight_Controller_Action_PostDispatch_Frontend_Account' => 'onPostDispatchFrontendAccount'
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Account' => 'onPostDispatch',
+            'Enlight_Controller_Action_PostDispatchSecure_Widgets'          => 'onPostDispatch'
 		);
 	}
 
@@ -84,25 +91,17 @@ class Account implements \Enlight\Event\SubscriberInterface
     /**
      * Extends the default account menu with our link.
      *
-     * @param \Enlight_Event_EventArgs   $arguments
+     * @param EventArgs   $arguments
      *
      * @return void
      */
 
-    public function onPostDispatchFrontendAccount( \Enlight_Event_EventArgs $arguments )
+    public function onPostDispatch( EventArgs $arguments )
     {
         // get parameters
-        /* @var $controller \Shopware_Controllers_Frontend_Account */
+        /* @var $controller Controller */
         $controller = $arguments->get( "subject" );
-        $request    = $controller->Request();
-        $response   = $controller->Response();
         $view       = $controller->View();
-        $action     = $request->getActionName();
-
-        // valid request?
-        if ( !$request->isDispatched() || $response->isException() || !$view->hasTemplate() || $request->getModuleName() != "frontend" )
-            // abort
-            return;
 
         // add template dir
         $view->addTemplateDir( $this->bootstrap->Path() . "Views/" );

@@ -168,6 +168,9 @@
  * 1.5.3
  * - added possibility to translate fieldset and element names
  *
+ * 1.5.4
+ * - fixed account subscriber for smarty security settings
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -186,7 +189,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.5.3",
+        'version'     => "1.5.4",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",
