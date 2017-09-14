@@ -201,6 +201,9 @@ class ParserService
 
                     // save it
                     $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['article'] = $product;
+
+                    // typecast surchage
+                    $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['surcharge'] = (integer) $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['surcharge'];
                 }
             }
         }

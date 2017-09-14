@@ -171,6 +171,14 @@
  * 1.5.4
  * - fixed account subscriber for smarty security settings
  *
+ * 1.5.5
+ * - removed multiplication of surcharges
+ * - changed behaviour of element surcharge option
+ *
+ *
+ *
+ * @todo add selection garbage collector
+ *
  * @category  Aquatuning
  * @package   Shopware\Plugins\AtsdConfigurator
  * @copyright Copyright (c) 2015, Aquatuning GmbH
@@ -189,7 +197,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.5.4",
+        'version'     => "1.5.5",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

@@ -94,11 +94,6 @@ class FilterService
                 // loop the articles
                 foreach ( $element['articles'] as $articleKey => $article )
                 {
-                    // surchage set but deactivated?
-                    if ( ( $element['surcharge'] == false ) and ( $article['surcharge'] > 0 ) )
-                        // disable surcharge for this article
-                        $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['surcharge'] = 0;
-
                     // can we use this article?
                     if ( ( $article['article']['active'] == false ) or ( $article['article']['mainDetail']['active'] == false ) or ( $this->stockService->getMaxArticleStock( $article['article']['mainDetail']['inStock'], $article['article']['lastStock'], $article['quantity'] ) < 1 ) )
                         // no we cant

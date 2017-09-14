@@ -33,8 +33,12 @@
                 // surcharge snippets
                 surcharge:
                     {
+                        // pre and post template from configuration
                         pre:  null,
-                        post: null
+                        post: null,
+
+                        // do we use surcharge on the main article as well
+                        mainArticle: true
                     },
 
                 // stock/delivery selector
@@ -783,9 +787,16 @@
             var mainPrice = parseFloat( me.$el.attr( "data-atsd-configurator-main-article-price" ) );
             var rebate    = parseFloat( me.$el.attr( "data-atsd-configurator-rebate" ) );
 
+            // surchage main article?
+            var mainArticleSurcharge = me.configuration.surcharge.mainArticle;
+
             // start with the price of the main article with and without rebate
-            var price       = mainPrice;
-            var pseudoPrice = mainPrice;
+            var price       = ( mainArticleSurcharge == true ) ? 0.0 : mainPrice;
+            var pseudoPrice = ( mainArticleSurcharge == true ) ? 0.0 : mainPrice;
+
+            // article prices which uses surcharges
+            var surchargePrice       = ( mainArticleSurcharge == true ) ? mainPrice : 0.0;
+            var surchargePseudoPrice = ( mainArticleSurcharge == true ) ? mainPrice : 0.0;
 
             // surcharges to add later
             var surcharges = [];
@@ -813,24 +824,41 @@
                         // get current article scaled price
                         var articlePrice = me.getArticlePriceForQuantity( article.attr( "data-atsd-configurator-article-prices" ), quantity );
 
-                        // add prices
-                        price       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
-                        pseudoPrice += quantity * parseFloat( articlePrice );
+                        // do we add surcharges to this article price?
+                        var addSurcharge = ( article.attr( "data-atsd-configurator-element-surcharge" ) === "true" );
+
+                        // add to prices with or without surcharges
+                        if ( addSurcharge == true )
+                        {
+                            // add prices
+                            surchargePrice       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                            surchargePseudoPrice += quantity * parseFloat( articlePrice );
+                        }
+                        else
+                        {
+                            // add prices
+                            price       += quantity * parseFloat( articlePrice ) * ( ( 100 - rebate ) / 100 );
+                            pseudoPrice += quantity * parseFloat( articlePrice );
+                        }
                     }
                 }
             );
 
 
 
+            // add the surcharges with factor 1.0
+            price       += surchargePrice;
+            pseudoPrice += surchargePseudoPrice;
+
             // loop the surcharges
             for ( var i in surcharges )
             {
                 // calculate surcharge
-                var surcharge = ( 100 + surcharges[i] ) / 100;
+                var surcharge = ( ( 100 + surcharges[i] ) / 100 ) - 1;
 
-                // add to prices
-                price       = price * surcharge;
-                pseudoPrice = pseudoPrice * surcharge;
+                // add percental of surchage prices to default prices
+                price       += surchargePrice * surcharge;
+                pseudoPrice += surchargePseudoPrice * surcharge;
             }
 
 
@@ -864,7 +892,6 @@
             else
                 // remove it
                 $( me.configuration.priceSelectors.container ).removeClass( me.configuration.priceSelectors.discount );
-
         },
 
 

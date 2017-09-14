@@ -39,6 +39,7 @@
                  data-atsd-configurator-element-id="{$element.id}"
                  data-atsd-configurator-element-switch-image-on-selection="{if $element.multiple == true}false{else}true{/if}"
                  data-atsd-configurator-element-default-image="{if $element.mediaFile != ""}{$element.mediaFile}{else}{link file='frontend/_public/src/img/no-picture.jpg'}{/if}"
+
             >
 
                 {* inner container *}
@@ -138,6 +139,7 @@
                          data-atsd-configurator-article-price="{$article->getCheapestPrice()->getCalculatedPrice()}"
                          data-atsd-configurator-article-prices='{$prices|json_encode}'
                          data-atsd-configurator-article-surcharge='{$elementArticle.surcharge}'
+                         data-atsd-configurator-element-surcharge="{if $element.surcharge == true}true{else}false{/if}"
                          data-atsd-configurator-article-quantity="{$elementArticle.quantity}"
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"

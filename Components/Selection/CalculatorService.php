@@ -47,6 +47,16 @@ class CalculatorService
     /**
      * ...
      *
+     * @var boolean
+     */
+
+    protected $surchargeMainArticle = true;
+
+
+
+    /**
+     * ...
+     *
      * @param ParserService         $parserService
      * @param ArticlePriceService   $articlePriceService
      */
@@ -128,6 +138,17 @@ class CalculatorService
         // set default max stock
         $return['stock'] = 100;
 
+        // do we have surcharges?
+        $applySurcharges = false;
+
+        // surcharge prices
+        $surchargePrices = array(
+            'pseudoPrice'    => 0.0,
+            'price'          => 0.0,
+            'pseudoPriceNet' => 0.0,
+            'priceNet'       => 0.0
+        );
+
 
 
         // now loop everything again to finally calculate the data
@@ -154,7 +175,7 @@ class CalculatorService
                     // some vars
                     $quantity  = (integer) $selection[$article['id']];
                     $rebate    = (integer) $configurator['rebate'];
-                    $surcharge = ( $element['surcharge'] == true ) ? (integer) $article['surcharge'] : 0;
+                    $surcharge = (integer) $article['surcharge'];
 
                     // article struct
                     /* @var $articleStruct Struct\ListProduct */
@@ -182,15 +203,28 @@ class CalculatorService
                         $priceNet       = 0;
                         $priceRebate    = 0;
                         $priceNetRebate = 0;
+
+                        // set surcharges
+                        $applySurcharges = true;
                     }
 
-                    // set prices
-                    $return['pseudoPrice'] += $price;
-                    $return['price']       += $priceRebate;
-
-                    // set net prices
-                    $return['pseudoPriceNet'] += $priceNet;
-                    $return['priceNet']       += $priceNetRebate;
+                    // do we want to apply surcharges?
+                    if ( $element['surcharge'] == true )
+                    {
+                        // add to surcharge prices
+                        $surchargePrices['pseudoPrice']    += $price;
+                        $surchargePrices['price']          += $priceRebate;
+                        $surchargePrices['pseudoPriceNet'] += $priceNet;
+                        $surchargePrices['priceNet']       += $priceNetRebate;
+                    }
+                    else
+                    {
+                        // set prices
+                        $return['pseudoPrice']    += $price;
+                        $return['price']          += $priceRebate;
+                        $return['pseudoPriceNet'] += $priceNet;
+                        $return['priceNet']       += $priceNetRebate;
+                    }
 
                     // save article
                     array_push(
@@ -224,6 +258,16 @@ class CalculatorService
 
 
 
+        if ( $return['price']  > 0 )
+        {
+            /*
+            var_dump($surchargePrices);
+            vd($return);
+            */
+        }
+
+
+
         // do we want to include the master?
         if ( $includeMaster == true )
         {
@@ -238,49 +282,71 @@ class CalculatorService
             $price    = ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticlePrice( $article, 1 ) : 0.0;
             $priceNet = ( $configurator['chargeArticle'] == true ) ? $this->articlePriceService->getArticleNetPrice( $article, 1 ) : 0.0;
 
-            // set prices
-            $return['pseudoPrice'] += $price;
-            $return['price']       += $price;
-
-            // set net prices
-            $return['pseudoPriceNet'] += $priceNet;
-            $return['priceNet']       += $priceNet;
+            // surcharge main article as well?
+            if ( $this->surchargeMainArticle == true )
+            {
+                // set surcharge prices
+                $surchargePrices['pseudoPrice']    += $price;
+                $surchargePrices['price']          += $price;
+                $surchargePrices['pseudoPriceNet'] += $priceNet;
+                $surchargePrices['priceNet']       += $priceNet;
+            }
+            else
+            {
+                // set prices
+                $return['pseudoPrice']    += $price;
+                $return['price']          += $price;
+                $return['pseudoPriceNet'] += $priceNet;
+                $return['priceNet']       += $priceNet;
+            }
         }
 
 
 
-        // loop it again to find surcharges
-        foreach ( $return['fieldsets'] as $fieldsetKey => $fieldset )
+        // do we need to apply surcharges?
+        if ( $applySurcharges == true )
         {
-            // loop the elements
-            foreach ( $fieldset['elements'] as $elementKey => $element )
+            // loop it again to find surcharges
+            foreach ( $return['fieldsets'] as $fieldsetKey => $fieldset )
             {
-                // loop the articles
-                foreach ( $element['articles'] as $articleKey => $article )
+                // loop the elements
+                foreach ( $fieldset['elements'] as $elementKey => $element )
                 {
-                    // does this article have a surcharge?!
-                    if ( $article['surcharge'] == 0 )
-                        // nope
-                        continue;
+                    // loop the articles
+                    foreach ( $element['articles'] as $articleKey => $article )
+                    {
+                        // does this article have a surcharge?!
+                        if ( $article['surcharge'] == 0 )
+                            // nope
+                            continue;
 
-                    // calculate gross and net prices for this surcharge
-                    $price          = $return['pseudoPrice'] * ( $article['surcharge'] / 100 );
-                    $priceRebate    = $return['price'] * ( $article['surcharge'] / 100 );
-                    $netPrice       = $return['pseudoPriceNet'] * ( $article['surcharge'] / 100 );
-                    $netPriceRebate = $return['priceNet'] * ( $article['surcharge'] / 100 );
+                        // calculate gross and net prices for this surcharge
+                        $price          = $surchargePrices['pseudoPrice'] * ( $article['surcharge'] / 100 );
+                        $priceRebate    = $surchargePrices['price'] * ( $article['surcharge'] / 100 );
+                        $netPrice       = $surchargePrices['pseudoPriceNet'] * ( $article['surcharge'] / 100 );
+                        $netPriceRebate = $surchargePrices['priceNet'] * ( $article['surcharge'] / 100 );
 
-                    // set it in the article
-                    $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['price']    = $priceRebate;
-                    $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['priceNet'] = $netPriceRebate;
+                        // set it in the article
+                        $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['price']    = $priceRebate;
+                        $return['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey]['priceNet'] = $netPriceRebate;
 
-                    // add to selection
-                    $return['pseudoPrice']    += $price;
-                    $return['price']          += $priceRebate;
-                    $return['pseudoPriceNet'] += $netPrice;
-                    $return['priceNet']       += $netPriceRebate;
+                        // add to selection
+                        $return['pseudoPrice']    += $price;
+                        $return['price']          += $priceRebate;
+                        $return['pseudoPriceNet'] += $netPrice;
+                        $return['priceNet']       += $netPriceRebate;
+                    }
                 }
             }
         }
+
+
+
+        // add surcharge prices to default prices
+        $return['pseudoPrice']    += $surchargePrices['pseudoPrice'];
+        $return['price']          += $surchargePrices['price'];
+        $return['pseudoPriceNet'] += $surchargePrices['pseudoPriceNet'];
+        $return['priceNet']       += $surchargePrices['priceNet'];
 
 
 
@@ -292,6 +358,8 @@ class CalculatorService
 
         // prices
         $return['hasPseudoPrice'] = ( $return['price'] != $return['pseudoPrice'] );
+
+
 
         // return it
         return $return;

@@ -114,6 +114,7 @@
                          data-atsd-configurator-article-price="{$article->getCheapestPrice()->getCalculatedPrice()}"
                          data-atsd-configurator-article-prices='{$prices|json_encode}'
                          data-atsd-configurator-article-surcharge='{$elementArticle.surcharge}'
+                         data-atsd-configurator-element-surcharge="{if $element.surcharge == true}true{else}false{/if}"
                          data-atsd-configurator-article-quantity="{$elementArticle.quantity}"
                          data-atsd-configurator-article-name="{$article->getName()|escape}"
                          data-atsd-configurator-article-stock="{$article->getStock()}"

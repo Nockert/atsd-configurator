@@ -172,7 +172,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                         Ext.create( "Ext.container.Container",
                             {
                                 html:
-                                '<span style="font-weight: bold;">Aufschlag:</span> ein Aufschlag ersetzt den Preis der Komponente durch einen prozentualen Wert, der den kompletten Konfigurator um den angegebenen Prozentwert teurer macht.<br />' +
+                                '<span style="font-weight: bold;">Aufschlag:</span> ein Aufschlag ersetzt den Preis der Komponente durch einen prozentualen Wert, der sämtliche Komponenten des Konfigurators, die die Option "Aufschlag berechnen" aktiviert haben, um den angegebenen Prozentwert teurer macht. Der Preis des Haupt-Artikels ist von prozentualen Aufschlägen stets unberührt.<br />' +
                                 '<span style="font-weight: bold;">Auswahl:</span> darf der Kunde die Stückzahl des Artikels selber wählen?<br />' +
                                 '<span style="font-weight: bold;">Multiplikator:</span> hat der Kunde eine freie Auswahl der Stückzahl oder muss es ein Vielfaches der definierten Anzahl sein?<br />' +
                                 '<span style="font-weight: bold;">Anzahl:</span> die Stückzahl des Artikels.',
@@ -214,7 +214,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.view.details.element.Details",
                         me.createFormCombobox( "mandatory", "Pflichtfeld", "L", undefined, "Muss mindestens eine Komponente dieses Elements gewählt werden?" ),
                         me.createFormCombobox( "multiple", "Mehrfach Auswahl", "R", undefined, "Darf der Kunde eine Komponente oder mehrere Komponenten wählen?" ),
                         me.createFormCombobox( "dependency", "Abhängigkeit aktivieren", "L", undefined, "Wenn diese Option aktiviert ist, dann gilt die oberste / erste Komponente als Vater und alle anderen Komponenten als Kinder. Die Kinder können nur ausgewählt werden, wenn der Vater ausgewählt ist. Diese Option ist nur möglich bei deaktivertem Pflichtfeld und aktivierter Mehrfach Auswahl. Sollte der Vater nicht verfügbar sein oder sollte es keine gültigen Kinder geben, dann wird das komplette Element deaktiviert." ),
-                        me.createFormCombobox( "surcharge", "Aufschlag berechnen", "R", undefined, "Sollen definierte Aufschläge von Komponenten aktiviert werden?" ),
+                        me.createFormCombobox( "surcharge", "Aufschlag berechnen", "R", undefined, "Sollen Aufschläge für alle Komponenten dieses Elements berechnet werden? Nur wenn diese Option aktiviert ist, werden alle Komponenten dieses Element um ausgewählte Aufschläge teurer." ),
                         me.createFormCombobox( "templateId", "Template", "L", Ext.create( "Shopware.apps.AtsdConfigurator.store.Templates").load(), "Soll die Auswahl der Komponenten als Liste oder als Slider dargestellt werden?" ),
                         Ext.create( 'Shopware.MediaManager.MediaSelection',
                             {
