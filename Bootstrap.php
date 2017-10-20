@@ -175,6 +175,9 @@
  * - removed multiplication of surcharges
  * - changed behaviour of element surcharge option
  *
+ * 1.5.6
+ * - removed deprecated allow-articles-without-category plugin configuration
+ *
  *
  *
  * @todo add selection garbage collector
@@ -197,7 +200,7 @@ class Shopware_Plugins_Frontend_AtsdConfigurator_Bootstrap extends Shopware_Comp
     
     // info
     private $pluginInfo = array(
-        'version'     => "1.5.5",
+        'version'     => "1.5.6",
         'label'       => "ATSD - Konfigurator",
         'description' => "Konfigurator",
         'supplier'    => "Aquatuning GmbH",

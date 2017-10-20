@@ -157,6 +157,13 @@ class Update
             case "1.4.11":
                 $this->updateSql( "1.5.0-a" );
                 $this->updateSql( "1.5.0-b" );
+            case "1.5.0":
+            case "1.5.1":
+            case "1.5.2":
+            case "1.5.3":
+            case "1.5.4":
+            case "1.5.5":
+                $this->updateSql( "1.5.6-a" );
 		}
 
 		// done
@@ -179,6 +186,7 @@ class Update
         // returns this plugin form
         $form = $this->bootstrap->Form();
 
+        /*
         // and set the element
         $form->setElement( "boolean", "allowArticlesWithoutCategory",
             array(
@@ -187,6 +195,7 @@ class Update
                 'value'       => true
             )
         );
+        */
     }
 
 
