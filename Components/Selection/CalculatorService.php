@@ -258,16 +258,6 @@ class CalculatorService
 
 
 
-        if ( $return['price']  > 0 )
-        {
-            /*
-            var_dump($surchargePrices);
-            vd($return);
-            */
-        }
-
-
-
         // do we want to include the master?
         if ( $includeMaster == true )
         {

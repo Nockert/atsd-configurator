@@ -13,7 +13,6 @@ namespace Shopware\AtsdConfigurator\Components;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\Model\ModelManager;
 use Enlight_Components_Session_Namespace as Session;
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
 use Shopware\CustomModels\AtsdConfigurator\Selection;
 use Shopware\AtsdConfigurator\Components;
 use Shopware\CustomModels\AtsdConfigurator\Repository;
@@ -67,8 +66,6 @@ class AtsdConfigurator
 
 
 
-
-
     /**
      * ...
      *
@@ -89,10 +86,6 @@ class AtsdConfigurator
 
 
 
-
-
-
-
     /**
      * Returns the current session.
      *
@@ -104,10 +97,6 @@ class AtsdConfigurator
         // return it
         return $this->container->get( "session" );
     }
-
-
-
-
 
 
 
@@ -127,14 +116,6 @@ class AtsdConfigurator
         // return it
         return $repo;
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -197,11 +178,6 @@ class AtsdConfigurator
 
 
 
-
-
-
-
-
     /**
      * Get all relevant data for a selection in the checkout.
      *
@@ -251,12 +227,4 @@ class AtsdConfigurator
         return $cache[$selection->getKey()]['cache'];
     }
 
-
-
-
-
-
 }
-
-
-

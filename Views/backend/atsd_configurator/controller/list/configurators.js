@@ -374,7 +374,7 @@ Ext.define( "Shopware.apps.AtsdConfigurator.controller.list.Configurators",
                             me.getConfiguratorList().setLoading( false );
 
                             // output message
-                            Shopware.Notification.createGrowlMessage( "", "Der Konfigurator wurde erfolgreich gelöscht." );
+                            Shopware.Notification.createGrowlMessage( "", "Der Konfigurator wurde erfolgreich kopiert." );
 
                             // reload the store
                             grid.getStore().reload();

@@ -1916,6 +1916,25 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
             // save
             $this->getModelManager()->persist( $fieldset );
+            $this->getModelManager()->flush( $fieldset );
+
+
+
+            // copy translations
+            $query = "
+                INSERT INTO s_core_translations
+                    SELECT
+                        NULL AS id,
+                        objecttype,
+                        objectdata,
+                        :id AS objectkey,
+                        objectlanguage,
+                        dirty
+                    FROM s_core_translations
+                    WHERE objecttype = 'atsd-configurator.fieldset'
+                        AND objectkey = :sourceId
+            ";
+            Shopware()->Db()->query( $query, array( 'id' => $fieldset->getId(), 'sourceId' => $sourceFieldset->getId() ) );
 
 
 
@@ -1939,6 +1958,25 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
                 // save
                 $this->getModelManager()->persist( $element );
+                $this->getModelManager()->flush( $element );
+
+
+
+                // copy translations
+                $query = "
+                    INSERT INTO s_core_translations
+                        SELECT
+                            NULL AS id,
+                            objecttype,
+                            objectdata,
+                            :id AS objectkey,
+                            objectlanguage,
+                            dirty
+                        FROM s_core_translations
+                        WHERE objecttype = 'atsd-configurator.element'
+                            AND objectkey = :sourceId
+                ";
+                Shopware()->Db()->query( $query, array( 'id' => $element->getId(), 'sourceId' => $sourceElement->getId() ) );
 
 
 
@@ -1960,13 +1998,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                     // save
                     $this->getModelManager()->persist( $article );
                 }
+
+                // save every article
+                $this->getModelManager()->flush();
             }
         }
 
 
-
-        // save
-        $this->getModelManager()->flush();
 
         // done
         return array(

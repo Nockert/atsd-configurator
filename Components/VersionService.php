@@ -10,14 +10,14 @@
 
 namespace Shopware\AtsdConfigurator\Components;
 
+
+
 /**
  * Aquatuning Software Development - Configurator - Component
  */
 
 class VersionService
 {
-
-
 
     /**
      * Compare versions.
@@ -36,7 +36,6 @@ class VersionService
 
 
 
-
     /**
      * ...
      *
@@ -48,7 +47,6 @@ class VersionService
         // return it
         return ( ( $this->versionCompare( '5.1.0', '>=' ) ) and ( $this->versionCompare( '5.2.0', '<' ) ) );
     }
-
 
 
 
@@ -66,7 +64,6 @@ class VersionService
 
 
 
-
     /**
      * ...
      *
@@ -79,9 +76,4 @@ class VersionService
         return $this->versionCompare( '5.3.0', '>=' );
     }
 
-
-
 }
-
-
-
