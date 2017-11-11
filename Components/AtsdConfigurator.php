@@ -8,14 +8,15 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components;
+namespace AtsdConfigurator\Components;
 
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\Model\ModelManager;
 use Enlight_Components_Session_Namespace as Session;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
-use Shopware\AtsdConfigurator\Components;
-use Shopware\CustomModels\AtsdConfigurator\Repository;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Models\Configurator;
+use AtsdConfigurator\Components;
+use AtsdConfigurator\Models\Repository;
 
 
 
@@ -71,17 +72,16 @@ class AtsdConfigurator
      *
      * @param Container      $container
      * @param ModelManager   $modelManager
-     * @param boolean        $cache
-     * @param integer        $cacheTime
+     * @param array          $configuration
      */
 
-    public function __construct( Container $container, ModelManager $modelManager, $cache, $cacheTime )
+    public function __construct( Container $container, ModelManager $modelManager, array $configuration )
     {
         // set params
         $this->container    = $container;
         $this->modelManager = $modelManager;
-        $this->cache        = $cache;
-        $this->cacheTime    = $cacheTime;
+        $this->cache        = (boolean) $configuration['cacheStatus'];
+        $this->cacheTime    = (integer) $configuration['cacheTime'];
     }
 
 
@@ -111,7 +111,7 @@ class AtsdConfigurator
         // return the default repository
         /* @var $repo Repository */
         $repo = $this->modelManager
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' );
+            ->getRepository( Configurator::class );
 
         // return it
         return $repo;
@@ -143,10 +143,10 @@ class AtsdConfigurator
         if ( ( $useCache == false ) or ( $this->cache == false ) or ( !isset( $cache[$configuratorId] ) ) or ( $cache[$configuratorId]['time'] < time() - $this->cacheTime ) )
         {
             /* @var $defaultService Components\Selection\DefaultService */
-            $defaultService = $this->container->get( "atsd_configurator.selection.default-service");
+            $defaultService = $this->container->get( "atsd_configurator.selection.default_service");
 
             /* @var $calculatorService Components\Selection\CalculatorService */
-            $calculatorService = $this->container->get( "atsd_configurator.selection.calculator-service");
+            $calculatorService = $this->container->get( "atsd_configurator.selection.calculator_service");
 
             // get default selection
             $selection = $defaultService->getDefaultSelection( $configuratorId );
@@ -208,7 +208,7 @@ class AtsdConfigurator
         if ( ( $useCache == false ) or ( $this->cache == false ) or ( !isset( $cache[$selection->getKey()] ) ) or ( $cache[$selection->getKey()]['time'] < time() - $this->cacheTime ) )
         {
             /* @var $calculatorService Components\Selection\CalculatorService */
-            $calculatorService = $this->container->get( "atsd_configurator.selection.calculator-service");
+            $calculatorService = $this->container->get( "atsd_configurator.selection.calculator_service");
 
             // get the data
             $data = $calculatorService->calculateSelectionDataBySelection( $selection );

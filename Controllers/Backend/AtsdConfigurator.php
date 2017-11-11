@@ -8,7 +8,10 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use AtsdConfigurator\Models\Configurator;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Models\Template;
+use AtsdConfigurator\Models\Repository;
 use Shopware\Components\CSRFWhitelistAware;
 
 
@@ -34,6 +37,24 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         ));
     }
 
+
+
+
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    public function preDispatch()
+    {
+        $viewDir = $this->container->getParameter('atsd_configurator.view_dir');
+
+        $this->get('template')->addTemplateDir($viewDir);
+
+        parent::preDispatch();
+    }
 
 
 
@@ -139,7 +160,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             '
             article.id NOT IN (
                 SELECT configuratorSwArticle.id
-                FROM \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article AS configuratorArticle
+                FROM \AtsdConfigurator\Models\Configurator\Fieldset\Element\Article AS configuratorArticle
                     LEFT JOIN configuratorArticle.article AS configuratorSwArticle
                     LEFT JOIN configuratorArticle.element AS configuratorElement
                 WHERE configuratorElement.id = ' . (integer) $elementId . '
@@ -226,11 +247,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function getArticleAssignedList( $elementId )
     {
         // get element
-        /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
-        $element = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element', $elementId );
+        /* @var $element Configurator\Fieldset\Element */
+        $element = Shopware()->Models()->find( Configurator\Fieldset\Element::class, $elementId );
 
         // not found?
-        if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+        if ( !$element instanceof Configurator\Fieldset\Element )
             // nope
             return array(
                 'success' => false
@@ -243,7 +264,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
         // set it up
         $builder->select( array( "article", 'PARTIAL swArticle.{id,name}', 'PARTIAL swDetail.{id,number}' ) )
-            ->from( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article', "article" )
+            ->from( Configurator\Fieldset\Element\Article::class, "article" )
             ->leftJoin( "article.article", "swArticle" )
             ->leftJoin( "swArticle.mainDetail", "swDetail" )
             ->where( "article.element= :element" )
@@ -352,7 +373,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     {
         // get them
         $templates = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Template' )
+            ->getRepository( Template::class )
             ->findAll();
 
         // to array
@@ -387,11 +408,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         // fix sort
         $sort[0]['property'] = "configurator." . $sort[0]['property'];
 
+        /* @var $repo Repository */
+        $repo = Shopware()->Models()
+            ->getRepository( Configurator::class );
+
         // get the query builder
         /* @var $builder \Doctrine\ORM\QueryBuilder */
-        $builder = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
-            ->getConfiguratorListQueryBuilder( $search, $sort, $offset, $limit );
+        $builder = $repo->getConfiguratorListQueryBuilder( $search, $sort, $offset, $limit );
 
         // get the query object
         $query = $builder->getQuery();
@@ -467,11 +490,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function getFieldsetList( $configuratorId )
     {
         // get configurator
-        /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
-        $configurator = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator', $configuratorId );
+        /* @var $configurator Configurator */
+        $configurator = Shopware()->Models()->find( Configurator::class, $configuratorId );
 
         // not found?
-        if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+        if ( !$configurator instanceof Configurator )
             // nope
             return array(
                 'success' => false
@@ -484,7 +507,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
         // set it up
         $builder->select( array( "fieldset" ) )
-            ->from( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset', "fieldset" )
+            ->from( Configurator\Fieldset::class, "fieldset" )
             ->where( "fieldset.configurator = :configurator" )
             ->setParameter( "configurator", $configurator )
             ->orderBy( "fieldset.position", "ASC" );
@@ -522,11 +545,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function getElementList( $fieldsetId )
     {
         // get fieldset
-        /* @var $fieldset \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset */
-        $fieldset = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset', $fieldsetId );
+        /* @var $fieldset Configurator\Fieldset */
+        $fieldset = Shopware()->Models()->find( Configurator\Fieldset::class, $fieldsetId );
 
         // not found?
-        if ( !$fieldset instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset )
+        if ( !$fieldset instanceof Configurator\Fieldset )
             // nope
             return array(
                 'success' => false
@@ -539,7 +562,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
         // set it up
         $builder->select( array( "element", "template", "article" ) )
-            ->from( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element', "element" )
+            ->from( Configurator\Fieldset\Element::class, "element" )
             ->leftJoin( "element.template", "template" )
             ->leftJoin( "element.articles", "article" )
             ->where( "element.fieldset = :fieldset" )
@@ -623,13 +646,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function deleteFieldset( $id )
     {
         // try to find the fieldset
-        /* @var $fieldset \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset */
+        /* @var $fieldset Configurator\Fieldset */
         $fieldset = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset' )
+            ->getRepository( Configurator\Fieldset::class )
             ->find( $id );
 
         // not found?
-        if ( !$fieldset instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset )
+        if ( !$fieldset instanceof Configurator\Fieldset )
             // nope
             return array(
                 'success' => false,
@@ -731,16 +754,16 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 $position = (integer) Shopware()->Db()->fetchOne( $query, array( (integer) $data['configuratorId'] ) );
 
                 // get the configurator
-                /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
-                $configurator = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator', (integer) $data['configuratorId'] );
+                /* @var $configurator Configurator */
+                $configurator = Shopware()->Models()->find( Configurator::class, (integer) $data['configuratorId'] );
 
                 // not found?
-                if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+                if ( !$configurator instanceof Configurator )
                     // throw error
                     throw new Exception( "configurator not found" );
 
                 // create a new one
-                $fieldset = new \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset();
+                $fieldset = new Configurator\Fieldset();
 
                 // set it
                 $fieldset->setConfigurator( $configurator );
@@ -753,11 +776,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             else
             {
                 // find it
-                /* @var $fieldset \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset */
-                $fieldset = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset', (integer) $data['id'] );
+                /* @var $fieldset Configurator\Fieldset */
+                $fieldset = Shopware()->Models()->find( Configurator\Fieldset::class, (integer) $data['id'] );
 
                 // not found?
-                if ( !$fieldset instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset )
+                if ( !$fieldset instanceof Configurator\Fieldset )
                     // throw error
                     throw new Exception( "fieldset not found" );
             }
@@ -859,11 +882,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         foreach ( $articles as $position )
         {
             // find it
-            /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
-            $article = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article', (integer) $position[0] );
+            /* @var $article Configurator\Fieldset\Element\Article */
+            $article = Shopware()->Models()->find( Configurator\Fieldset\Element\Article::class, (integer) $position[0] );
 
             // not found?
-            if ( !$article instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article )
+            if ( !$article instanceof Configurator\Fieldset\Element\Article )
                 // next
                 continue;
 
@@ -903,11 +926,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         foreach ( $fieldsets as $position )
         {
             // find it
-            /* @var $fieldset \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset */
-            $fieldset = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset', (integer) $position[0] );
+            /* @var $fieldset Configurator\Fieldset */
+            $fieldset = Shopware()->Models()->find( Configurator\Fieldset::class, (integer) $position[0] );
 
             // not found?
-            if ( !$fieldset instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset )
+            if ( !$fieldset instanceof Configurator\Fieldset )
                 // next
                 continue;
 
@@ -969,11 +992,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         foreach ( $elements as $position )
         {
             // find it
-            /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
-            $element = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element', (integer) $position[0] );
+            /* @var $element Configurator\Fieldset\Element */
+            $element = Shopware()->Models()->find( Configurator\Fieldset\Element::class, (integer) $position[0] );
 
             // not found?
-            if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+            if ( !$element instanceof Configurator\Fieldset\Element )
                 // next
                 continue;
 
@@ -1034,13 +1057,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function deleteElement( $id )
     {
         // try to find the element
-        /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
+        /* @var $element Configurator\Fieldset\Element */
         $element = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element' )
+            ->getRepository( Configurator\Fieldset\Element::class )
             ->find( $id );
 
         // not found?
-        if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+        if ( !$element instanceof Configurator\Fieldset\Element )
             // nope
             return array(
                 'success' => false,
@@ -1157,11 +1180,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         try
         {
             // find it
-            /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
-            $article = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article', (integer) $data['id'] );
+            /* @var $article Configurator\Fieldset\Element\Article */
+            $article = Shopware()->Models()->find( Configurator\Fieldset\Element\Article::class, (integer) $data['id'] );
 
             // not found?
-            if ( !$article instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article )
+            if ( !$article instanceof Configurator\Fieldset\Element\Article )
                 // throw error
                 throw new Exception( "element not found" );
 
@@ -1232,16 +1255,16 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 $position = (integer) Shopware()->Db()->fetchOne( $query, array( (integer) $data['fieldsetId'] ) );
 
                 // get the fieldset
-                /* @var $fieldset \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset */
-                $fieldset = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset', (integer) $data['fieldsetId'] );
+                /* @var $fieldset Configurator\Fieldset */
+                $fieldset = Shopware()->Models()->find( Configurator\Fieldset::class, (integer) $data['fieldsetId'] );
 
                 // not found?
-                if ( !$fieldset instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset )
+                if ( !$fieldset instanceof Configurator\Fieldset )
                     // throw error
                     throw new Exception( "fieldset not found" );
 
                 // create a new one
-                $element = new \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element();
+                $element = new Configurator\Fieldset\Element();
 
                 // set it
                 $element->setFieldset( $fieldset );
@@ -1254,11 +1277,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             else
             {
                 // find it
-                /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
-                $element = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element', (integer) $data['id'] );
+                /* @var $element Configurator\Fieldset\Element */
+                $element = Shopware()->Models()->find( Configurator\Fieldset\Element::class, (integer) $data['id'] );
 
                 // not found?
-                if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+                if ( !$element instanceof Configurator\Fieldset\Element )
                     // throw error
                     throw new Exception( "element not found" );
             }
@@ -1266,8 +1289,8 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
 
             // find the template
-            /* @var $template \Shopware\CustomModels\AtsdConfigurator\Template */
-            $template = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Template', (integer) $data['templateId'] );
+            /* @var $template Template */
+            $template = Shopware()->Models()->find( Template::class, (integer) $data['templateId'] );
 
 
 
@@ -1367,13 +1390,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 'error'   => "No article(s) selected" );
 
         // get the element
-        /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
+        /* @var $element Configurator\Fieldset\Element */
         $element = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element' )
+            ->getRepository( Configurator\Fieldset\Element::class )
             ->find( $elementId );
 
         // not found?!
-        if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+        if ( !$element instanceof Configurator\Fieldset\Element )
             // nope
             return array(
                 'success' => false,
@@ -1417,7 +1440,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 continue;
 
             // create a new article
-            $model = new \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article();
+            $model = new Configurator\Fieldset\Element\Article();
 
             // set it
             $model->setPosition( $position++ );
@@ -1498,13 +1521,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 'error'   => "No article(s) selected" );
 
         // get the element
-        /* @var $element \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element */
+        /* @var $element Configurator\Fieldset\Element */
         $element = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element' )
+            ->getRepository( Configurator\Fieldset\Element::class )
             ->find( $elementId );
 
         // not found?!
-        if ( !$element instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element )
+        if ( !$element instanceof Configurator\Fieldset\Element )
             // nope
             return array(
                 'success' => false,
@@ -1522,11 +1545,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
                 continue;
 
             // get our article
-            /* @var $article \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
-            $article = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article', $articleId );
+            /* @var $article Configurator\Fieldset\Element\Article */
+            $article = Shopware()->Models()->find( Configurator\Fieldset\Element\Article::class, $articleId );
 
             // not found?!
-            if ( !$article instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article )
+            if ( !$article instanceof Configurator\Fieldset\Element\Article )
                 // invalid
                 continue;
 
@@ -1618,7 +1641,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             if ( !isset( $data['id'] ) )
             {
                 // create a new one
-                $configurator = new \Shopware\CustomModels\AtsdConfigurator\Configurator();
+                $configurator = new Configurator();
 
                 // persist it
                 Shopware()->Models()->persist( $configurator );
@@ -1627,11 +1650,11 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
             else
             {
                 // find it
-                /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
-                $configurator = Shopware()->Models()->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator', (integer) $data['id'] );
+                /* @var $configurator Configurator */
+                $configurator = Shopware()->Models()->find( Configurator::class, (integer) $data['id'] );
 
                 // not found?
-                if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+                if ( !$configurator instanceof Configurator )
                     // throw error
                     throw new Exception( "configurator not found" );
             }
@@ -1779,13 +1802,13 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
     protected function deleteConfigurator( $id )
     {
         // try to find the configurator
-        /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
+        /* @var $configurator Configurator */
         $configurator = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
+            ->getRepository( Configurator::class )
             ->find( $id );
 
         // not found?
-        if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+        if ( !$configurator instanceof Configurator )
             // nope
             return array(
                 'success' => false,
@@ -1795,9 +1818,9 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
 
 
         // get all selections
-        /* @var $selections \Shopware\CustomModels\AtsdConfigurator\Selection[] */
+        /* @var $selections Selection[] */
         $selections = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+            ->getRepository( Selection::class )
             ->findBy( array( 'configurator' => $configurator ) );
 
         // any found?
@@ -1873,7 +1896,7 @@ class Shopware_Controllers_Backend_AtsdConfigurator extends Shopware_Controllers
         // ...
         /* @var $source Configurator */
         $source = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
+            ->getRepository( Configurator::class )
             ->find( $id );
 
         // not found?

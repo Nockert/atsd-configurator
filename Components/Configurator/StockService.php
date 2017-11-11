@@ -8,9 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Configurator;
-
-use Enlight_Config as Config;
+namespace AtsdConfigurator\Components\Configurator;
 
 
 
@@ -24,28 +22,24 @@ class StockService
     /**
      * ...
      *
-     * @var Config
+     * @var array
      */
 
-    protected $config;
+    protected $configuration;
 
 
 
     /**
      * ...
      *
-     * @param Config   $config
+     * @param array   $configuration
      */
 
-    public function __construct( Config $config )
+    public function __construct( array $configuration )
     {
         // set params
-        $this->config = $config;
+        $this->configuration = $configuration;
     }
-
-
-
-
 
 
 
@@ -64,7 +58,7 @@ class StockService
     public function getMaxArticleStock( $stock, $lastStock, $quantity, $max = 100 )
     {
         // get the sales type from the configuration
-        $saleType = (integer) $this->config->get( "saleType" );
+        $saleType = (integer) $this->configuration[ "saleType" ];
 
         // always for sale?
         if ( $saleType == 0 )
@@ -82,14 +76,4 @@ class StockService
         return floor( $stock / $quantity );
     }
 
-
-
-
-
-
-
-
 }
-
-
-

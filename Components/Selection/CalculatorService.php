@@ -8,12 +8,12 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
 
-use Shopware\AtsdConfigurator\Components\Exception;
+use AtsdConfigurator\Components\Exception;
 use Shopware\Bundle\StoreFrontBundle\Struct;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
-use Shopware\AtsdConfigurator\Components\Configurator\ArticlePriceService;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Components\Configurator\ArticlePriceService;
 
 
 
@@ -67,8 +67,6 @@ class CalculatorService
         $this->parserService       = $parserService;
         $this->articlePriceService = $articlePriceService;
     }
-
-
 
 
 
@@ -338,8 +336,6 @@ class CalculatorService
         $return['pseudoPriceNet'] += $surchargePrices['pseudoPriceNet'];
         $return['priceNet']       += $surchargePrices['priceNet'];
 
-
-
         // all good
         $return['valid'] = true;
 
@@ -349,14 +345,9 @@ class CalculatorService
         // prices
         $return['hasPseudoPrice'] = ( $return['price'] != $return['pseudoPrice'] );
 
-
-
         // return it
         return $return;
     }
-
-
-
 
 
 
@@ -383,8 +374,4 @@ class CalculatorService
         return $this->calculateSelectionData( $selection->getConfigurator()->getId(), $selectionArr, $selection->getKey() );
     }
 
-
 }
-
-
-

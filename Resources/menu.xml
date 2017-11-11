@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../../engine/Shopware/Components/Plugin/schema/menu.xsd">
+
+    <entries>
+
+        <!-- main app -->
+        <entry>
+            <name>AtsdConfigurator</name>
+            <label>Konfigurator</label>
+            <controller>AtsdConfigurator</controller>
+            <action>index</action>
+            <class>sprite-application-block</class>
+            <parent identifiedBy="id">1</parent>
+        </entry>
+
+    </entries>
+
+</menu>

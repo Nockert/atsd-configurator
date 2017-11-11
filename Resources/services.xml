@@ -1,0 +1,191 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <!-- configuration service -->
+        <service id="atsd_configurator.configuration" class="Shopware\Components\Plugin\CachedConfigReader">
+            <factory service="shopware.plugin.cached_config_reader" method="getByPluginName"/>
+            <argument type="string">AtsdConfigurator</argument>
+        </service>
+
+
+
+        <!-- plugin services -->
+        <service id="atsd_configurator.component" class="AtsdConfigurator\Components\AtsdConfigurator">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="models" />
+            <argument type="service" id="atsd_configurator.configuration" />
+        </service>
+
+        <service id="atsd_configurator.version_service" class="AtsdConfigurator\Components\VersionService">
+        </service>
+
+        <service id="atsd_configurator.configurator.article_price_service" class="AtsdConfigurator\Components\Configurator\ArticlePriceService">
+        </service>
+
+        <service id="atsd_configurator.configurator.filter_service" class="AtsdConfigurator\Components\Configurator\FilterService">
+            <argument type="service" id="atsd_configurator.configurator.stock_service" />
+        </service>
+
+        <service id="atsd_configurator.configurator.parser_service" class="AtsdConfigurator\Components\Configurator\ParserService">
+            <argument type="service" id="atsd_configurator.version_service" />
+            <argument type="service" id="shopware_storefront.list_product_service" />
+            <argument type="service" id="shopware_storefront.context_service" />
+            <argument type="service" id="shopware_media.media_service" />
+        </service>
+
+        <service id="atsd_configurator.configurator.stock_service" class="AtsdConfigurator\Components\Configurator\StockService">
+            <argument type="service" id="atsd_configurator.configuration" />
+        </service>
+
+        <service id="atsd_configurator.configurator.validator_service" class="AtsdConfigurator\Components\Configurator\ValidatorService">
+            <argument type="service" id="atsd_configurator.configurator.stock_service" />
+        </service>
+
+        <service id="atsd_configurator.helper.customer_service" class="AtsdConfigurator\Components\Helper\CustomerService">
+            <argument type="service" id="session" />
+            <argument type="service" id="models" />
+        </service>
+
+        <service id="atsd_configurator.selection.basket_service" class="AtsdConfigurator\Components\Selection\BasketService">
+            <argument type="service" id="models" />
+            <argument type="service" id="session" />
+            <argument type="service" id="shopware_storefront.context_service" />
+            <argument type="service" id="atsd_configurator.component" />
+        </service>
+
+        <service id="atsd_configurator.selection.calculator_service" class="AtsdConfigurator\Components\Selection\CalculatorService">
+            <argument type="service" id="atsd_configurator.selection.parser_service" />
+            <argument type="service" id="atsd_configurator.configurator.article_price_service" />
+        </service>
+
+        <service id="atsd_configurator.selection.creator_service" class="AtsdConfigurator\Components\Selection\CreatorService">
+            <argument type="service" id="models" />
+            <argument type="service" id="atsd_configurator.helper.customer_service" />
+        </service>
+
+        <service id="atsd_configurator.selection.default_service" class="AtsdConfigurator\Components\Selection\DefaultService">
+            <argument type="service" id="models" />
+        </service>
+
+        <service id="atsd_configurator.selection.parser_service" class="AtsdConfigurator\Components\Selection\ParserService">
+            <argument type="service" id="models" />
+            <argument type="service" id="atsd_configurator.configurator.filter_service" />
+            <argument type="service" id="atsd_configurator.configurator.parser_service" />
+            <argument type="service" id="atsd_configurator.selection.validator_service" />
+        </service>
+
+        <service id="atsd_configurator.selection.validator_service" class="AtsdConfigurator\Components\Selection\ValidatorService">
+        </service>
+
+        <service id="atsd_configurator.bundle.store_front_bundle.configurator_service" class="AtsdConfigurator\Bundle\StoreFrontBundle\ConfiguratorService">
+            <argument type="service" id="models" />
+        </service>
+
+
+
+        <!-- list product service decorator -->
+        <service id="atsd_configurator.listener.bundle.store_front_bundle.list_product_service" class="AtsdConfigurator\Listener\Bundle\StoreFrontBundle\ListProductService">
+            <argument type="service" id="service_container" />
+            <tag name="shopware.event_listener" method="afterListProductService" event="Enlight_Bootstrap_AfterInitResource_shopware_storefront.list_product_service" />
+        </service>
+
+
+
+        <!-- listeners -->
+        <service id="atsd_configurator.listener.components.theme.compiler.less" class="AtsdConfigurator\Listener\Components\Theme\Compiler">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <tag name="shopware.event_listener" method="addLessFiles" event="Theme_Compiler_Collect_Plugin_Less" />
+        </service>
+
+        <service id="atsd_configurator.listener.components.theme.compiler.javascript" class="AtsdConfigurator\Listener\Components\Theme\Compiler">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <tag name="shopware.event_listener" method="addJavascriptFiles" event="Theme_Compiler_Collect_Plugin_Javascript" />
+        </service>
+
+        <!-- frontend and widget controller listeners -->
+        <service id="atsd_configurator.listener.controllers.widgets" class="AtsdConfigurator\Listener\Controllers\Widgets">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure_Widgets" />
+        </service>
+
+        <service id="atsd_configurator.listener.controllers.frontend.account" class="AtsdConfigurator\Listener\Controllers\Frontend\Account">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure_Frontend_Account" />
+        </service>
+
+        <service id="atsd_configurator.listener.controllers.frontend.checkout" class="AtsdConfigurator\Listener\Controllers\Frontend\Checkout">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure_Frontend_Checkout" />
+        </service>
+
+        <service id="atsd_configurator.listener.controllers.frontend.detail" class="AtsdConfigurator\Listener\Controllers\Frontend\Detail">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="models" />
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail" />
+        </service>
+
+        <service id="atsd_configurator.listener.controllers.frontend.listing" class="AtsdConfigurator\Listener\Controllers\Frontend\Listing">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatchSecure_Frontend_Listing" />
+        </service>
+
+        <!-- third party listeners -->
+        <service id="atsd_configurator.listener.plugins.frontend.atsd_shipping_ups_xml" class="AtsdConfigurator\Listener\Plugins\Frontend\AtsdShippingUpsXml">
+            <argument type="service" id="session" />
+            <argument type="service" id="atsd_configurator.selection.basket_service" />
+            <tag name="shopware.event_listener" method="onModifyWeight" event="Shopware_AtsdShippingUpsXml_ModifyWeight" />
+        </service>
+
+        <!-- core class listeners -->
+        <service id="atsd_configurator.listener.core.s_admin" class="AtsdConfigurator\Listener\Core\sAdmin">
+            <argument type="service" id="atsd_configurator.selection.basket_service" />
+            <tag name="shopware.event_listener" method="afterGetDispatchBasket" event="sAdmin::sGetDispatchBasket::after" />
+        </service>
+
+        <service id="atsd_configurator.listener.core.s_order.before_save_order" class="AtsdConfigurator\Listener\Core\sOrder">
+            <argument type="service" id="models" />
+            <argument type="service" id="db" />
+            <argument type="service" id="shopware_attribute.data_loader" />
+            <argument type="service" id="shopware_attribute.data_persister" />
+            <argument type="service" id="atsd_configurator.selection.parser_service" />
+            <argument type="service" id="atsd_configurator.selection.calculator_service" />
+            <argument type="service" id="atsd_configurator.configurator.article_price_service" />
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="beforeSaveOrder" event="sOrder::sSaveOrder::before" />
+        </service>
+
+        <service id="atsd_configurator.listener.core.s_order.on_process_details" class="AtsdConfigurator\Listener\Core\sOrder">
+            <argument type="service" id="models" />
+            <argument type="service" id="db" />
+            <argument type="service" id="shopware_attribute.data_loader" />
+            <argument type="service" id="shopware_attribute.data_persister" />
+            <argument type="service" id="atsd_configurator.selection.parser_service" />
+            <argument type="service" id="atsd_configurator.selection.calculator_service" />
+            <argument type="service" id="atsd_configurator.configurator.article_price_service" />
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onProcessDetails" event="Shopware_Modules_Order_SaveOrder_ProcessDetails" />
+        </service>
+
+
+
+        <!-- subscriber -->
+        <service id="atsd_configurator.subscriber.core.s_basket" class="AtsdConfigurator\Subscriber\Core\sBasket">
+            <argument type="service" id="models" />
+            <argument type="service" id="db" />
+            <argument type="service" id="atsd_configurator.component" />
+            <tag name="shopware.event_subscriber" />
+        </service>
+
+    </services>
+
+</container>

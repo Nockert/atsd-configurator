@@ -8,10 +8,12 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Bundle\StoreFrontBundle;
+namespace AtsdConfigurator\Bundle\StoreFrontBundle;
 
 use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
-use Shopware\CustomModels\AtsdConfigurator\Repository;
+use AtsdConfigurator\Models\Repository;
+use Shopware\Components\Model\ModelManager;
+use AtsdConfigurator\Models\Configurator;
 
 
 
@@ -21,6 +23,16 @@ use Shopware\CustomModels\AtsdConfigurator\Repository;
 
 class ConfiguratorService
 {
+
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
+
+    private $modelManager;
+
+
 
     /**
      * ...
@@ -35,20 +47,15 @@ class ConfiguratorService
     /**
      * ...
      *
-     * @param Repository   $repository
-     *
-     * @return ConfiguratorService
+     * @param ModelManager   $modelManager
      */
 
-    public function __construct( Repository $repository )
+    public function __construct( ModelManager $modelManager )
     {
         // set parameters
-        $this->repository = $repository;
+        $this->modelManager = $modelManager;
+        $this->repository   = $modelManager->getRepository( Configurator::class );
     }
-
-
-
-
 
 
 
@@ -107,11 +114,6 @@ class ConfiguratorService
 
 
 
-
-
-
-
-
     /**
      * ...
      *
@@ -137,7 +139,4 @@ class ConfiguratorService
         return $articleIds;
     }
 
-
 }
-
-

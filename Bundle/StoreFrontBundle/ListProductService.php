@@ -8,15 +8,16 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Bundle\StoreFrontBundle;
+namespace AtsdConfigurator\Bundle\StoreFrontBundle;
 
 use Shopware\Components\DependencyInjection\Container;
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
-use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+use AtsdConfigurator\Models\Configurator;
+use AtsdConfigurator\Components\AtsdConfigurator as Component;
 use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\ProductContextInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\ListProduct;
 use Shopware\Bundle\StoreFrontBundle\Struct\Attribute;
+
 
 
 /**
@@ -73,8 +74,6 @@ class ListProductService implements ListProductServiceInterface
      * @param ConfiguratorService            $configuratorService
      * @param Component                      $component
      * @param Container                      $container
-     *
-     * @return ListProductService
      */
 
     public function __construct( ListProductServiceInterface $coreService, ConfiguratorService $configuratorService, Component $component, Container $container )
@@ -85,7 +84,6 @@ class ListProductService implements ListProductServiceInterface
         $this->component           = $component;
         $this->container           = $container;
     }
-
 
 
 
@@ -106,8 +104,6 @@ class ListProductService implements ListProductServiceInterface
         // get all configurators
         $configurators = $this->configuratorService->getList( $products );
 
-
-
         // loop all products
         /* @var $product ListProduct */
         foreach ( $products as $product )
@@ -122,14 +118,9 @@ class ListProductService implements ListProductServiceInterface
             );
         }
 
-
-
         // return the products
         return $products;
     }
-
-
-
 
 
 
@@ -153,10 +144,6 @@ class ListProductService implements ListProductServiceInterface
 
 
 
-
-
-
-
     /**
      * ...
      *
@@ -170,7 +157,7 @@ class ListProductService implements ListProductServiceInterface
     {
         // get the configurator
         /* @var $configurator Configurator */
-        $configurator = $this->container->get( "shopware.model_manager" )->find( '\Shopware\CustomModels\AtsdConfigurator\Configurator', $configuratorId );
+        $configurator = $this->container->get( "shopware.model_manager" )->find( Configurator::class, $configuratorId );
 
         // call component
         $defaults = $this->component->getConfiguratorDefaults( $configuratorId );
@@ -184,10 +171,4 @@ class ListProductService implements ListProductServiceInterface
         return $defaults;
     }
 
-
-
-
-
 }
-
-

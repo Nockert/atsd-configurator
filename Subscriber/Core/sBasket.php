@@ -8,20 +8,20 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Subscriber\Core;
+namespace AtsdConfigurator\Subscriber\Core;
 
 use Enlight\Event\SubscriberInterface;
-use Shopware_Components_Plugin_Bootstrap as Bootstrap;
-use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
-use Shopware\Components\DependencyInjection\Container;
-use Shopware\AtsdConfigurator\Components\AtsdConfigurator as Component;
+use AtsdConfigurator\Components\Exception\ValidatorException;
+use AtsdConfigurator\Components\AtsdConfigurator as Component;
 use Enlight_Event_EventArgs as EventArgs;
 use Enlight_Hook_HookArgs as HookArgs;
 use Shopware\Models\Article\Detail;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Models\Configurator;
 use Shopware\Models\Order\Basket as BasketItem;
-use Shopware\Bundle\AttributeBundle\Service\DataLoader as AttributeDataLoader;
+use Shopware\Components\Model\ModelManager;
+use Enlight_Components_Db_Adapter_Pdo_Mysql as Db;
+use sBasket as CoreClass;
 
 
 
@@ -32,23 +32,23 @@ use Shopware\Bundle\AttributeBundle\Service\DataLoader as AttributeDataLoader;
 class sBasket implements SubscriberInterface
 {
 
-	/**
-	 * Main bootstrap object.
-	 *
-	 * @var Bootstrap
-	 */
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
 
-	protected $bootstrap;
+    protected $modelManager;
 
 
 
-	/**
-	 * DI container.
-	 *
-	 * @var Container
-	 */
+    /**
+     * ...
+     *
+     * @var Db
+     */
 
-	protected $container;
+    protected $db;
 
 
 
@@ -62,27 +62,22 @@ class sBasket implements SubscriberInterface
 
 
 
+    /**
+     * ...
+     *
+     *
+     * @param ModelManager   $modelManager
+     * @param Db             $db
+     * @param Component      $component
+     */
 
-
-
-	/**
-	 * ...
-	 *
-	 * @param Bootstrap   $bootstrap
-	 * @param Container   $container
-	 * @param Component   $component
-	 */
-
-	public function __construct( Bootstrap $bootstrap, Container $container, Component $component )
+	public function __construct( ModelManager $modelManager, Db $db, Component $component )
     {
 		// set params
-		$this->bootstrap = $bootstrap;
-		$this->container = $container;
-		$this->component = $component;
+		$this->modelManager = $modelManager;
+		$this->db           = $db;
+		$this->component    = $component;
 	}
-
-
-
 
 
 
@@ -102,10 +97,6 @@ class sBasket implements SubscriberInterface
             'sBasket::sAddArticle::before'                                 => "beforeAddArticleHook"
 		);
 	}
-
-
-
-
 
 
 
@@ -135,9 +126,6 @@ class sBasket implements SubscriberInterface
 
 
 
-
-
-
     /**
      * Set our own price for every selection.
      *
@@ -162,7 +150,7 @@ class sBasket implements SubscriberInterface
             FROM s_order_basket_attributes
             WHERE basketID = ?
         ";
-        $selectionId = (integer) Shopware()->Db()->fetchOne( $query, array( $id ) );
+        $selectionId = (integer) $this->db->fetchOne( $query, array( $id ) );
 
 
 
@@ -175,8 +163,8 @@ class sBasket implements SubscriberInterface
 
         // get the selection
         /* @var $selection Selection */
-        $selection = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+        $selection = $this->modelManager
+            ->getRepository( Selection::class )
             ->find( $selectionId );
 
         // try to get selection data
@@ -202,10 +190,6 @@ class sBasket implements SubscriberInterface
 
 
 
-
-
-
-
     /**
      * Dont allow an article with a configurator to be added like this.
      *
@@ -217,7 +201,7 @@ class sBasket implements SubscriberInterface
     public function beforeAddArticleHook( HookArgs $arguments )
     {
         // get the controller
-        /* @var $sBasket \sBasket */
+        /* @var $sBasket CoreClass */
         $sBasket = $arguments->getSubject();
 
         // get parameters
@@ -226,8 +210,8 @@ class sBasket implements SubscriberInterface
 
         // get the detail
         /* @var $detail Detail */
-        $detail = Shopware()->Models()
-            ->getRepository( '\Shopware\Models\Article\Detail' )
+        $detail = $this->modelManager
+            ->getRepository( Detail::class )
             ->findOneBy( array( 'number' => $ordernumber ) );
 
         // did we even find it?
@@ -240,8 +224,8 @@ class sBasket implements SubscriberInterface
 
         // does it have a configurator?
         /* @var $configurator Configurator */
-        $configurator = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator' )
+        $configurator = $this->modelManager
+            ->getRepository( Configurator::class )
             ->findOneBy( array( 'article' => $article ) );
 
         // no configurator found?
@@ -249,14 +233,9 @@ class sBasket implements SubscriberInterface
             // nothing to do
             return;
 
-
-
         // disable default addArticle()
         $arguments->set( "id", "0" );
     }
-
-
-
 
 
 
@@ -289,8 +268,8 @@ class sBasket implements SubscriberInterface
 
             // get the selector
             /* @var $selection Selection */
-            $selection = Shopware()->Models()
-                ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+            $selection = $this->modelManager
+                ->getRepository( Selection::class )
                 ->find( $selectorId );
 
 
@@ -331,11 +310,6 @@ class sBasket implements SubscriberInterface
 
 
 
-
-
-
-
-
     /**
      * ...
      *
@@ -348,20 +322,11 @@ class sBasket implements SubscriberInterface
     {
         // get the model to remove the attribute as well
         /* @var $orderBasket BasketItem */
-        $orderBasket = Shopware()->Models()->find( '\Shopware\Models\Order\Basket', $orderBasketId );
+        $orderBasket = $this->modelManager->find( BasketItem::class, $orderBasketId );
 
         // remove it
-        Shopware()->Models()->remove( $orderBasket );
-        Shopware()->Models()->flush( $orderBasket );
+        $this->modelManager->remove( $orderBasket );
+        $this->modelManager->flush( $orderBasket );
     }
-
-
-
-
-
-
-
-
-
 
 }

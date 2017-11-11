@@ -8,7 +8,9 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Configurator;
+namespace AtsdConfigurator\Components\Configurator;
+
+
 
 /**
  * Aquatuning Software Development - Configurator - Component
@@ -38,10 +40,6 @@ class ValidatorService
         // set params
         $this->stockService = $stockService;
     }
-
-
-
-
 
 
 
@@ -96,13 +94,4 @@ class ValidatorService
         return true;
     }
 
-
-
-
-
-
-
 }
-
-
-

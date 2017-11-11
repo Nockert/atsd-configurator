@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components;
+namespace AtsdConfigurator\Components;
 
 
 

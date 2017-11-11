@@ -8,7 +8,9 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
+
+
 
 /**
  * Aquatuning Software Development - Configurator - Component
@@ -16,8 +18,6 @@ namespace Shopware\AtsdConfigurator\Components\Selection;
 
 class ValidatorService
 {
-
-
 
     /**
      * Checks if the selection is complete for the configurator.
@@ -66,12 +66,4 @@ class ValidatorService
         return true;
     }
 
-
-
-
-
-
 }
-
-
-

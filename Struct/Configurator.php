@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Struct;
+namespace AtsdConfigurator\Struct;
 
 /**
  * Aquatuning Software Development - Configurator - Struct

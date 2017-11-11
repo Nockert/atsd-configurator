@@ -8,9 +8,11 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
 
-use Shopware\CustomModels\AtsdConfigurator\Repository;
+use AtsdConfigurator\Models\Repository;
+use Shopware\Components\Model\ModelManager;
+use AtsdConfigurator\Models\Configurator;
 
 
 
@@ -20,6 +22,16 @@ use Shopware\CustomModels\AtsdConfigurator\Repository;
 
 class DefaultService
 {
+
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
+
+    protected $modelManager;
+
+
 
     /**
      * ...
@@ -34,17 +46,15 @@ class DefaultService
     /**
      * ...
      *
-     * @param Repository   $repository
+     * @param ModelManager   $modelManager
      */
 
-    public function __construct( Repository $repository)
+    public function __construct( ModelManager $modelManager )
     {
         // set params
-        $this->repository = $repository;
+        $this->modelManager = $modelManager;
+        $this->repository   = $modelManager->getRepository( Configurator::class );
     }
-
-
-
 
 
 
@@ -110,11 +120,4 @@ class DefaultService
         return $selection;
     }
 
-
-
-
-
 }
-
-
-

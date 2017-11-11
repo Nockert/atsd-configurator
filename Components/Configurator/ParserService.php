@@ -8,13 +8,12 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Configurator;
+namespace AtsdConfigurator\Components\Configurator;
 
 use Shopware\Bundle\StoreFrontBundle\Service\ListProductServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
 use Shopware\Bundle\MediaBundle\MediaService;
-use Shopware\Bundle\StoreFrontBundle\Struct;
-use Shopware\AtsdConfigurator\Components\VersionService;
+use AtsdConfigurator\Components\VersionService;
 use Shopware_Components_Translation as Translation;
 
 
@@ -82,6 +81,7 @@ class ParserService
      * @param VersionService                $versionService
      * @param ListProductServiceInterface   $listProductService
      * @param ContextService                $contextService
+     * @param MediaService                  $mediaService
      */
 
     public function __construct( VersionService $versionService, ListProductServiceInterface $listProductService, ContextService $contextService, MediaService $mediaService )
@@ -93,10 +93,6 @@ class ParserService
         $this->mediaService       = $mediaService;
         $this->translation        = new Translation();
     }
-
-
-
-
 
 
 
@@ -221,11 +217,6 @@ class ParserService
 
 
 
-
-
-
-
-
     /**
      * ...
      *
@@ -263,11 +254,4 @@ class ParserService
         return $translation[$key];
     }
 
-
-
-
-
 }
-
-
-

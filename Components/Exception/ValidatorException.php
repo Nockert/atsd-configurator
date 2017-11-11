@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Exception;
+namespace AtsdConfigurator\Components\Exception;
 
 use Exception;
 
@@ -21,5 +21,3 @@ use Exception;
 class ValidatorException extends Exception
 {
 }
-
-

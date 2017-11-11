@@ -8,12 +8,14 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
 
-use Shopware\CustomModels\AtsdConfigurator\Repository;
-use Shopware\AtsdConfigurator\Components\Configurator\FilterService as ConfiguratorFilterService;
-use Shopware\AtsdConfigurator\Components\Configurator\ParserService as ConfiguratorParserService;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
+use AtsdConfigurator\Models\Repository;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Components\Configurator\FilterService as ConfiguratorFilterService;
+use AtsdConfigurator\Components\Configurator\ParserService as ConfiguratorParserService;
+use Shopware\Components\Model\ModelManager;
+use AtsdConfigurator\Models\Configurator;
 
 
 
@@ -23,6 +25,17 @@ use Shopware\CustomModels\AtsdConfigurator\Selection;
 
 class ParserService
 {
+
+    /**
+     * ...
+     *
+     * @var ModelManager
+     */
+
+    protected $modelManager;
+
+
+
 
     /**
      * ...
@@ -67,23 +80,21 @@ class ParserService
     /**
      * ...
      *
-     * @param Repository                  $repository
+     * @param ModelManager                $modelManager
      * @param ConfiguratorFilterService   $configuratorFilterService
      * @param ConfiguratorParserService   $configuratorParserService
      * @param ValidatorService            $validatorService
      */
 
-    public function __construct( Repository $repository, ConfiguratorFilterService $configuratorFilterService, ConfiguratorParserService $configuratorParserService, ValidatorService $validatorService )
+    public function __construct( ModelManager $modelManager, ConfiguratorFilterService $configuratorFilterService, ConfiguratorParserService $configuratorParserService, ValidatorService $validatorService )
     {
         // set params
-        $this->repository                = $repository;
+        $this->modelManager              = $modelManager;
+        $this->repository                = $modelManager->getRepository( Configurator::class );
         $this->configuratorFilterService = $configuratorFilterService;
         $this->configuratorParserService = $configuratorParserService;
         $this->validatorService          = $validatorService;
     }
-
-
-
 
 
 
@@ -152,9 +163,6 @@ class ParserService
 
 
 
-
-
-
     /**
      * ...
      *
@@ -179,12 +187,4 @@ class ParserService
         return $this->getParsedConfiguratorForSelection( $selection->getConfigurator()->getId(), $selectionArr, $validate );
     }
 
-
-
-
-
-
 }
-
-
-

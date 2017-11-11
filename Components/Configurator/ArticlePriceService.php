@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Configurator;
+namespace AtsdConfigurator\Components\Configurator;
 
 use Shopware\Bundle\StoreFrontBundle\Struct;
 
@@ -20,9 +20,6 @@ use Shopware\Bundle\StoreFrontBundle\Struct;
 
 class ArticlePriceService
 {
-
-
-
 
     /**
      * ...
@@ -58,8 +55,6 @@ class ArticlePriceService
 
 
 
-
-
     /**
      * ...
      *
@@ -78,9 +73,6 @@ class ArticlePriceService
         // calculate final price
         return $price->getCalculatedPrice() * $quantity * ( ( 100 - (integer) $rebate ) / 100 );
     }
-
-
-
 
 
 
@@ -105,10 +97,6 @@ class ArticlePriceService
 
 
 
-
-
-
-
     /**
      * ...
      *
@@ -122,9 +110,6 @@ class ArticlePriceService
         // return via context service
         return Shopware()->Modules()->Articles()->sFormatPrice( $price );
     }
-
-
-
 
 
 
@@ -142,12 +127,4 @@ class ArticlePriceService
         return (float) Shopware()->Modules()->Articles()->getTaxRateByConditions( $id );
     }
 
-
-
-
-
-
 }
-
-
-

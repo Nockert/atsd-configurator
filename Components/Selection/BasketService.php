@@ -8,17 +8,17 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
 
 use Shopware\Components\Model\ModelManager;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
+use AtsdConfigurator\Models\Selection;
 use Shopware\Models\Order\Basket;
 use Shopware\Models\Attribute\OrderBasket as Attribute;
 use Enlight_Components_Session_Namespace as Session;
 use Shopware\Bundle\StoreFrontBundle\Struct;
 use Shopware\Bundle\StoreFrontBundle\Service\Core\ContextService;
-use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
-use Shopware\AtsdConfigurator\Components\AtsdConfigurator;
+use AtsdConfigurator\Components\Exception\ValidatorException;
+use AtsdConfigurator\Components\AtsdConfigurator;
 
 
 
@@ -85,10 +85,6 @@ class BasketService
         $this->contextService = $contextService;
         $this->component      = $component;
     }
-
-
-
-
 
 
 
@@ -165,9 +161,6 @@ class BasketService
 
 
 
-
-
-
     /**
      * ...
      *
@@ -218,9 +211,9 @@ class BasketService
         foreach ( $articles as $article )
         {
             // get the selection
-            /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+            /* @var $selection Selection */
             $selection = Shopware()->Models()
-                ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+                ->getRepository( Selection::class )
                 ->find( (integer) $article['atsd_configurator_selection_id'] );
 
             // get selection data and ignore it when an error occurs
@@ -248,11 +241,6 @@ class BasketService
 
 
 
-
-
-
-
-
     /**
      * Returns the current currency.
      *
@@ -264,9 +252,6 @@ class BasketService
         // return via context service
         return $this->contextService->getShopContext()->getCurrency();
     }
-
-
-
 
 
 
@@ -284,11 +269,4 @@ class BasketService
         return (float) Shopware()->Modules()->Articles()->getTaxRateByConditions( $id );
     }
 
-
-
-
-
 }
-
-
-

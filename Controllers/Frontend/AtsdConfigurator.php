@@ -8,10 +8,10 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
-use Shopware\AtsdConfigurator\Components\Exception\ValidatorException;
-use Shopware\AtsdConfigurator\Components;
+use AtsdConfigurator\Models\Configurator;
+use AtsdConfigurator\Models\Selection;
+use AtsdConfigurator\Components\Exception\ValidatorException;
+use AtsdConfigurator\Components;
 use Shopware\Components\CSRFWhitelistAware;
 
 
@@ -37,6 +37,21 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         ));
     }
 
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+
+    public function preDispatch()
+    {
+        $viewDir = $this->container->getParameter('atsd_configurator.view_dir');
+
+        $this->get('template')->addTemplateDir($viewDir);
+
+        parent::preDispatch();
+    }
 
 
 
@@ -91,7 +106,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // try to find the selection
         /* @var $selection Selection */
         $selection = Shopware()->Models()
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+            ->getRepository( Selection::class )
             ->findOneBy( array( 'key' => $key ) );
 
         // not found?
@@ -132,7 +147,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
     public function addToBasketAction()
     {
         // get the component
-        /* @var $component \Shopware\AtsdConfigurator\Components\AtsdConfigurator */
+        /* @var $component Components\AtsdConfigurator */
         $component = $this->get( "atsd_configurator.component" );
 
         // create a new selection
@@ -156,16 +171,16 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
         /* @var $validatorService Components\Configurator\ValidatorService */
-        $validatorService = $this->container->get( "atsd_configurator.configurator.validator-service");
+        $validatorService = $this->container->get( "atsd_configurator.configurator.validator_service");
 
         /* @var $filterService Components\Configurator\FilterService */
-        $filterService = $this->container->get( "atsd_configurator.configurator.filter-service");
+        $filterService = $this->container->get( "atsd_configurator.configurator.filter_service");
 
         /* @var $parserService Components\Configurator\ParserService */
-        $parserService = $this->container->get( "atsd_configurator.configurator.parser-service");
+        $parserService = $this->container->get( "atsd_configurator.configurator.parser_service");
 
         /* @var $selectionValidatorService Components\Selection\ValidatorService */
-        $selectionValidatorService = $this->container->get( "atsd_configurator.selection.validator-service");
+        $selectionValidatorService = $this->container->get( "atsd_configurator.selection.validator_service");
 
 
 
@@ -218,7 +233,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
         /* @var $basketService Components\Selection\BasketService */
-        $basketService = $this->container->get( "atsd_configurator.selection.basket-service");
+        $basketService = $this->container->get( "atsd_configurator.selection.basket_service");
 
         // add it
         $basketService->addSelectionToBasket( $selection );
@@ -262,9 +277,9 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
         // get the selection article
-        /* @var $selectionArticle \Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article */
+        /* @var $selectionArticle Configurator\Fieldset\Element\Article */
         $selectionArticle = $this->get( "shopware.model_manager" )
-            ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article' )
+            ->getRepository( Configurator\Fieldset\Element\Article::class )
             ->find( $articleId );
 
         // get the article details
@@ -273,12 +288,8 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
 
-        // get the bootstrap
-        /* @var $bootstrap \Shopware_Components_Plugin_Bootstrap */
-        $bootstrap = $this->get( "atsd_configurator.bootstrap" );
-
         // get the configuration
-        $config = $bootstrap->Config()->toArray();
+        $config = $this->container->get( "atsd_configurator.configuration");
 
         // assign it
         $this->View()->assign( "atsdConfiguratorConfig", $config );
@@ -311,11 +322,11 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
     private function createSelectionFromRequest( $manual = false )
     {
         // get the component
-        /* @var $component \Shopware\AtsdConfigurator\Components\AtsdConfigurator */
+        /* @var $component Components\AtsdConfigurator */
         $component = $this->get( "atsd_configurator.component" );
 
         /* @var $creatorService Components\Selection\CreatorService */
-        $creatorService = $this->container->get( "atsd_configurator.selection.creator-service");
+        $creatorService = $this->container->get( "atsd_configurator.selection.creator_service");
 
         // get parameters
         $configuratorId = (integer) $this->Request()->getParam( "configuratorId" );
@@ -341,12 +352,12 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
 
         // get the configurator
-        /* @var $configurator \Shopware\CustomModels\AtsdConfigurator\Configurator */
+        /* @var $configurator Configurator */
         $configurator = $component->getRepository()
             ->find( $configuratorId );
 
         // not found?
-        if ( !$configurator instanceof \Shopware\CustomModels\AtsdConfigurator\Configurator )
+        if ( !$configurator instanceof Configurator )
             // not found
             throw new \Exception( "configurator with id " . $configuratorId . " not found" );
 
@@ -379,7 +390,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         /* @var $db \Enlight_Components_Db_Adapter_Pdo_Mysql */
         $db        = $this->get( "shopware.db" );
 
-        /* @var $component \Shopware\AtsdConfigurator\Components\AtsdConfigurator */
+        /* @var $component Components\AtsdConfigurator */
         $component = $this->get( "atsd_configurator.component" );
 
 
@@ -410,9 +421,9 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         foreach ( $result as $aktu )
         {
             // get the selector
-            /* @var $selection \Shopware\CustomModels\AtsdConfigurator\Selection */
+            /* @var $selection Selection */
             $selection = Shopware()->Models()
-                ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Selection' )
+                ->getRepository( Selection::class )
                 ->find( $aktu['id'] );
 
             // try it

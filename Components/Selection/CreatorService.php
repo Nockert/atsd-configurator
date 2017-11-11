@@ -8,12 +8,12 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Selection;
+namespace AtsdConfigurator\Components\Selection;
 
-use Shopware\CustomModels\AtsdConfigurator\Configurator;
-use Shopware\CustomModels\AtsdConfigurator\Selection;
+use AtsdConfigurator\Models\Configurator;
+use AtsdConfigurator\Models\Selection;
 use Shopware\Components\Model\ModelManager;
-use Shopware\AtsdConfigurator\Components\Helper\CustomerService;
+use AtsdConfigurator\Components\Helper\CustomerService;
 
 
 
@@ -60,11 +60,6 @@ class CreatorService
 
 
 
-
-
-
-
-
     /**
      * Get a default selection for a specified configurator. We always use the first article
      * of every mandatory element.
@@ -96,7 +91,7 @@ class CreatorService
             // get the article
             /* @var $configuratorArticle Configurator\Fieldset\Element\Article */
             $configuratorArticle = $this->modelManager
-                ->getRepository( '\Shopware\CustomModels\AtsdConfigurator\Configurator\Fieldset\Element\Article' )
+                ->getRepository( Configurator\Fieldset\Element\Article::class )
                 ->findOneBy( array( 'id' => (integer) $articleId ) );
 
             // not found?
@@ -126,11 +121,4 @@ class CreatorService
         return $selection;
     }
 
-
-
-
-
 }
-
-
-

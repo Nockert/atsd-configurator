@@ -8,9 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Configurator;
-
-use Enlight_Config as Config;
+namespace AtsdConfigurator\Components\Configurator;
 
 
 
@@ -20,16 +18,6 @@ use Enlight_Config as Config;
 
 class FilterService
 {
-
-    /**
-     * ...
-     *
-     * @var Config
-     */
-
-    protected $config;
-
-
 
     /**
      * ...
@@ -44,22 +32,14 @@ class FilterService
     /**
      * ...
      *
-     * @param Config         $config
      * @param StockService   $stockService
      */
 
-    public function __construct( Config $config, StockService $stockService )
+    public function __construct( StockService $stockService )
     {
         // set params
-        $this->config       = $config;
         $this->stockService = $stockService;
     }
-
-
-
-
-
-
 
 
 
@@ -73,15 +53,6 @@ class FilterService
 
     public function filter( array $configurator )
     {
-        // get category config
-        $allowArticlesWithoutCategory = (boolean) $this->config->get( "allowArticlesWithoutCategory" );
-
-        // we cant use articles without category :(
-        // we drop them in the parser service when we have all the data
-        $allowArticlesWithoutCategory = false;
-
-
-
         // loop the fieldsets
         foreach ( $configurator['fieldsets'] as $fieldsetKey => $fieldset )
         {
@@ -97,11 +68,6 @@ class FilterService
                     // can we use this article?
                     if ( ( $article['article']['active'] == false ) or ( $article['article']['mainDetail']['active'] == false ) or ( $this->stockService->getMaxArticleStock( $article['article']['mainDetail']['inStock'], $article['article']['lastStock'], $article['quantity'] ) < 1 ) )
                         // no we cant
-                        unset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] );
-
-                    // do not allow articles without category
-                    if ( ( $allowArticlesWithoutCategory == false ) and ( $this->hasCategory( $article['article']['id'] ) == false ) )
-                        // remove the article
                         unset( $configurator['fieldsets'][$fieldsetKey]['elements'][$elementKey]['articles'][$articleKey] );
 
                     // did we remove it and this was the father?!
@@ -139,32 +105,4 @@ class FilterService
         return $configurator;
     }
 
-
-
-
-
-
-    /**
-     * ...
-     *
-     * @param integer   $articleId
-     *
-     * @return boolean
-     */
-
-    private function hasCategory( $articleId )
-    {
-        // always return true since this setting is deprecated because we cant use articles without category
-        return true;
-
-        // ...
-        // return ( (integer) Shopware()->Modules()->Categories()->sGetCategoryIdByArticleId( $articleId ) > 0 );
-    }
-
-
-
-
 }
-
-
-

@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace Shopware\AtsdConfigurator\Components\Helper;
+namespace AtsdConfigurator\Components\Helper;
 
 use Shopware\Models\Customer\Customer;
 use Enlight_Components_Session_Namespace as Session;
@@ -59,8 +59,6 @@ class CustomerService
 
 
 
-
-
     /**
      * ...
      *
@@ -75,19 +73,11 @@ class CustomerService
         // get the customer
         /* @var $customer Customer */
         $customer = $this->modelManager
-            ->getRepository( '\Shopware\Models\Customer\Customer' )
+            ->getRepository( Customer::class )
             ->find( $customerId );
 
         // return it
         return $customer;
     }
 
-
-
-
-
-
 }
-
-
-
