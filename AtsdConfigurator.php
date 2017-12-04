@@ -184,6 +184,9 @@
  * 2.0.0
  * - migrated to shopware 5.2 plugin system
  *
+ * 2.0.1
+ * - fixed plugin update
+ *
  *
  *
  * @todo add selection garbage collector
@@ -388,8 +391,8 @@ class AtsdConfigurator extends Plugin
         $updater = new Setup\Update(
             $this,
             $context,
-            $this->container->get( "db" ),
             $this->container->get( "models" ),
+            $this->container->get( "db" ),
             $this->container->get( "shopware_attribute.crud_service" )
         );
         $updater->update( $context->getUpdateVersion());
