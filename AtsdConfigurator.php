@@ -187,6 +187,9 @@
  * 2.0.1
  * - fixed plugin update
  *
+ * 2.0.2
+ * - changed checkLicense() method from private to public for shopware automatic code review
+ *
  *
  *
  * @todo add selection garbage collector
@@ -274,6 +277,8 @@ class AtsdConfigurator extends Plugin
 
 
 
+
+
     /**
      * Checks for a valid license key.
      *
@@ -284,7 +289,7 @@ class AtsdConfigurator extends Plugin
      * @return bool
      */
 
-    private function checkLicense( $throwException = true )
+    public function checkLicense( $throwException = true )
     {
         // license check
         $check = null;
