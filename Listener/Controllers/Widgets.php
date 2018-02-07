@@ -66,7 +66,7 @@ class Widgets
      * @return void
      */
 
-    public function onPostDispatch( EventArgs $arguments )
+    public function onPreDispatch( EventArgs $arguments )
     {
         // get parameters
         /* @var $controller Controller */

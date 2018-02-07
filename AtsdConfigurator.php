@@ -190,6 +190,9 @@
  * 2.0.2
  * - changed checkLicense() method from private to public for shopware automatic code review
  *
+ * 2.0.3
+ * - fixed listeners for smarty security settings
+ *
  *
  *
  * @todo add selection garbage collector
