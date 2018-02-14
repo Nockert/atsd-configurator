@@ -195,6 +195,7 @@
  *
  * 2.0.4
  * - added new selection field to show only one configurator fieldset
+ * - added new selection fields for quickview to plugin configuration
  *
  *
  * @todo add selection garbage collector
