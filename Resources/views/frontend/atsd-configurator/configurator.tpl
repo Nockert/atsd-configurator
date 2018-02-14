@@ -11,10 +11,10 @@
      data-atsd-configurator-main-article-price="{if $configurator.chargeArticle == true}{$configurator['article']->getCheapestPrice()->getCalculatedPrice()}{else}0{/if}"
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
-     data-atsd-configurator-show-one-group="{$showOneGroup}"
+     data-atsd-configurator-show-one-group="{if $showOneGroup == true}1{else}0{/if}"
      data-atsd-configurator-show-quickview="{if $showQuickview == true}1{else}0{/if}"
-     data-atsd-configurator-show-description="{$quickviewDescription}"
-     data-atsd-configurator-show-attributes="{$quickviewAttributes}"
+     data-atsd-configurator-show-description="{if $quickviewDescription == true}1{else}0{/if}"
+     data-atsd-configurator-show-attributes="{if $quickviewAttributes == true}1{else}0{/if}"
 >
 
     {* loop the fieldsets *}

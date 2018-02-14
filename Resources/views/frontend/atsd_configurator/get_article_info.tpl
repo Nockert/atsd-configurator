@@ -27,8 +27,8 @@
     {/if}
 
     {* should show quickview? *}
-    {if isset($quickview) && $quickview == true }
-        <div class="atsd-configurator-quickview-images {if $showDescription == false && $showAttributes == false} only-images {/if}">
+    {if $atsdConfiguratorQuickview.status == true }
+        <div class="atsd-configurator-quickview-images {if $atsdConfiguratorQuickview.showDescription == false && $atsdConfiguratorQuickview.showAttributes == false} only-images {/if}">
             <div class="atsd-configurator-quckview-slider-thumbnails">
 
                 {* Thumbnail - Main image *}
@@ -103,12 +103,12 @@
         </div>
 
         {* show article attributes/ description? *}
-        {if $showDescription == true || $showAttributes == true}
+        {if $atsdConfiguratorQuickview.showDescription == true || $atsdConfiguratorQuickview.showAttributes == true}
 
         <div class="atsd-configurator-quickview-additional">
 
             {* do we have an attribute and is it filled? *}
-            {if ($atsdConfiguratorConfig.articleInfoAttribute != "" && $article[$atsdConfiguratorConfig.articleInfoAttribute] != "" ) || ( $quickview ==true && ($showDescription == true || $showAttributes == true ) ) }
+            {if ($atsdConfiguratorConfig.articleInfoAttribute != "" && $article[$atsdConfiguratorConfig.articleInfoAttribute] != "" ) &&  ($atsdConfiguratorQuickview.showDescription == true || $atsdConfiguratorQuickview.showAttributes == true ) }
 
                 {* header *}
                 <div style="font-weight: bold; margin-bottom: 8px;">
@@ -124,7 +124,7 @@
             {/if}
 
             {* show description? *}
-            {if isset($showDescription) && $showDescription == true}
+            {if $atsdConfiguratorQuickview.showDescription == true}
 
                 <div class="">
 
@@ -135,7 +135,7 @@
             {/if}
 
             {* show attributes? *}
-            {if isset($showAttributes) and ($showAttributes == true) }
+            {if ($atsdConfiguratorQuickview.showAttributes == true) }
                 {* do we have properties? *}
                 {if count( $article.sProperties ) > 0 }
 
@@ -177,7 +177,7 @@
     {/if}
 
     {* quickview is not selected? *}
-    {if !isset($quickview) || $quickview == false }
+    {if $atsdConfiguratorQuickview.status == false }
 
         {if count( $article.sProperties ) > 0 }
 
