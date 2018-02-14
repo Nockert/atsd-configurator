@@ -193,6 +193,7 @@
  * 2.0.3
  * - fixed listeners for smarty security settings
  *
+ * 2.0.4
  *
  *
  * @todo add selection garbage collector
