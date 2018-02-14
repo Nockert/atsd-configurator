@@ -194,6 +194,7 @@
  * - fixed listeners for smarty security settings
  *
  * 2.0.4
+ * - added new selection field to show only one configurator fieldset
  *
  *
  * @todo add selection garbage collector

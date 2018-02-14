@@ -82,6 +82,13 @@
             </store>
         </element>
 
+        <element type="boolean" scope="locale">
+            <name>showOneGroup</name>
+            <label>Konfigurator aufteilen</label>
+            <value>1</value>
+            <description>Soll im Konfigurator nur eine Gruppe angezeigt werden, von der aus man über Buttons zur nächsten Gruppe kommt?</description>
+        </element>
+
         <element type="button">
             <name>cacheButton</name>
             <label><![CDATA[<b>Cache Einstellungen</b>]]></label>
