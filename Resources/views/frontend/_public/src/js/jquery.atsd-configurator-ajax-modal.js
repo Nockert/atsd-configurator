@@ -28,7 +28,7 @@
             options.additionalClass = "atsd-configurator--info-modal";
 
             //check if quickview is selected
-            if( typeof showData !== "undefined" && showData.quickview == true )
+            if( showData.quickview == true )
             {
                 //prepare data for view
                 data = { quickview: showData.quickview, showDescription: showData.showDescription, showAttributes: showData.showAttributes, isXHR: 1};
@@ -44,7 +44,6 @@
                     //adapt modal width
                     modalWidth = 600;
                 }
-
             }
             else
             {
@@ -72,6 +71,7 @@
                     data: data,
                     success: function ( response )
                     {
+                        // set the modal content
                         $.modal.setContent( response );
 
                         // call quickview plugin

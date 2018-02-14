@@ -12,7 +12,7 @@
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
      data-atsd-configurator-show-one-group="{$showOneGroup}"
-     data-atsd-configurator-show-quickview="{$showQuickview}"
+     data-atsd-configurator-show-quickview="{if $showQuickview == true}1{else}0{/if}"
      data-atsd-configurator-show-description="{$quickviewDescription}"
      data-atsd-configurator-show-attributes="{$quickviewAttributes}"
 >
@@ -101,11 +101,11 @@
 
     {/foreach}
 
+    {* show every fieldset in one page *}
     {if $showOneGroup == 1}
 
         <div class="atsd-configurator--page-actions">
 
-            {* show the button *}
             <button class="btn is--align-center is--icon-left atsd-configurator--previous-page">
                 {s name='ButtonPreviousPage'}Zurück{/s}<i class="icon--arrow-left"></i>
             </button>
@@ -119,7 +119,6 @@
         </div>
 
     {/if}
-
 
     {* our button action panel *}
     <div class="atsd-configurator--actions panel has--border is--rounded" style="padding: 10px;">

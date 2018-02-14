@@ -89,6 +89,11 @@
             <description>Soll im Konfigurator nur eine Gruppe angezeigt werden, von der aus man über Buttons zur nächsten Gruppe kommt?</description>
         </element>
 
+        <element type="button">
+            <name>quickviewButton</name>
+            <label><![CDATA[<b>Quickview Einstellungen</b>]]></label>
+        </element>
+
         <element type="boolean" scope="locale">
             <name>showQuickview</name>
             <label>Artikel Quickview anzeigen</label>

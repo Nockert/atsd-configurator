@@ -154,6 +154,8 @@
             me.configuration.infoModal.ajaxUrl         = configuration.articleInfoAjaxUrl;
         },
 
+
+
         // adapt layout
         adaptLayout: function()
         {
@@ -161,37 +163,35 @@
             var me = this;
 
             // get config for show one group
-            var showOneGroup = $("div.atsd-configurator").data("atsd-configurator-show-one-group");
+            var showOneGroup = parseInt( me.$el.data( "atsd-configurator-show-one-group" ) );
 
             // show one group?
-            if(showOneGroup === 1)
+            if ( showOneGroup === 1 )
             {
-                var count = $("input.final-count").data("atsd-configurator-final-count"),
-                    $fieldset = $("div.atsd-configurator--fieldset").first();
+                // get parameters
+                var count = me.$el.find( "input.final-count" ).data( "atsd-configurator-final-count" );
+                var $fieldset = me.$el.find( "div.atsd-configurator--fieldset" ).first();
 
                 // add steps
-                $fieldset.find("span.atsd-configurator-count").text("Schritt 1 von " + count);
+                $fieldset.find( "span.atsd-configurator-count" ).text( "Schritt 1 von " + count );
 
                 // hide other fieldsets
-                for(var i = 1; i < count ; i++)
+                for ( var i = 1; i < count ; i++ )
                 {
+                    // next fieldset
                     $fieldset = $fieldset.next();
-                    $fieldset.find("span.atsd-configurator-count").text("Seite " + ( i + 1 ) + " von " + count);
+                    $fieldset.find( "span.atsd-configurator-count" ).text( "Seite " + ( i + 1 ).toString() + " von " + count.toString() );
                     $fieldset.hide();
-
                 }
 
                 // hide previous button
-                $("button.atsd-configurator--previous-page").hide();
+                me.$el.find( "button.atsd-configurator--previous-page" ).hide();
 
                 // only one fieldset?
-                if(count == 1)
-                {
+                if ( count == 1 )
                     // hide next page button
-                    $("button.atsd-configurator--next-page").hide()
-                }
+                    me.$el.find( "button.atsd-configurator--next-page" ).hide();
             }
-
         },
 
 
@@ -524,17 +524,12 @@
             // get parameters
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
-            var dataDiv = $("div.atsd-configurator"),
-                showQuickview = dataDiv.data("atsd-configurator-show-quickview"),
-                showDescription = dataDiv.data("atsd-configurator-show-description"),
-                showAttributes = dataDiv.data("atsd-configurator-show-attributes"),
-                showData = {};
-
-
-            showData.quickview = showQuickview;
-            showData.showDescription = showDescription;
-            showData.showAttributes = showAttributes;
-
+            // set attributes
+            var showData = {
+                quickview: me.$el.data( "atsd-configurator-show-quickview" ),
+                showDescription: me.$el.data( "atsd-configurator-show-description" ),
+                showAttributes: me.$el.data( "atsd-configurator-show-attributes" )
+            };
 
             // open our modal
             $.atsdConfiguratorAjaxModal.open(
@@ -1143,44 +1138,53 @@
         },
 
 
-        //click on next page button
+
+        // click on next page button
         onNextPage: function()
         {
-            var me = this,
-                count = $("input.final-count").data("atsd-configurator-final-count"),
-                $fieldset = $("div.atsd-configurator--fieldset").first();
+            // get parameters
+            var me = this;
+            var count = me.$el.find( "input.final-count" ).data( "atsd-configurator-final-count" );
+            var $fieldset = me.$el.find( "div.atsd-configurator--fieldset" ).first();
 
-            if(!$("button.atsd-configurator--previous-page").is(':visible'))
+            // ...
+            var $previousPage = me.$el.find( "button.atsd-configurator--previous-page" );
+
+            // ...
+            if ( !$previousPage.is( ":visible" ) )
+                // ...
+                $previousPage.show();
+
+            // ...
+            for ( var i = 1; i < count; i++ )
             {
-                $("button.atsd-configurator--previous-page").show();
-            }
-
-            for(var i = 1; i < count; i++)
-            {
-
-                if($fieldset.is(':visible'))
+                // ...
+                if ( $fieldset.is( ":visible" ) )
                 {
-
+                    // ...
                     $fieldset.hide();
                     $fieldset.next().show();
-                    $('html, body').animate({
-                        scrollTop: ($fieldset.next().offset().top)
+
+                    // scroll to top fieldset
+                    $( "html, body" ).animate({
+                        scrollTop: ( $fieldset.next().offset().top )
                     },200);
 
-                    if( i === (count-1))
-                    {
-                        $("button.atsd-configurator--next-page").hide();
-                    }
+                    // last element?
+                    if( i === ( count - 1 ) )
+                        // hide the next button
+                        me.$el.find( "button.atsd-configurator--next-page" ).hide();
 
+                    // ...
                     return;
 
                 }
+
+                // ...
                 $fieldset = $fieldset.next();
             }
-
-
-
         },
+
 
 
         //click on previous page button

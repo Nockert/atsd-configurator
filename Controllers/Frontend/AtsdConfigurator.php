@@ -38,6 +38,7 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
     }
 
 
+
     /**
      * ...
      *
@@ -46,10 +47,13 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
     public function preDispatch()
     {
-        $viewDir = $this->container->getParameter('atsd_configurator.view_dir');
+        // ...
+        $viewDir = $this->container->getParameter( "atsd_configurator.view_dir" );
 
-        $this->get('template')->addTemplateDir($viewDir);
+        // ...
+        $this->get( "template" )->addTemplateDir($viewDir);
 
+        // ...
         parent::preDispatch();
     }
 
@@ -305,14 +309,24 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // assign it
         $this->View()->assign( "article", $article );
 
-        // assign quickview info if isset
-        if ( isset( $quickview ) )
-        {
-            $this->View()->assign( "quickview", $quickview );
-            $this->View()->assign( "showDescription", $showDescription );
-            $this->View()->assign( "showAttributes", $showAttributes );
 
-        }
+
+        // ...
+        $arr = array(
+            'status'          => $quickview,
+            'showDescription' => $showDescription,
+            'showAttributes'  => $showAttributes
+        );
+
+        // ...
+        $this->View()->assign( "atsdConfiguratorQuickview", $arr );
+
+
+
+        // assign quickview
+        $this->View()->assign( "quickview", $quickview );
+        $this->View()->assign( "showDescription", $showDescription );
+        $this->View()->assign( "showAttributes", $showAttributes );
     }
 
 

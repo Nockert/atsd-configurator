@@ -3,7 +3,6 @@
     // quickview plugin
     $.plugin( "atsdConfiguratorQuickview", {
 
-
         // on initialization
         init: function ()
         {
@@ -13,9 +12,6 @@
             // bind all events
             me.bindEvents();
         },
-
-
-
 
 
 
@@ -30,6 +26,8 @@
         },
 
 
+
+        // ...
         onClickThumbnail: function( event )
         {
             var me = this,
@@ -60,6 +58,5 @@
         }
 
     });
-
 
 })(jQuery);
