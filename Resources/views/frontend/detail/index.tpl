@@ -59,7 +59,7 @@
             </div>
 
             {* include our configurator *}
-            {include file="frontend/atsd-configurator/configurator.tpl" configurator=$atsdConfigurator selection=$atsdConfiguratorSelection}
+            {include file="frontend/atsd-configurator/configurator.tpl" configurator=$atsdConfigurator selection=$atsdConfiguratorSelection showOneGroup=$atsdConfiguratorShowOneGroup showQuickview=$atsdConfiguratorShowQuickview quickviewDescription=$atsdConfiguratorQuickviewDescription quickviewAttributes=$atsdConfiguratorQuickviewAttributes count=0}
 
         {/if}
 

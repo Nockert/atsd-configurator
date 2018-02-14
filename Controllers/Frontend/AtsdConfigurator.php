@@ -274,7 +274,10 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // article id
         $articleId = (integer) $this->Request()->getParam( "articleId" );
 
-
+        // get quickview infos
+        $quickview = (boolean) $this->Request()->getParam( "quickview" );
+        $showDescription = (boolean) $this->Request()->getParam( "showDescription" );
+        $showAttributes = (boolean) $this->Request()->getParam( "showAttributes" );
 
         // get the selection article
         /* @var $selectionArticle Configurator\Fieldset\Element\Article */
@@ -301,6 +304,15 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
         // assign it
         $this->View()->assign( "article", $article );
+
+        // assign quickview info if isset
+        if ( isset( $quickview ) )
+        {
+            $this->View()->assign( "quickview", $quickview );
+            $this->View()->assign( "showDescription", $showDescription );
+            $this->View()->assign( "showAttributes", $showAttributes );
+
+        }
     }
 
 

@@ -11,16 +11,20 @@
      data-atsd-configurator-main-article-price="{if $configurator.chargeArticle == true}{$configurator['article']->getCheapestPrice()->getCalculatedPrice()}{else}0{/if}"
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
+     data-atsd-configurator-show-one-group="{$showOneGroup}"
+     data-atsd-configurator-show-quickview="{$showQuickview}"
+     data-atsd-configurator-show-description="{$quickviewDescription}"
+     data-atsd-configurator-show-attributes="{$quickviewAttributes}"
 >
 
     {* loop the fieldsets *}
     {foreach $configurator.fieldsets as $fieldset}
 
         {* main container *}
-        <div class="atsd-configurator--fieldset">
+        <div class="atsd-configurator--fieldset" data-atsd-configurator-fieldset-count="{$count++}">
 
             {* header *}
-            <h1 class="atsd-configurator--fieldset-description">{$fieldset.description}</h1>
+            <h1 class="atsd-configurator--fieldset-description">{$fieldset.description}<span class="atsd-configurator-count"></span></h1>
 
 
 
@@ -97,6 +101,24 @@
 
     {/foreach}
 
+    {if $showOneGroup == 1}
+
+        <div class="atsd-configurator--page-actions">
+
+            {* show the button *}
+            <button class="btn is--align-center is--icon-left atsd-configurator--previous-page">
+                {s name='ButtonPreviousPage'}Zurück{/s}<i class="icon--arrow-left"></i>
+            </button>
+
+            <button class="btn is--align-center is--primary is--icon-right atsd-configurator--next-page">
+                {s name='ButtonNextPage'}Weiter{/s}<i class="icon--arrow-right"></i>
+            </button>
+
+            <input type="hidden" class="final-count" data-atsd-configurator-final-count="{$count}">
+
+        </div>
+
+    {/if}
 
 
     {* our button action panel *}
