@@ -11,6 +11,7 @@
      data-atsd-configurator-main-article-price="{if $configurator.chargeArticle == true}{$configurator['article']->getCheapestPrice()->getCalculatedPrice()}{else}0{/if}"
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
+     data-atsd-configurator-show-one-group="{$showOneGroup}"
 >
 
     {* loop the fieldsets *}
@@ -97,6 +98,24 @@
 
     {/foreach}
 
+    {if $showOneGroup == 1}
+
+        <div class="atsd-configurator--page-actions">
+
+            {* show the button *}
+            <button class="btn is--align-center is--icon-left atsd-configurator--previous-page">
+                {s name='ButtonPreviousPage'}Zurück{/s}<i class="icon--arrow-left"></i>
+            </button>
+
+            <button class="btn is--align-center is--primary is--icon-right atsd-configurator--next-page">
+                {s name='ButtonNextPage'}Weiter{/s}<i class="icon--arrow-right"></i>
+            </button>
+
+            <input type="hidden" class="final-count" data-atsd-configurator-final-count="{$count}">
+
+        </div>
+
+    {/if}
 
 
     {* our button action panel *}

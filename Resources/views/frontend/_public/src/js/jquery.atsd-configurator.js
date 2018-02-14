@@ -120,6 +120,9 @@
             // startup the default selection
             me.parseCurrentSelection();
 
+            // adapt layout
+            me.adaptLayout();
+
             // bind all events
             me.bindEvents();
         },
@@ -149,6 +152,46 @@
             me.configuration.infoPanel.ajaxUrl         = configuration.articleInfoAjaxUrl;
             me.configuration.infoModal.title           = configuration.infoModalTitle;
             me.configuration.infoModal.ajaxUrl         = configuration.articleInfoAjaxUrl;
+        },
+
+        // adapt layout
+        adaptLayout: function()
+        {
+            // get this
+            var me = this;
+
+            // get config for show one group
+            var showOneGroup = $("div.atsd-configurator").data("atsd-configurator-show-one-group");
+
+            // show one group?
+            if(showOneGroup === 1)
+            {
+                var count = $("input.final-count").data("atsd-configurator-final-count"),
+                    $fieldset = $("div.atsd-configurator--fieldset").first();
+
+                // add steps
+                $fieldset.find("span.atsd-configurator-count").text("Schritt 1 von " + count);
+
+                // hide other fieldsets
+                for(var i = 1; i < count ; i++)
+                {
+                    $fieldset = $fieldset.next();
+                    $fieldset.find("span.atsd-configurator-count").text("Seite " + ( i + 1 ) + " von " + count);
+                    $fieldset.hide();
+
+                }
+
+                // hide previous button
+                $("button.atsd-configurator--previous-page").hide();
+
+                // only one fieldset?
+                if(count == 1)
+                {
+                    // hide next page button
+                    $("button.atsd-configurator--next-page").hide()
+                }
+            }
+
         },
 
 
@@ -186,6 +229,11 @@
 
             // on quantity select change
             me._on( me.$el.find( 'select[data-atsd-configurator-article-quantity-selector="true"]' ), 'change', $.proxy( me.onArticleQuantityChange, me ) );
+
+            // on next and previous page
+            me._on( me.$el.find( 'button.atsd-configurator--next-page' ), 'click', $.proxy( me.onNextPage, me ) );
+            me._on( me.$el.find( 'button.atsd-configurator--previous-page' ), 'click', $.proxy( me.onPreviousPage, me ) );
+
         },
 
 
@@ -476,10 +524,23 @@
             // get parameters
             var articleId = button.attr( "data-atsd-configurator-selector-info-button-article-id" );
 
+            var dataDiv = $("div.atsd-configurator"),
+                showQuickview = dataDiv.data("atsd-configurator-show-quickview"),
+                showDescription = dataDiv.data("atsd-configurator-show-description"),
+                showAttributes = dataDiv.data("atsd-configurator-show-attributes"),
+                showData = {};
+
+
+            showData.quickview = showQuickview;
+            showData.showDescription = showDescription;
+            showData.showAttributes = showAttributes;
+
+
             // open our modal
             $.atsdConfiguratorAjaxModal.open(
                 me.configuration.infoModal.title,
-                me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId )
+                me.configuration.infoModal.ajaxUrl.replace( "__articleId__", articleId ),
+                showData
             );
         },
 
@@ -1081,6 +1142,81 @@
             return explode[0] + me.configuration.priceFormat.decPoint + explode[1];
         },
 
+
+        //click on next page button
+        onNextPage: function()
+        {
+            var me = this,
+                count = $("input.final-count").data("atsd-configurator-final-count"),
+                $fieldset = $("div.atsd-configurator--fieldset").first();
+
+            if(!$("button.atsd-configurator--previous-page").is(':visible'))
+            {
+                $("button.atsd-configurator--previous-page").show();
+            }
+
+            for(var i = 1; i < count; i++)
+            {
+
+                if($fieldset.is(':visible'))
+                {
+
+                    $fieldset.hide();
+                    $fieldset.next().show();
+                    $('html, body').animate({
+                        scrollTop: ($fieldset.next().offset().top)
+                    },200);
+
+                    if( i === (count-1))
+                    {
+                        $("button.atsd-configurator--next-page").hide();
+                    }
+
+                    return;
+
+                }
+                $fieldset = $fieldset.next();
+            }
+
+
+
+        },
+
+
+        //click on previous page button
+        onPreviousPage: function()
+        {
+            var me = this,
+                count = $("input.final-count").data("atsd-configurator-final-count"),
+                $fieldset = $("div.atsd-configurator--fieldset").first(),
+                $fieldsetNext = $fieldset.next();
+
+            if(!$("button.atsd-configurator--next-page").is(':visible'))
+            {
+                $("button.atsd-configurator--next-page").show();
+            }
+
+            for(var i = 1; i < count; i++) {
+
+                if ($fieldsetNext.is(':visible')) {
+
+                    $fieldsetNext.hide();
+                    $fieldset.show();
+                    $('html, body').animate({
+                        scrollTop: ($fieldset.offset().top)
+                    },200);
+
+                    if (i === 1) {
+                        $("button.atsd-configurator--previous-page").hide();
+                    }
+
+                    return;
+
+                }
+                $fieldset = $fieldset.next();
+                $fieldsetNext = $fieldset.next();
+            }
+        },
 
 
         // on destroy

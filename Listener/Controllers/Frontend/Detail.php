@@ -256,6 +256,7 @@ class Detail
         $view->assign( "atsdConfiguratorConfigNoChoicePosition", (integer) $this->configuration[ "noChoicePosition" ] );
         $view->assign( "atsdConfiguratorConfigSaleType", (integer) $this->configuration[ "saleType" ] );
         $view->assign( "atsdConfiguratorIsShopware53", $versionService->isShopware53() );
+        $view->assign( "atsdConfiguratorShowOneGroup", (boolean) $this->configuration[ "showOneGroup" ] );
     }
 
 
