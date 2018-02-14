@@ -86,7 +86,8 @@ class Compiler
         $files = array(
             $this->viewDir . "frontend/_public/src/js/jquery.atsd-configurator-product-slider.js",
             $this->viewDir . "frontend/_public/src/js/jquery.atsd-configurator-ajax-modal.js",
-            $this->viewDir . "frontend/_public/src/js/jquery.atsd-configurator.js"
+            $this->viewDir . "frontend/_public/src/js/jquery.atsd-configurator.js",
+            $this->viewDir . "frontend/_public/src/js/jquery.atsd-configurator-quickview.js"
         );
 
         // return them

@@ -30,6 +30,10 @@
 
         }
 
+        span.atsd-configurator-count {
+            float: right;
+        }
+
 
 
         // the upper summary div
@@ -600,7 +604,7 @@
     .emotion--loading-indicator {
         margin: auto;
         padding: 0;
-        padding-top: ~"calc(50% - 20px)";
+        padding-top: 300px;
     }
 }
 
@@ -609,6 +613,85 @@
 // article info modal popup
 .js--modal.atsd-configurator--info-modal .content {
     height: ~"calc(100% - 42px)";
+    overflow: hidden;
+}
+
+
+// atricle quickview
+.atsd-configurator-quickview {
+    padding: 20px;
+    height: 100%;
+
+    // quickview div for images
+    .atsd-configurator-quickview-images {
+        width: 49%;
+        height: 100%;
+        float:left;
+
+        // thumbnail slider
+        .atsd-configurator-quckview-slider-thumbnails {
+            width: 20%;
+            height: 100%;
+            padding: 5px;
+            float: left;
+            overflow-y: auto;
+
+            // article thumbnails div
+            .atsd-configurator-quickview-thumbnail-div {
+                width: 5em;
+                height: 5em;
+                margin-bottom: 5px;
+                border: 1px solid black;
+                display: block;
+                cursor: pointer;
+
+
+                //article thumbnails
+                .atsd-configurator-quickview-thumbnail-image {
+                    margin: auto;
+                    max-height: 100%;
+                    max-width: 100%;
+
+                }
+
+            }
+
+        }
+
+        // article main image div
+        .atsd-configurator-quickview-image {
+            width: 80%;
+            height: 80%;
+            float:right;
+
+            // article main image
+            .atsd-configurator--quickview-images-image {
+                margin: auto;
+                margin-bottom: 17%;
+                max-height: 100%;
+                max-width: 100%;
+            }
+
+
+        }
+
+    }
+    // show only images
+    .only-images {
+        width: 100%;
+    }
+
+    // div for description and attributes
+    .atsd-configurator-quickview-additional {
+        width: 50%;
+        height: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        border: 1px solid #dadae5;
+        padding: 20px;
+        float: right;
+    }
+
 }
 
 
@@ -639,6 +722,49 @@
         width: 100%;
     }
 
+    .atsd-configurator .atsd-configurator--next-page {
+        width: 35%;
+    }
+
+    .atsd-configurator .atsd-configurator--previous-page {
+        width: 35%;
+    }
+
+    .atsd-configurator-quickview {
+
+        .atsd-configurator-quickview-images {
+            width: 100%;
+            height: auto;
+            clear: both;
+
+            .atsd-configurator-quickview-image {
+                width: 70%;
+                height: 70%;
+                float: right;
+
+            }
+            .atsd-configurator--quickview-images-image {
+                margin: auto;
+                margin-bottom: 2em;
+            }
+
+        }
+
+
+        .atsd-configurator-quickview-additional:before {
+            clear: both;
+        }
+
+        .atsd-configurator-quickview-additional {
+            margin-top: 3em;
+            overflow: hidden;
+            width: 100%;
+            height: auto;
+            border: 1px solid #dadae5;
+            padding: 20px;
+            clear: both;
+        }
+    }
 }
 
 

@@ -257,6 +257,9 @@ class Detail
         $view->assign( "atsdConfiguratorConfigSaleType", (integer) $this->configuration[ "saleType" ] );
         $view->assign( "atsdConfiguratorIsShopware53", $versionService->isShopware53() );
         $view->assign( "atsdConfiguratorShowOneGroup", (boolean) $this->configuration[ "showOneGroup" ] );
+        $view->assign( "atsdConfiguratorShowQuickview", (boolean) $this->configuration[ "showQuickview" ] );
+        $view->assign( "atsdConfiguratorQuickviewDescription", (boolean) $this->configuration[ "quickviewDescription" ] );
+        $view->assign( "atsdConfiguratorQuickviewAttributes", (boolean) $this->configuration[ "quickviewAttributes" ] );
     }
 
 

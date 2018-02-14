@@ -12,16 +12,19 @@
      data-atsd-configurator-main-article-weight="{$configurator['article']->getWeight()}"
      data-atsd-configurator-main-article-stock="{$configurator['article']->getStock()}"
      data-atsd-configurator-show-one-group="{$showOneGroup}"
+     data-atsd-configurator-show-quickview="{$showQuickview}"
+     data-atsd-configurator-show-description="{$quickviewDescription}"
+     data-atsd-configurator-show-attributes="{$quickviewAttributes}"
 >
 
     {* loop the fieldsets *}
     {foreach $configurator.fieldsets as $fieldset}
 
         {* main container *}
-        <div class="atsd-configurator--fieldset">
+        <div class="atsd-configurator--fieldset" data-atsd-configurator-fieldset-count="{$count++}">
 
             {* header *}
-            <h1 class="atsd-configurator--fieldset-description">{$fieldset.description}</h1>
+            <h1 class="atsd-configurator--fieldset-description">{$fieldset.description}<span class="atsd-configurator-count"></span></h1>
 
 
 
