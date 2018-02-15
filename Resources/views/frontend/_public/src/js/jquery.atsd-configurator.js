@@ -1190,33 +1190,43 @@
         //click on previous page button
         onPreviousPage: function()
         {
-            var me = this,
-                count = $("input.final-count").data("atsd-configurator-final-count"),
-                $fieldset = $("div.atsd-configurator--fieldset").first(),
-                $fieldsetNext = $fieldset.next();
+            // get parameters
+            var me = this;
+            var count = me.$el.find( "input.final-count" ).data( "atsd-configurator-final-count" );
+            var $fieldset = me.$el.find( "div.atsd-configurator--fieldset" ).first();
+            var $fieldsetNext = $fieldset.next();
+            var $nextButton = me.$el.find( "button.atsd-configurator--next-page" );
 
-            if(!$("button.atsd-configurator--next-page").is(':visible'))
+            // ..
+            if(!$nextButton.is( ":visible" ) )
+                // ..
+                $nextButton.show();
+
+            // ..
+            for ( var i = 1; i < count; i++ )
             {
-                $("button.atsd-configurator--next-page").show();
-            }
-
-            for(var i = 1; i < count; i++) {
-
-                if ($fieldsetNext.is(':visible')) {
-
+                // ..
+                if ( $fieldsetNext.is( ":visible" ) )
+                {
+                    // ..
                     $fieldsetNext.hide();
                     $fieldset.show();
-                    $('html, body').animate({
-                        scrollTop: ($fieldset.offset().top)
+
+                    // scroll to top field
+                    $( "html, body" ).animate({
+                        scrollTop: ( $fieldset.offset().top )
                     },200);
 
-                    if (i === 1) {
-                        $("button.atsd-configurator--previous-page").hide();
-                    }
+                    // first element?
+                    if ( i === 1 )
+                        //..
+                        me.$el.find( "button.atsd-configurator--previous-page" ).hide();
 
+                    // ...
                     return;
 
                 }
+                // ..
                 $fieldset = $fieldset.next();
                 $fieldsetNext = $fieldset.next();
             }

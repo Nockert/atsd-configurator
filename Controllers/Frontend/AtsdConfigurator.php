@@ -309,8 +309,6 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // assign it
         $this->View()->assign( "article", $article );
 
-
-
         // ...
         $arr = array(
             'status'          => $quickview,
@@ -320,13 +318,6 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
 
         // ...
         $this->View()->assign( "atsdConfiguratorQuickview", $arr );
-
-
-
-        // assign quickview
-        $this->View()->assign( "quickview", $quickview );
-        $this->View()->assign( "showDescription", $showDescription );
-        $this->View()->assign( "showAttributes", $showAttributes );
     }
 
 

@@ -31,17 +31,17 @@
         onClickThumbnail: function( event )
         {
             var me = this,
-                $targetTumbnail = $(event.target),
+                $targetTumbnail = $( event.target) ,
                 $targetDiv = $targetTumbnail.parent(),
                 thumbnailSrc = $targetDiv.data("atsd-quickview-thumbnail"),
-                $image = $("img.atsd-configurator--quickview-images-image"),
+                $image = me.$el.find( "img.atsd-configurator--quickview-images-image" ),
                 imgSrc = $image.attr('srcset'),
-                $oldDiv = $("div").find('[data-atsd-quickview-thumbnail="' + imgSrc + '"]');
+                $oldDiv = me.$el.find( '[data-atsd-quickview-thumbnail="' + imgSrc + '"]' );
 
             //unmark old thumbnail
-            $oldDiv.css("border-color", "#000000");
+            $oldDiv.css( "border-color", "#000000" );
             //mark target thumbnail
-            $targetDiv.css("border-color", "#d9400b");
+            $targetDiv.css(" border-color", "#d9400b" );
 
             //show image
             $image.attr( 'srcset', thumbnailSrc );
