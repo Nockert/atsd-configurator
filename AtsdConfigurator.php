@@ -202,6 +202,9 @@
  * 2.0.5
  * - code beautify
  *
+ * 2.0.6
+ * - fixed default config values for 2.0.4
+ *
  *
  *
  * @todo add selection garbage collector

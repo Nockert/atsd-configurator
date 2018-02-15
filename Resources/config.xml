@@ -85,7 +85,7 @@
         <element type="boolean" scope="locale">
             <name>showOneGroup</name>
             <label>Konfigurator aufteilen</label>
-            <value>1</value>
+            <value>0</value>
             <description>Soll im Konfigurator nur eine Gruppe angezeigt werden, von der aus man über Buttons zur nächsten Gruppe kommt?</description>
         </element>
 
@@ -97,21 +97,21 @@
         <element type="boolean" scope="locale">
             <name>showQuickview</name>
             <label>Artikel Quickview anzeigen</label>
-            <value>1</value>
+            <value>0</value>
             <description>Soll beim Klicken auf Produktbild/Informationsbutton eine Quickview angezeigt werden?</description>
         </element>
 
         <element type="boolean" scope="locale">
             <name>quickviewDescription</name>
             <label>Artikelbeschreibung anzeigen</label>
-            <value>1</value>
+            <value>0</value>
             <description>Soll die Produktbeschreibung in der Quickview angezeigt werden?</description>
         </element>
 
         <element type="boolean" scope="locale">
             <name>quickviewAttributes</name>
             <label>Artikelattribute anzeigen</label>
-            <value>1</value>
+            <value>0</value>
             <description>Sollen Produktdetails in der Quickwiew angezeigt werden?</description>
         </element>
 
