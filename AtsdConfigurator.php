@@ -199,6 +199,9 @@
  * - adapted layout for "Show one group" option
  * - adapted modal view for "Quickview" option
  *
+ * 2.0.5
+ * - code beautify
+ *
  *
  *
  * @todo add selection garbage collector
