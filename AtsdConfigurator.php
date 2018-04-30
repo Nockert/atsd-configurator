@@ -205,6 +205,9 @@
  * 2.0.6
  * - fixed default config values for 2.0.4
  *
+ * 2.0.7
+ * - fixed faulty update method
+ *
  *
  *
  * @todo add selection garbage collector
@@ -415,7 +418,7 @@ class AtsdConfigurator extends Plugin
             $this->container->get( "db" ),
             $this->container->get( "shopware_attribute.crud_service" )
         );
-        $updater->update( $context->getUpdateVersion());
+        $updater->update( $context->getCurrentVersion() );
 
         // call default updater
         parent::update( $context );
