@@ -205,6 +205,9 @@
  * 2.0.6
  * - fixed default config values for 2.0.4
  *
+ * 2.0.7
+ * - fixed faulty view for account sidebar
+ *
  *
  *
  * @todo add selection garbage collector

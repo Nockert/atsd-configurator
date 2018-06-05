@@ -50,6 +50,12 @@ class Shopware_Controllers_Frontend_AtsdConfigurator extends Enlight_Controller_
         // ...
         $viewDir = $this->container->getParameter( "atsd_configurator.view_dir" );
 
+        // get current user
+        $user = Shopware()->Modules()->Admin()->sGetUserData();
+
+        $userName['firstname'] = $user['billingaddress']['firstname'];
+
+        $this->get( "template" )->assign( "userInfo", $userName );
         // ...
         $this->get( "template" )->addTemplateDir($viewDir);
 
