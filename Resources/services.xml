@@ -106,11 +106,7 @@
             <tag name="shopware.event_listener" method="addJavascriptFiles" event="Theme_Compiler_Collect_Plugin_Javascript" />
         </service>
 
-        <service id="atsd_configurator.listener.components.sidebar" class="AtsdConfigurator\Listener\Components\Sidebar">
-            <argument type="string">%atsd_configurator.view_dir%</argument>
-            <argument type="service" id="atsd_configurator.configuration" />
-            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatch_Frontend" />
-        </service>
+
 
         <!-- frontend and widget controller listeners -->
         <service id="atsd_configurator.listener.controllers.widgets" class="AtsdConfigurator\Listener\Controllers\Widgets">
@@ -143,6 +139,12 @@
             <argument type="string">%atsd_configurator.view_dir%</argument>
             <argument type="service" id="atsd_configurator.configuration" />
             <tag name="shopware.event_listener" method="onPreDispatch" event="Enlight_Controller_Action_PreDispatch_Frontend_Listing" />
+        </service>
+
+        <service id="atsd_configurator.listener.controllers.frontend.sidebar" class="AtsdConfigurator\Listener\Controllers\Frontend\Sidebar">
+            <argument type="string">%atsd_configurator.view_dir%</argument>
+            <argument type="service" id="atsd_configurator.configuration" />
+            <tag name="shopware.event_listener" method="onPostDispatch" event="Enlight_Controller_Action_PostDispatch_Frontend" />
         </service>
 
         <!-- third party listeners -->

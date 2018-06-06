@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2015, Aquatuning GmbH
  */
 
-namespace AtsdConfigurator\Listener\Components;
+namespace AtsdConfigurator\Listener\Controllers\Frontend;
 
 use Enlight_Event_EventArgs as EventArgs;
 use Enlight_Controller_Action as Controller;
