@@ -207,6 +207,7 @@
  *
  * 2.0.7
  * - fixed faulty view for account sidebar
+ * - fixed faulty price template for CHF
  *
  *
  *
