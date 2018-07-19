@@ -22,6 +22,10 @@
             </a>
         </li>
 
+        {if isset($atsdFirstName) }
+            {$userInfo['firstname'] = $atsdFirstName}
+        {/if}
+
     {/if}
 
 {/block}

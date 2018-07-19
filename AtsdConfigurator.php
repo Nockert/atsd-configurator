@@ -210,6 +210,7 @@
  *
  * 2.0.8
  * - fixed faulty price template for chf
+ * - fixed faulty view for account sidebar
  *
  *
  *
