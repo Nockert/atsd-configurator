@@ -208,6 +208,9 @@
  * 2.0.7
  * - fixed faulty update method
  *
+ * 2.0.8
+ * - fixed faulty price template for chf
+ *
  *
  *
  * @todo add selection garbage collector
